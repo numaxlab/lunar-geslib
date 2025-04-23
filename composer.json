@@ -1,0 +1,44 @@
+{
+    "name": "numaxlab/lunar-geslib",
+    "type": "library",
+    "version": "1.0.0-beta.1",
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "lunarphp/core": "^1.0.0",
+        "lunarphp/lunar": "^1.0.0",
+        "illuminate/support": "*",
+        "numaxlab/geslib-files": "^1.0@beta"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "NumaxLab\\Lunar\\Geslib\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "NumaxLab\\Lunar\\Geslib\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "NumaxLab\\Lunar\\Geslib\\LunarGeslibServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "Adrián Pardellas Blunier",
+            "email": "adrian@numax.org"
+        },
+        {
+            "name": "Noa García Amado",
+            "email": "noa@numax.org"
+        }
+    ],
+    "minimum-stability": "beta"
+}

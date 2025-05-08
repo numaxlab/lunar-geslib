@@ -4,9 +4,9 @@ namespace NumaxLab\Lunar\Geslib\FieldTypes;
 
 use Lunar\Base\FieldType;
 
-class Date implements FieldType, JsonSerializable
+class Date implements FieldType
 {
-    protected string $value;
+    protected ?string $value;
 
     public function __construct($value = '')
     {
@@ -32,4 +32,6 @@ class Date implements FieldType, JsonSerializable
     {
         return [];
     }
+
+
 }

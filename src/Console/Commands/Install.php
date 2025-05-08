@@ -135,8 +135,7 @@ class Install extends Command
                 'active' => true,
             ]);
             $taxZone->countries()->createMany(
-                Country::get()->map(fn($country)
-                    => [
+                Country::get()->map(fn($country) => [
                     'country_id' => $country->id,
                 ]),
             );
@@ -160,7 +159,7 @@ class Install extends Command
             $this->components->info('Adding product types.');
 
             $type = ProductType::create([
-                'name' => 'Libro',
+                'name' => 'Artículo Geslib',
             ]);
 
             $type->mappedAttributes()->attach(

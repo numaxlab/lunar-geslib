@@ -2,8 +2,7 @@
 
 namespace NumaxLab\Lunar\Geslib\Geslib;
 
-use Lunar\FieldTypes\Number;
-use Lunar\Models\Product;
+use Lunar\Models\ProductVariant;
 use NumaxLab\Geslib\Lines\Stock;
 
 class StockCommand
@@ -11,15 +10,14 @@ class StockCommand
 
     public function __invoke(Stock $stock): void
     {
-        $product = Product::where('attribute_data->geslib-code->value', $stock->articleId())->first();
+        $variant = ProductVariant::where('sku', $stock->articleId())->first();
 
-
-        if ($product) {
-            $product->update([
-                'attribute_data' => [
-                    'quantity' => new Number($stock->quantity()),
-                ],
-            ]);
+        if (!$variant) {
+            return;
         }
+
+        $variant->update([
+            'stock' => $stock->quantity(),
+        ]);
     }
 }

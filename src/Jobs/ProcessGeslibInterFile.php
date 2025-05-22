@@ -2,6 +2,7 @@
 
 namespace NumaxLab\Lunar\Geslib\Jobs;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Storage;
@@ -58,6 +59,10 @@ class ProcessGeslibInterFile implements ShouldQueue
 
     public function handle(): void
     {
+        $this->geslibInterFile->update([
+            'started_at' => Carbon::now(),
+        ]);
+
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
         $geslibFile = GeslibFile::parse(
@@ -75,7 +80,7 @@ class ProcessGeslibInterFile implements ShouldQueue
                 Collection::CODE => $command = new CollectionCommand(),
                 Topic::CODE => $command = new TopicCommand(),
                 Article::CODE => $command = new ArticleCommand(),
-                EBook::CODE => null,
+                EBook::CODE => $command = new ArticleCommand(true),
                 EbookInfo::CODE => null,
                 ArticleTopic::CODE => null,
                 Ibic::CODE => null,
@@ -131,5 +136,9 @@ class ProcessGeslibInterFile implements ShouldQueue
                 $command($line);
             }
         }
+
+        $this->geslibInterFile->update([
+            'finished_at' => Carbon::now(),
+        ]);
     }
 }

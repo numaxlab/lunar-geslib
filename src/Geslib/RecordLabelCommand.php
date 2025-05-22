@@ -12,38 +12,34 @@ class RecordLabelCommand
 {
     public const BRAND_TYPE = 'record_label';
 
-    public function __invoke(RecordLabel $record_label): void
+    public function __invoke(RecordLabel $recordLabel): void
     {
-        if ($record_label->action()->isDelete()) {
-            $brand = Brand::where('attribute_data->geslib-code->value', $record_label->id())->first();
+        if ($recordLabel->action()->isDelete()) {
+            $brand = Brand::where('attribute_data->geslib-code->value', $recordLabel->id())->first();
 
             if ($brand) {
                 $brand->delete();
             }
         } else {
-            $brand = Brand::where('attribute_data->geslib-code->value', $record_label->id())->first();
+            $brand = Brand::where('attribute_data->geslib-code->value', $recordLabel->id())->first();
+
+            $attributeData = [
+                'type' => new Dropdown(self::BRAND_TYPE),
+                'geslib-code' => new Number($recordLabel->id()),
+                'external-name' => new Text($recordLabel->externalName()),
+                'country' => new Text($recordLabel->country()),
+
+            ];
 
             if (!$brand) {
                 Brand::create([
-                    'name' => $record_label->name(),
-                    'attribute_data' => [
-                        'type' => new Dropdown(self::BRAND_TYPE),
-                        'geslib-code' => new Number($record_label->id()),
-                        'external-name' => new Text($record_label->externalName()),
-                        'country' => new Text($record_label->country()),
-
-                    ],
+                    'name' => $recordLabel->name(),
+                    'attribute_data' => $attributeData,
                 ]);
             } else {
                 $brand->update([
-                    'name' => $record_label->name(),
-                    'attribute_data' => [
-                        'type' => new Dropdown(self::BRAND_TYPE),
-                        'geslib-code' => new Number($record_label->id()),
-                        'external-name' => new Text($record_label->externalName()),
-                        'country' => new Text($record_label->country()),
-
-                    ],
+                    'name' => $recordLabel->name(),
+                    'attribute_data' => $attributeData,
                 ]);
             }
         }

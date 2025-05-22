@@ -47,8 +47,6 @@ class Import extends Command
             $interFile = new GeslibInterFile([
                 'name' => $filename,
                 'received_at' => $fileLastModified,
-                'processing' => false,
-                'processed' => false,
             ]);
 
             $interFile->save();
@@ -60,7 +58,7 @@ class Import extends Command
         }
 
         // Temp para dev
-        GeslibInterFile::truncate();
+        //GeslibInterFile::truncate();
 
         $this->components->info('All Geslib INTER files have been dispatched for processing.');
     }

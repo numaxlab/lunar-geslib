@@ -9,11 +9,14 @@ class GeslibInterFile extends BaseModel
     protected $fillable = [
         'name',
         'received_at',
-        'processing',
-        'processed',
+        'started_at',
+        'finished_at',
+        'log',
     ];
 
     protected $casts = [
         'received_at' => 'datetime',
+        'started_at' => 'datetime',
+        'finished_at' => 'datetime',
     ];
 }

@@ -23,25 +23,22 @@ class EditorialCommand
         } else {
             $brand = Brand::where('attribute_data->geslib-code->value', $editorial->id())->first();
 
+            $attributeData = [
+                'type' => new Dropdown(self::BRAND_TYPE),
+                'geslib-code' => new Number($editorial->id()),
+                'external-name' => new Text($editorial->externalName()),
+                'country' => new Text($editorial->countryId()),
+            ];
+
             if (!$brand) {
                 Brand::create([
                     'name' => $editorial->name(),
-                    'attribute_data' => [
-                        'type' => new Dropdown(self::BRAND_TYPE),
-                        'geslib-code' => new Number($editorial->id()),
-                        'external-name' => new Text($editorial->externalName()),
-                        'country' => new Text($editorial->countryId()),
-                    ],
+                    'attribute_data' => $attributeData,
                 ]);
             } else {
                 $brand->update([
                     'name' => $editorial->name(),
-                    'attribute_data' => [
-                        'type' => new Dropdown(self::BRAND_TYPE),
-                        'geslib-code' => new Number($editorial->id()),
-                        'external-name' => new Text($editorial->externalName()),
-                        'country' => new Text($editorial->countryId()),
-                    ],
+                    'attribute_data' => $attributeData,
                 ]);
             }
         }

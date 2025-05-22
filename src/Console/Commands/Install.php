@@ -23,7 +23,6 @@ use Lunar\Models\Product;
 use Lunar\Models\ProductType;
 use Lunar\Models\TaxClass;
 use Lunar\Models\TaxZone;
-use NumaxLab\Lunar\Geslib\FieldTypes\Date;
 use NumaxLab\Lunar\Geslib\Geslib\BindingTypeCommand;
 use NumaxLab\Lunar\Geslib\Geslib\ClassificationCommand;
 use NumaxLab\Lunar\Geslib\Geslib\EditorialCommand;
@@ -135,7 +134,8 @@ class Install extends Command
                 'active' => true,
             ]);
             $taxZone->countries()->createMany(
-                Country::get()->map(fn($country) => [
+                Country::get()->map(fn($country)
+                    => [
                     'country_id' => $country->id,
                 ]),
             );
@@ -470,75 +470,8 @@ class Install extends Command
         Attribute::create([
             'attribute_type' => Product::morphName(),
             'attribute_group_id' => $mainGroup->id,
-            'position' => 1,
-            'handle' => 'geslib-code',
-            'name' => [
-                'es' => 'Código Geslib',
-            ],
-            'description' => [
-                'es' => '',
-            ],
-            'section' => 'main',
-            'type' => Number::class,
-            'required' => true,
-            'default_value' => null,
-            'configuration' => [
-                'min' => null,
-                'max' => null,
-            ],
-            'system' => true,
-            'searchable' => true,
-        ]);
-
-        Attribute::create([
-            'attribute_type' => Product::morphName(),
-            'attribute_group_id' => $mainGroup->id,
-            'position' => 2,
-            'handle' => 'isbn',
-            'name' => [
-                'es' => 'ISBN',
-            ],
-            'description' => [
-                'es' => '',
-            ],
-            'section' => 'main',
-            'type' => Text::class,
-            'required' => false,
-            'default_value' => null,
-            'configuration' => [
-                'richtext' => false,
-            ],
-            'system' => false,
-            'searchable' => true,
-        ]);
-
-        Attribute::create([
-            'attribute_type' => Product::morphName(),
-            'attribute_group_id' => $mainGroup->id,
-            'position' => 2,
-            'handle' => 'ean',
-            'name' => [
-                'es' => 'EAN',
-            ],
-            'description' => [
-                'es' => '',
-            ],
-            'section' => 'main',
-            'type' => Text::class,
-            'required' => false,
-            'default_value' => null,
-            'configuration' => [
-                'richtext' => false,
-            ],
-            'system' => false,
-            'searchable' => true,
-        ]);
-
-        Attribute::create([
-            'attribute_type' => Product::morphName(),
-            'attribute_group_id' => $mainGroup->id,
             'position' => 3,
-            'handle' => 'title',
+            'handle' => 'name',
             'name' => [
                 'es' => 'Título',
             ],
@@ -590,10 +523,12 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Date::class,
+            'type' => Text::class,
             'required' => false,
             'default_value' => null,
-            'configuration' => null,
+            'configuration' => [ // TODO: Temporal mentres non se implemente o campo Date
+                'richtext' => false,
+            ],
             'system' => false,
             'searchable' => false,
         ]);
@@ -610,10 +545,12 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Date::class,
+            'type' => Text::class,
             'required' => false,
             'default_value' => null,
-            'configuration' => null,
+            'configuration' => [ // TODO: Temporal mentres non se implemente o campo Date
+                'richtext' => false,
+            ],
             'system' => false,
             'searchable' => false,
         ]);
@@ -639,10 +576,12 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Date::class,
+            'type' => Text::class,
             'required' => false,
             'default_value' => null,
-            'configuration' => null,
+            'configuration' => [ // TODO: Temporal mentres non se implemente o campo Date
+                'richtext' => false,
+            ],
             'system' => false,
             'searchable' => false,
         ]);
@@ -704,10 +643,12 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Date::class,
+            'type' => Text::class,
             'required' => false,
             'default_value' => null,
-            'configuration' => null,
+            'configuration' => [ // TODO: Temporal mentres non se implemente o campo Date
+                'richtext' => false,
+            ],
             'system' => false,
             'searchable' => false,
         ]);
@@ -787,75 +728,6 @@ class Install extends Command
             'handle' => 'illustrations-quantity',
             'name' => [
                 'es' => 'Número de ilustraciones',
-            ],
-            'description' => [
-                'es' => '',
-            ],
-            'section' => 'main',
-            'type' => Number::class,
-            'required' => false,
-            'default_value' => null,
-            'configuration' => [
-                'min' => null,
-                'max' => null,
-            ],
-            'system' => true,
-            'searchable' => false,
-        ]);
-
-        Attribute::create([
-            'attribute_type' => Product::morphName(),
-            'attribute_group_id' => $bibliographicDataGroup->id,
-            'position' => 9,
-            'handle' => 'weight',
-            'name' => [
-                'es' => 'Peso',
-            ],
-            'description' => [
-                'es' => '',
-            ],
-            'section' => 'main',
-            'type' => Number::class,
-            'required' => false,
-            'default_value' => null,
-            'configuration' => [
-                'min' => null,
-                'max' => null,
-            ],
-            'system' => true,
-            'searchable' => false,
-        ]);
-
-        Attribute::create([
-            'attribute_type' => Product::morphName(),
-            'attribute_group_id' => $bibliographicDataGroup->id,
-            'position' => 10,
-            'handle' => 'width',
-            'name' => [
-                'es' => 'Ancho',
-            ],
-            'description' => [
-                'es' => '',
-            ],
-            'section' => 'main',
-            'type' => Number::class,
-            'required' => false,
-            'default_value' => null,
-            'configuration' => [
-                'min' => null,
-                'max' => null,
-            ],
-            'system' => true,
-            'searchable' => false,
-        ]);
-
-        Attribute::create([
-            'attribute_type' => Product::morphName(),
-            'attribute_group_id' => $bibliographicDataGroup->id,
-            'position' => 11,
-            'handle' => 'height',
-            'name' => [
-                'es' => 'Alto',
             ],
             'description' => [
                 'es' => '',

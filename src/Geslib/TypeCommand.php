@@ -18,20 +18,19 @@ class TypeCommand
         $collection = Collection::where('attribute_data->geslib-code->value', $type->id())
             ->where('collection_group_id', $group->id)->first();
 
+        $attributeData = [
+            'geslib-code' => new Text($type->id()),
+            'name' => new Text($type->name()),
+        ];
+
         if (!$collection) {
             Collection::create([
-                'attribute_data' => [
-                    'geslib-code' => new Text($type->id()),
-                    'name' => new Text($type->name()),
-                ],
+                'attribute_data' => $attributeData,
                 'collection_group_id' => $group->id,
             ]);
         } else {
             $collection->update([
-                'attribute_data' => [
-                    'geslib-code' => new Text($type->id()),
-                    'name' => new Text($type->name()),
-                ],
+                'attribute_data' => $attributeData,
             ]);
         }
     }

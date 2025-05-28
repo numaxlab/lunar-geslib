@@ -23,6 +23,7 @@ use Lunar\Models\Product;
 use Lunar\Models\ProductType;
 use Lunar\Models\TaxClass;
 use Lunar\Models\TaxZone;
+use NumaxLab\Lunar\Geslib\FieldTypes\Date;
 use NumaxLab\Lunar\Geslib\Geslib\BindingTypeCommand;
 use NumaxLab\Lunar\Geslib\Geslib\ClassificationCommand;
 use NumaxLab\Lunar\Geslib\Geslib\EditorialCommand;
@@ -523,11 +524,11 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Text::class,
+            'type' => Date::class,
             'required' => false,
             'default_value' => null,
-            'configuration' => [ // TODO: Temporal mentres non se implemente o campo Date
-                'richtext' => false,
+            'configuration' => [
+                'has_time' => false,
             ],
             'system' => false,
             'searchable' => false,
@@ -545,11 +546,11 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Text::class,
+            'type' => Date::class,
             'required' => false,
             'default_value' => null,
-            'configuration' => [ // TODO: Temporal mentres non se implemente o campo Date
-                'richtext' => false,
+            'configuration' => [
+                'has_time' => false,
             ],
             'system' => false,
             'searchable' => false,
@@ -576,11 +577,11 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Text::class,
+            'type' => Date::class,
             'required' => false,
             'default_value' => null,
-            'configuration' => [ // TODO: Temporal mentres non se implemente o campo Date
-                'richtext' => false,
+            'configuration' => [
+                'has_time' => false,
             ],
             'system' => false,
             'searchable' => false,
@@ -643,11 +644,11 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Text::class,
+            'type' => Date::class,
             'required' => false,
             'default_value' => null,
-            'configuration' => [ // TODO: Temporal mentres non se implemente o campo Date
-                'richtext' => false,
+            'configuration' => [
+                'has_time' => false,
             ],
             'system' => false,
             'searchable' => false,

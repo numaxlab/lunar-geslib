@@ -33,13 +33,13 @@ class ArticleCommand
                 // book-main
                 'name' => new Text($article->title()),
                 'subtitle' => new Text($article->subtitle()),
-                'created-at' => new Date($article->createdAt()),
-                'novelty-date' => new Date($article->noveltyDate()),
+                'created-at' => new Date($article->createdAt()?->format('Y-m-d')),
+                'novelty-date' => new Date($article->noveltyDate()?->format('Y-m-d')),
                 // bibliographic-data
-                'issue-date' => new Date($article->edition()?->date()),
+                'issue-date' => new Date($article->edition()?->date()?->format('Y-m-d')),
                 'first-issue-year' => new Number($article->firstEditionYear()),
                 'edition-number' => new Number($article->edition()?->number()),
-                'reissue-date' => new Date($article->edition()?->reEditionDate()),
+                'reissue-date' => new Date($article->edition()?->reEditionDate()?->format('Y-m-d')),
                 'last-issue-year' => new Number($article->lastEditionYear()),
                 //'edition-origin',
                 'pages' => new Number($article->pagesQty()),

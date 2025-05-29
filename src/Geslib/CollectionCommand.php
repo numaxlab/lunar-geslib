@@ -3,6 +3,7 @@
 namespace NumaxLab\Lunar\Geslib\Geslib;
 
 use Lunar\FieldTypes\Text;
+use Lunar\Models\Brand;
 use Lunar\Models\Collection;
 use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\Collection as EditorialCollection;
@@ -32,6 +33,12 @@ class CollectionCommand extends AbstractCommand
             $collection->update([
                 'attribute_data' => $attributeData,
             ]);
+        }
+
+        $brand = Brand::where('attribute_data->geslib-code->value', $editorialCollection->editorialId())->first();
+
+        if ($brand) {
+            $collection->brands()->sync([$brand->id]);
         }
     }
 }

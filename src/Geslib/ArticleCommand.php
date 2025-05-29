@@ -35,6 +35,13 @@ class ArticleCommand extends AbstractCommand
 
         $variant = ProductVariant::where('sku', $article->id())->first();
 
+        $languageCollectionGroup = CollectionGroup::where('handle', LanguageCommand::HANDLE)->firstOrFail();
+
+        $originalLanguageCollection = Collection::where(
+            'attribute_data->geslib-code->value',
+            $article->originalLanguageId(),
+        )->where('collection_group_id', $languageCollectionGroup->id)->first();
+
         $productAttributeData = [
             // book-main group
             'name' => new Text($article->title()),
@@ -48,6 +55,11 @@ class ArticleCommand extends AbstractCommand
             'reissue-date' => new Date($article->edition()?->reEditionDate()?->format('Y-m-d')),
             'last-issue-year' => new Number($article->lastEditionYear()),
             'edition-origin' => new Text($article->edition()?->editorial()),
+            'original-title' => new Text($article->originalTitle()),
+            'original-language' => new Text(
+                $originalLanguageCollection ? $originalLanguageCollection->attribute_data->get('name')->getValue(
+                ) : null,
+            ),
             'pages' => new Number($article->pagesQty()),
             'illustrations-quantity' => new Number($article->illustrationsQty()),
         ];
@@ -111,8 +123,14 @@ class ArticleCommand extends AbstractCommand
             ]);
         }
 
-        $group = CollectionGroup::where('handle', TypeCommand::HANDLE)->firstOrFail();
+        // Language collection
+        $languageCollection = Collection::where('attribute_data->geslib-code->value', $article->languageId())
+            ->where('collection_group_id', $languageCollectionGroup->id)->get();
 
+        (new CollectionGroupSync($product, $languageCollectionGroup->id, $languageCollection))->handle();
+
+        // Product type collection
+        $group = CollectionGroup::where('handle', TypeCommand::HANDLE)->firstOrFail();
         $productTypeCollection = Collection::where('attribute_data->geslib-code->value', $article->typeId())
             ->where('collection_group_id', $group->id)->get();
 

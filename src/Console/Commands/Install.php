@@ -682,6 +682,50 @@ class Install extends Command
             'attribute_type' => Product::morphName(),
             'attribute_group_id' => $bibliographicDataGroup->id,
             'position' => 7,
+            'handle' => 'original-title',
+            'name' => [
+                'es' => 'Título original',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Text::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => false,
+            ],
+            'system' => false,
+            'searchable' => false,
+        ]);
+
+        Attribute::create([
+            'attribute_type' => Product::morphName(),
+            'attribute_group_id' => $bibliographicDataGroup->id,
+            'position' => 8,
+            'handle' => 'original-language',
+            'name' => [
+                'es' => 'Idioma original',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Text::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => false,
+            ],
+            'system' => false,
+            'searchable' => false,
+        ]);
+
+        Attribute::create([
+            'attribute_type' => Product::morphName(),
+            'attribute_group_id' => $bibliographicDataGroup->id,
+            'position' => 9,
             'handle' => 'pages',
             'name' => [
                 'es' => 'Páginas',
@@ -704,7 +748,7 @@ class Install extends Command
         Attribute::create([
             'attribute_type' => Product::morphName(),
             'attribute_group_id' => $bibliographicDataGroup->id,
-            'position' => 8,
+            'position' => 10,
             'handle' => 'illustrations-quantity',
             'name' => [
                 'es' => 'Número de ilustraciones',

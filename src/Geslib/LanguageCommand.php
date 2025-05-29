@@ -7,7 +7,7 @@ use Lunar\Models\Collection;
 use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\Language;
 
-class LanguageCommand
+class LanguageCommand extends AbstractCommand
 {
     public const HANDLE = 'languages';
 

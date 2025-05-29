@@ -8,7 +8,7 @@ use Lunar\FieldTypes\Text;
 use Lunar\Models\Brand;
 use NumaxLab\Geslib\Lines\Editorial;
 
-class EditorialCommand
+class EditorialCommand extends AbstractCommand
 {
     public const BRAND_TYPE = 'editorial';
 

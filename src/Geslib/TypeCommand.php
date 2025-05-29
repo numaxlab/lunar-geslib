@@ -7,7 +7,7 @@ use Lunar\Models\Collection;
 use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\Type;
 
-class TypeCommand
+class TypeCommand extends AbstractCommand
 {
     public const HANDLE = 'product-types';
 

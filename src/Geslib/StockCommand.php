@@ -5,7 +5,7 @@ namespace NumaxLab\Lunar\Geslib\Geslib;
 use Lunar\Models\ProductVariant;
 use NumaxLab\Geslib\Lines\Stock;
 
-class StockCommand
+class StockCommand extends AbstractCommand
 {
 
     public function __invoke(Stock $stock): void

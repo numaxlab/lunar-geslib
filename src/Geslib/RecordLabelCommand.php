@@ -8,7 +8,7 @@ use Lunar\FieldTypes\Text;
 use Lunar\Models\Brand;
 use NumaxLab\Geslib\Lines\RecordLabel;
 
-class RecordLabelCommand
+class RecordLabelCommand extends AbstractCommand
 {
     public const BRAND_TYPE = 'record_label';
 

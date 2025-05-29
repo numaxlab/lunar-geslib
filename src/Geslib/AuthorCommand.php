@@ -2,27 +2,26 @@
 
 namespace NumaxLab\Lunar\Geslib\Geslib;
 
+use Illuminate\Support\Str;
 use Lunar\FieldTypes\Text;
 use Lunar\Models\Collection;
 use Lunar\Models\CollectionGroup;
-use NumaxLab\Geslib\Lines\Classification;
+use NumaxLab\Geslib\Lines\Author;
 
-class ClassificationCommand extends AbstractCommand
+class AuthorCommand extends AbstractCommand
 {
-    public const HANDLE = 'classifications';
+    public const HANDLE = 'authors';
 
-    public function __invoke(Classification $classification): void
+    public function __invoke(Author $author): void
     {
         $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
 
-        // Falta o 'tipo de artículo' $classification->typeId()
-        $collection = Collection::where('attribute_data->geslib-code->value', $classification->id())
-            ->where('collection_group_id', $group->id)
-            ->first();
+        $collection = Collection::where('attribute_data->geslib-code->value', $author->id())
+            ->where('collection_group_id', $group->id)->first();
 
         $attributeData = [
-            'geslib-code' => new Text($classification->id()),
-            'name' => new Text($classification->name()),
+            'geslib-code' => new Text($author->id()),
+            'name' => new Text(Str::title($author->name())),
         ];
 
         if (!$collection) {

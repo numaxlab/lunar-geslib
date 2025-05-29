@@ -35,11 +35,17 @@ use NumaxLab\Geslib\Lines\Status;
 use NumaxLab\Geslib\Lines\Stock;
 use NumaxLab\Geslib\Lines\Topic;
 use NumaxLab\Geslib\Lines\Type;
+use NumaxLab\Lunar\Geslib\Geslib\ArticleAuthorCommand;
 use NumaxLab\Lunar\Geslib\Geslib\ArticleCommand;
+use NumaxLab\Lunar\Geslib\Geslib\ArticleIndexCommand;
+use NumaxLab\Lunar\Geslib\Geslib\ArticleTopicCommand;
+use NumaxLab\Lunar\Geslib\Geslib\AuthorCommand;
 use NumaxLab\Lunar\Geslib\Geslib\BindingTypeCommand;
+use NumaxLab\Lunar\Geslib\Geslib\BookshopReferenceCommand;
 use NumaxLab\Lunar\Geslib\Geslib\ClassificationCommand;
 use NumaxLab\Lunar\Geslib\Geslib\CollectionCommand;
 use NumaxLab\Lunar\Geslib\Geslib\EditorialCommand;
+use NumaxLab\Lunar\Geslib\Geslib\EditorialReferenceCommand;
 use NumaxLab\Lunar\Geslib\Geslib\LanguageCommand;
 use NumaxLab\Lunar\Geslib\Geslib\PressPublicationCommand;
 use NumaxLab\Lunar\Geslib\Geslib\RecordLabelCommand;
@@ -69,6 +75,8 @@ class ProcessGeslibInterFile implements ShouldQueue
             $storage->get(config('lunar.geslib.inter_files_path') . '/' . $this->geslibInterFile->name),
         );
 
+        $batchCommands = collect();
+
         foreach ($geslibFile->lines() as $line) {
             $command = null;
 
@@ -82,15 +90,15 @@ class ProcessGeslibInterFile implements ShouldQueue
                 Article::CODE => $command = new ArticleCommand(),
                 EBook::CODE => $command = new ArticleCommand(true),
                 EbookInfo::CODE => null,
-                ArticleTopic::CODE => null,
+                ArticleTopic::CODE => $command = new ArticleTopicCommand(),
                 Ibic::CODE => null,
-                BookshopReference::CODE => null,
-                EditorialReference::CODE => null,
-                ArticleIndex::CODE => null,
+                BookshopReference::CODE => $command = new BookshopReferenceCommand(),
+                EditorialReference::CODE => $command = new EditorialReferenceCommand(),
+                ArticleIndex::CODE => $command = new ArticleIndexCommand(),
                 BookshopReferenceTranslation::CODE => null,
                 EditorialReferenceTranslation::CODE => null,
                 ArticleIndexTranslation::CODE => null,
-                ArticleAuthor::CODE => null,
+                ArticleAuthor::CODE => $command = new ArticleAuthorCommand(),
                 BindingType::CODE => $command = new BindingTypeCommand(),
                 Language::CODE => $command = new LanguageCommand(),
                 Preposition::CODE => null,
@@ -98,7 +106,7 @@ class ProcessGeslibInterFile implements ShouldQueue
                 'B2' => null,
                 Status::CODE => null,
                 'CLI' => null,
-                Author::CODE => null,
+                Author::CODE => $command = new AuthorCommand(),
                 'IPC' => null,
                 'P' => null,
                 'PROCEN' => null,
@@ -133,7 +141,11 @@ class ProcessGeslibInterFile implements ShouldQueue
             };
 
             if ($command !== null) {
-                $command($line);
+                if (!$command->isBatch()) {
+                    $command($line);
+                } else {
+                    $batchCommands->push($command);
+                }
             }
         }
 

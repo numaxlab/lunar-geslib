@@ -24,6 +24,7 @@ use Lunar\Models\ProductType;
 use Lunar\Models\TaxClass;
 use Lunar\Models\TaxZone;
 use NumaxLab\Lunar\Geslib\FieldTypes\Date;
+use NumaxLab\Lunar\Geslib\Geslib\AuthorCommand;
 use NumaxLab\Lunar\Geslib\Geslib\BindingTypeCommand;
 use NumaxLab\Lunar\Geslib\Geslib\ClassificationCommand;
 use NumaxLab\Lunar\Geslib\Geslib\EditorialCommand;
@@ -241,7 +242,7 @@ class Install extends Command
 
         CollectionGroup::create([
             'name' => 'Autores',
-            'handle' => 'authors',
+            'handle' => AuthorCommand::HANDLE,
         ]);
 
         CollectionGroup::create([
@@ -433,28 +434,6 @@ class Install extends Command
             'system' => false,
             'searchable' => true,
         ]);
-        /*Attribute::create([
-            'attribute_type' => Collection::morphName(),
-            'attribute_group_id' => $group->id,
-            'position' => 2,
-            'handle' => 'article-type-geslib-code',
-            'name' => [
-                'es' => 'Tipo de artículo',
-            ],
-            'description' => [
-                'es' => '',
-            ],
-            'section' => 'main',
-            'type' => Text::class,
-            'required' => true,
-            'default_value' => null,
-            'configuration' => [
-                'min' => null,
-                'max' => null,
-            ],
-            'system' => true,
-            'searchable' => true,
-        ]);*/
     }
 
     private function setupArticleAttributes(): void
@@ -471,7 +450,7 @@ class Install extends Command
         Attribute::create([
             'attribute_type' => Product::morphName(),
             'attribute_group_id' => $mainGroup->id,
-            'position' => 3,
+            'position' => 1,
             'handle' => 'name',
             'name' => [
                 'es' => 'Título',
@@ -493,7 +472,7 @@ class Install extends Command
         Attribute::create([
             'attribute_type' => Product::morphName(),
             'attribute_group_id' => $mainGroup->id,
-            'position' => 4,
+            'position' => 2,
             'handle' => 'subtitle',
             'name' => [
                 'es' => 'Subtítulo',
@@ -515,7 +494,7 @@ class Install extends Command
         Attribute::create([
             'attribute_type' => Product::morphName(),
             'attribute_group_id' => $mainGroup->id,
-            'position' => 5,
+            'position' => 3,
             'handle' => 'created-at',
             'name' => [
                 'es' => 'Fecha de alta',
@@ -537,7 +516,7 @@ class Install extends Command
         Attribute::create([
             'attribute_type' => Product::morphName(),
             'attribute_group_id' => $mainGroup->id,
-            'position' => 6,
+            'position' => 4,
             'handle' => 'novelty-date',
             'name' => [
                 'es' => 'Fecha de novedad',
@@ -742,6 +721,81 @@ class Install extends Command
                 'max' => null,
             ],
             'system' => true,
+            'searchable' => false,
+        ]);
+
+        $referencesDataGroup = AttributeGroup::create([
+            'attributable_type' => Product::morphName(),
+            'name' => collect([
+                'es' => 'Referencias',
+            ]),
+            'handle' => 'references-data',
+            'position' => 3,
+        ]);
+
+        Attribute::create([
+            'attribute_type' => Product::morphName(),
+            'attribute_group_id' => $referencesDataGroup->id,
+            'position' => 1,
+            'handle' => 'editorial-reference',
+            'name' => [
+                'es' => 'Referencias del editor',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Text::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => true,
+            ],
+            'system' => false,
+            'searchable' => false,
+        ]);
+
+        Attribute::create([
+            'attribute_type' => Product::morphName(),
+            'attribute_group_id' => $referencesDataGroup->id,
+            'position' => 2,
+            'handle' => 'bookshop-reference',
+            'name' => [
+                'es' => 'Referencias de la librería',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Text::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => true,
+            ],
+            'system' => false,
+            'searchable' => false,
+        ]);
+
+        Attribute::create([
+            'attribute_type' => Product::morphName(),
+            'attribute_group_id' => $referencesDataGroup->id,
+            'position' => 3,
+            'handle' => 'index',
+            'name' => [
+                'es' => 'Índice',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Text::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => true,
+            ],
+            'system' => false,
             'searchable' => false,
         ]);
     }

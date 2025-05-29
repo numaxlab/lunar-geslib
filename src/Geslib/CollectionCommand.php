@@ -7,7 +7,7 @@ use Lunar\Models\Collection;
 use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\Collection as EditorialCollection;
 
-class CollectionCommand
+class CollectionCommand extends AbstractCommand
 {
     public const HANDLE = 'editorial-collections';
 

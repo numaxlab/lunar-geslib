@@ -7,7 +7,7 @@ use Lunar\Models\Collection;
 use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\BindingType;
 
-class BindingTypeCommand
+class BindingTypeCommand extends AbstractCommand
 {
     public const HANDLE = 'binding-types';
 

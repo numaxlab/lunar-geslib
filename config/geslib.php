@@ -11,4 +11,14 @@ return [
      *
      */
     'inter_files_path' => '/geslib/inter',
+
+    /*
+     * Geslib code => Tax Class ID pairs
+     */
+    'product_types_taxation' => [
+        'L0' => 3, // Libros => superreducido
+        'P0' => 3, // Papelería => superreducido
+        'R0' => 3, // Prensa => superreducido
+        'A0' => 1, // Audiovisuales => general
+    ],
 ];

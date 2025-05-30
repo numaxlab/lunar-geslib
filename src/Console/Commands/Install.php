@@ -21,7 +21,10 @@ use Lunar\Models\CustomerGroup;
 use Lunar\Models\Language;
 use Lunar\Models\Product;
 use Lunar\Models\ProductType;
+use Lunar\Models\State;
 use Lunar\Models\TaxClass;
+use Lunar\Models\TaxRate;
+use Lunar\Models\TaxRateAmount;
 use Lunar\Models\TaxZone;
 use NumaxLab\Lunar\Geslib\FieldTypes\Date;
 use NumaxLab\Lunar\Geslib\Geslib\AuthorCommand;
@@ -116,32 +119,7 @@ class Install extends Command
             ]);
         }
 
-        if (!TaxClass::count()) {
-            $this->components->info('Adding tax classes.');
-
-            TaxClass::create([
-                'name' => 'IVA',
-                'default' => true,
-            ]);
-        }
-
-        if (!TaxZone::count()) {
-            $this->components->info('Adding tax zones.');
-
-            $taxZone = TaxZone::create([
-                'name' => 'España peninsular + Baleares',
-                'zone_type' => 'country',
-                'price_display' => 'tax_exclusive',
-                'default' => true,
-                'active' => true,
-            ]);
-            $taxZone->countries()->createMany(
-                Country::get()->map(fn($country)
-                    => [
-                    'country_id' => $country->id,
-                ]),
-            );
-        }
+        $this->setupTaxation();
 
         if (!CollectionGroup::count()) {
             $this->components->info('Adding an collection groups.');
@@ -211,6 +189,83 @@ class Install extends Command
             'Config file already exists. Do you want to overwrite it?',
             false,
         );
+    }
+
+    /**
+     * @return void
+     */
+    protected function setupTaxation(): void
+    {
+        if (TaxClass::count() > 0 || TaxZone::count() > 0 || TaxRate::count() > 0) {
+            return;
+        }
+
+        $this->components->info('Adding tax classes.');
+
+        $generalVatTaxClass = TaxClass::create([
+            'name' => 'IVA general',
+            'default' => true,
+        ]);
+
+        $reducedVatTaxClass = TaxClass::create([
+            'name' => 'IVA reducido',
+            'default' => false,
+        ]);
+
+        $superReducedVatTaxClass = TaxClass::create([
+            'name' => 'IVA superreducido',
+            'default' => false,
+        ]);
+
+        $this->components->info('Adding tax zones.');
+
+        $taxZone = TaxZone::create([
+            'name' => 'España peninsular + Baleares',
+            'zone_type' => 'states',
+            'price_display' => 'tax_inclusive',
+            'default' => true,
+            'active' => true,
+        ]);
+
+        $spain = Country::where('iso2', 'ES')->first();
+
+        $taxZone->countries()->create([
+            'country_id' => $spain->id,
+        ]);
+        $taxZone->states()->createMany(
+            State::where('country_id', $spain->id)
+                ->whereNotIn('code', ['CE', 'ML', 'CN'])
+                ->get()
+                ->map(fn($state)
+                    => [
+                    'state_id' => $state->id,
+                ]),
+        );
+
+        $this->components->info('Adding tax rates.');
+
+        $taxRate = TaxRate::create([
+            'name' => 'IVA',
+            'tax_zone_id' => $taxZone->id,
+        ]);
+
+        TaxRateAmount::create([
+            'tax_rate_id' => $taxRate->id,
+            'tax_class_id' => $generalVatTaxClass->id,
+            'percentage' => 21,
+        ]);
+
+        TaxRateAmount::create([
+            'tax_rate_id' => $taxRate->id,
+            'tax_class_id' => $reducedVatTaxClass->id,
+            'percentage' => 10,
+        ]);
+
+        TaxRateAmount::create([
+            'tax_rate_id' => $taxRate->id,
+            'tax_class_id' => $superReducedVatTaxClass->id,
+            'percentage' => 4,
+        ]);
     }
 
     private function setupCollectionGroups(): void

@@ -76,7 +76,7 @@ class ArticleCommand extends AbstractCommand
 
             $variant = ProductVariant::create([
                 'product_id' => $product->id,
-                'tax_class_id' => 1,
+                'tax_class_id' => config('lunar.geslib.product_types_taxation.' . $article->typeId(), 1),
                 'unit_quantity' => 1,
                 'min_quantity' => 1,
                 'quantity_increment' => 1,

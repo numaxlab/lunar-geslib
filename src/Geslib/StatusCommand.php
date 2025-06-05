@@ -5,24 +5,22 @@ namespace NumaxLab\Lunar\Geslib\Geslib;
 use Lunar\FieldTypes\Text;
 use Lunar\Models\Collection;
 use Lunar\Models\CollectionGroup;
-use NumaxLab\Geslib\Lines\Classification;
+use NumaxLab\Geslib\Lines\Status;
 
-class ClassificationCommand extends AbstractCommand
+class StatusCommand extends AbstractCommand
 {
-    public const HANDLE = 'classifications';
+    public const HANDLE = 'statuses';
 
-    public function __invoke(Classification $classification): void
+    public function __invoke(Status $status): void
     {
         $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
 
-        $collection = Collection::where('attribute_data->geslib-code->value', $classification->id())
-            ->where('collection_group_id', $group->id)
-            ->first();
+        $collection = Collection::where('attribute_data->geslib-code->value', $status->id())
+            ->where('collection_group_id', $group->id)->first();
 
-        // Falta o 'tipo de artículo' $classification->typeId()
         $attributeData = [
-            'geslib-code' => new Text($classification->id()),
-            'name' => new Text($classification->name()),
+            'geslib-code' => new Text($status->id()),
+            'name' => new Text($status->name()),
         ];
 
         if (!$collection) {

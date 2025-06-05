@@ -32,6 +32,7 @@ use NumaxLab\Lunar\Geslib\Geslib\BindingTypeCommand;
 use NumaxLab\Lunar\Geslib\Geslib\ClassificationCommand;
 use NumaxLab\Lunar\Geslib\Geslib\EditorialCommand;
 use NumaxLab\Lunar\Geslib\Geslib\LanguageCommand;
+use NumaxLab\Lunar\Geslib\Geslib\StatusCommand;
 use NumaxLab\Lunar\Geslib\Geslib\TypeCommand;
 
 use function Laravel\Prompts\confirm;
@@ -307,7 +308,7 @@ class Install extends Command
 
         CollectionGroup::create([
             'name' => 'Estados',
-            'handle' => 'statuses',
+            'handle' => StatusCommand::HANDLE,
         ]);
 
         CollectionGroup::create([
@@ -781,6 +782,94 @@ class Install extends Command
             'attribute_type' => Product::morphName(),
             'attribute_group_id' => $bibliographicDataGroup->id,
             'position' => 9,
+            'handle' => 'translator',
+            'name' => [
+                'es' => 'Traducción',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Text::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => false,
+            ],
+            'system' => false,
+            'searchable' => false,
+        ]);
+
+        Attribute::create([
+            'attribute_type' => Product::morphName(),
+            'attribute_group_id' => $bibliographicDataGroup->id,
+            'position' => 10,
+            'handle' => 'illustrator',
+            'name' => [
+                'es' => 'Ilustración',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Text::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => false,
+            ],
+            'system' => false,
+            'searchable' => false,
+        ]);
+
+        Attribute::create([
+            'attribute_type' => Product::morphName(),
+            'attribute_group_id' => $bibliographicDataGroup->id,
+            'position' => 11,
+            'handle' => 'cover-illustrator',
+            'name' => [
+                'es' => 'Ilustración de portada',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Text::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => false,
+            ],
+            'system' => false,
+            'searchable' => false,
+        ]);
+
+        Attribute::create([
+            'attribute_type' => Product::morphName(),
+            'attribute_group_id' => $bibliographicDataGroup->id,
+            'position' => 12,
+            'handle' => 'back-cover-illustrator',
+            'name' => [
+                'es' => 'Ilustración de contraportada',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Text::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => false,
+            ],
+            'system' => false,
+            'searchable' => false,
+        ]);
+
+        Attribute::create([
+            'attribute_type' => Product::morphName(),
+            'attribute_group_id' => $bibliographicDataGroup->id,
+            'position' => 13,
             'handle' => 'pages',
             'name' => [
                 'es' => 'Páginas',
@@ -803,7 +892,7 @@ class Install extends Command
         Attribute::create([
             'attribute_type' => Product::morphName(),
             'attribute_group_id' => $bibliographicDataGroup->id,
-            'position' => 10,
+            'position' => 14,
             'handle' => 'illustrations-quantity',
             'name' => [
                 'es' => 'Número de ilustraciones',

@@ -40,6 +40,8 @@ use NumaxLab\Lunar\Geslib\Geslib\ArticleCommand;
 use NumaxLab\Lunar\Geslib\Geslib\ArticleIndexCommand;
 use NumaxLab\Lunar\Geslib\Geslib\ArticleTopicCommand;
 use NumaxLab\Lunar\Geslib\Geslib\AuthorCommand;
+use NumaxLab\Lunar\Geslib\Geslib\Batch\ArticleAuthorRelation;
+use NumaxLab\Lunar\Geslib\Geslib\Batch\ArticleTopicRelation;
 use NumaxLab\Lunar\Geslib\Geslib\BindingTypeCommand;
 use NumaxLab\Lunar\Geslib\Geslib\BookshopReferenceCommand;
 use NumaxLab\Lunar\Geslib\Geslib\ClassificationCommand;
@@ -49,6 +51,7 @@ use NumaxLab\Lunar\Geslib\Geslib\EditorialReferenceCommand;
 use NumaxLab\Lunar\Geslib\Geslib\LanguageCommand;
 use NumaxLab\Lunar\Geslib\Geslib\PressPublicationCommand;
 use NumaxLab\Lunar\Geslib\Geslib\RecordLabelCommand;
+use NumaxLab\Lunar\Geslib\Geslib\StatusCommand;
 use NumaxLab\Lunar\Geslib\Geslib\StockCommand;
 use NumaxLab\Lunar\Geslib\Geslib\TopicCommand;
 use NumaxLab\Lunar\Geslib\Geslib\TypeCommand;
@@ -104,7 +107,7 @@ class ProcessGeslibInterFile implements ShouldQueue
                 Preposition::CODE => null,
                 Stock::CODE => $command = new StockCommand(),
                 'B2' => null,
-                Status::CODE => null,
+                Status::CODE => $command = new StatusCommand(),
                 'CLI' => null,
                 Author::CODE => $command = new AuthorCommand(),
                 'IPC' => null,
@@ -141,11 +144,25 @@ class ProcessGeslibInterFile implements ShouldQueue
             };
 
             if ($command !== null) {
-                if (!$command->isBatch()) {
-                    $command($line);
-                } else {
+                $command($line);
+
+                if ($command->isBatch()) {
                     $batchCommands->push($command);
                 }
+            }
+        }
+
+        foreach ($batchCommands->groupBy('type') as $lineType => $commands) {
+            $batchCommand = null;
+
+            match ((string)$lineType) {
+                ArticleAuthor::CODE => $batchCommand = new ArticleAuthorRelation($commands->groupBy('articleId')),
+                ArticleTopic::CODE => $batchCommand = new ArticleTopicRelation($commands->groupBy('topicId')),
+                default => throw new RuntimeException(sprintf('Unexpected batch command for line type: %s', $lineType)),
+            };
+
+            if ($batchCommand !== null) {
+                $batchCommand();
             }
         }
 

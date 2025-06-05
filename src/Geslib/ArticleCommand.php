@@ -57,8 +57,9 @@ class ArticleCommand extends AbstractCommand
             'edition-origin' => new Text($article->edition()?->editorial()),
             'original-title' => new Text($article->originalTitle()),
             'original-language' => new Text(
-                $originalLanguageCollection ? $originalLanguageCollection->attribute_data->get('name')->getValue(
-                ) : null,
+                $originalLanguageCollection ?
+                    $originalLanguageCollection->attribute_data->get('name')->getValue() :
+                    null,
             ),
             'pages' => new Number($article->pagesQty()),
             'illustrations-quantity' => new Number($article->illustrationsQty()),
@@ -123,17 +124,24 @@ class ArticleCommand extends AbstractCommand
             ]);
         }
 
+        // Product type collection
+        $group = CollectionGroup::where('handle', TypeCommand::HANDLE)->firstOrFail();
+        $statusCollection = Collection::where('attribute_data->geslib-code->value', $article->typeId())
+            ->where('collection_group_id', $group->id)->get();
+
+        (new CollectionGroupSync($product, $group->id, $statusCollection))->handle();
+
+        // Status collection
+        $group = CollectionGroup::where('handle', TypeCommand::HANDLE)->firstOrFail();
+        $statusCollection = Collection::where('attribute_data->geslib-code->value', $article->statusId())
+            ->where('collection_group_id', $group->id)->get();
+
+        (new CollectionGroupSync($product, $group->id, $statusCollection))->handle();
+
         // Language collection
         $languageCollection = Collection::where('attribute_data->geslib-code->value', $article->languageId())
             ->where('collection_group_id', $languageCollectionGroup->id)->get();
 
         (new CollectionGroupSync($product, $languageCollectionGroup->id, $languageCollection))->handle();
-
-        // Product type collection
-        $group = CollectionGroup::where('handle', TypeCommand::HANDLE)->firstOrFail();
-        $productTypeCollection = Collection::where('attribute_data->geslib-code->value', $article->typeId())
-            ->where('collection_group_id', $group->id)->get();
-
-        (new CollectionGroupSync($product, $group->id, $productTypeCollection))->handle();
     }
 }

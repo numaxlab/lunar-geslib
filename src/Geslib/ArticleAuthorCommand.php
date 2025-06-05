@@ -2,22 +2,26 @@
 
 namespace NumaxLab\Lunar\Geslib\Geslib;
 
-use Lunar\Models\Collection;
-use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\ArticleAuthor;
 
 class ArticleAuthorCommand extends AbstractCommand
 {
+    public string $articleId;
+    public string $authorId;
+    public string $authorType;
+    public int $position;
+
     public function __construct()
     {
         $this->isBatch = true;
+        $this->type = ArticleAuthor::CODE;
     }
 
     public function __invoke(ArticleAuthor $articleAuthor): void
     {
-        $group = CollectionGroup::where('handle', AuthorCommand::HANDLE)->firstOrFail();
-
-        $author = Collection::where('attribute_data->geslib-code->value', $articleAuthor->authorId())
-            ->where('collection_group_id', $group->id)->get();
+        $this->articleId = $articleAuthor->articleId();
+        $this->authorId = $articleAuthor->authorId();
+        $this->authorType = $articleAuthor->authorType()->code();
+        $this->position = $articleAuthor->position();
     }
 }

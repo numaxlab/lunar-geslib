@@ -41,6 +41,7 @@ use NumaxLab\Lunar\Geslib\Geslib\ArticleIndexCommand;
 use NumaxLab\Lunar\Geslib\Geslib\ArticleTopicCommand;
 use NumaxLab\Lunar\Geslib\Geslib\AuthorCommand;
 use NumaxLab\Lunar\Geslib\Geslib\Batch\ArticleAuthorRelation;
+use NumaxLab\Lunar\Geslib\Geslib\Batch\ArticleIbicRelation;
 use NumaxLab\Lunar\Geslib\Geslib\Batch\ArticleTopicRelation;
 use NumaxLab\Lunar\Geslib\Geslib\BindingTypeCommand;
 use NumaxLab\Lunar\Geslib\Geslib\BookshopReferenceCommand;
@@ -48,6 +49,7 @@ use NumaxLab\Lunar\Geslib\Geslib\ClassificationCommand;
 use NumaxLab\Lunar\Geslib\Geslib\CollectionCommand;
 use NumaxLab\Lunar\Geslib\Geslib\EditorialCommand;
 use NumaxLab\Lunar\Geslib\Geslib\EditorialReferenceCommand;
+use NumaxLab\Lunar\Geslib\Geslib\IbicCommand;
 use NumaxLab\Lunar\Geslib\Geslib\LanguageCommand;
 use NumaxLab\Lunar\Geslib\Geslib\PressPublicationCommand;
 use NumaxLab\Lunar\Geslib\Geslib\RecordLabelCommand;
@@ -94,7 +96,7 @@ class ProcessGeslibInterFile implements ShouldQueue
                 EBook::CODE => $command = new ArticleCommand(true),
                 EbookInfo::CODE => null,
                 ArticleTopic::CODE => $command = new ArticleTopicCommand(),
-                Ibic::CODE => null,
+                Ibic::CODE => $command = new IbicCommand(),
                 BookshopReference::CODE => $command = new BookshopReferenceCommand(),
                 EditorialReference::CODE => $command = new EditorialReferenceCommand(),
                 ArticleIndex::CODE => $command = new ArticleIndexCommand(),
@@ -158,6 +160,7 @@ class ProcessGeslibInterFile implements ShouldQueue
             match ((string)$lineType) {
                 ArticleAuthor::CODE => $batchCommand = new ArticleAuthorRelation($commands->groupBy('articleId')),
                 ArticleTopic::CODE => $batchCommand = new ArticleTopicRelation($commands->groupBy('topicId')),
+                Ibic::CODE => $batchCommand = new ArticleIbicRelation($commands->groupBy('articleId')),
                 default => throw new RuntimeException(sprintf('Unexpected batch command for line type: %s', $lineType)),
             };
 

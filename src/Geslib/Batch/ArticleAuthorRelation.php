@@ -20,7 +20,7 @@ class ArticleAuthorRelation
         $this->byArticleCommands = $commandsGroupedByArticle;
     }
 
-    public function __invoke()
+    public function __invoke(): void
     {
         foreach ($this->byArticleCommands as $articleId => $articleCommands) {
             $variant = ProductVariant::where('sku', $articleId)->first();
@@ -45,6 +45,11 @@ class ArticleAuthorRelation
                         }
                     })->get();
 
+                if ($authorType === AuthorType::AUTHOR) {
+                    (new CollectionGroupSync($product, $collectionGroup->id, $authorsCollection))->handle();
+                    continue;
+                }
+
                 if ($authorsCollection->isEmpty()) {
                     continue;
                 }
@@ -52,11 +57,6 @@ class ArticleAuthorRelation
                 $authorsString = $authorsCollection
                     ->map(fn($author) => $author->attribute_data->get('name')->getValue())
                     ->implode('; ');
-
-                if ($authorType === AuthorType::AUTHOR) {
-                    (new CollectionGroupSync($product, $collectionGroup->id, $authorsCollection))->handle();
-                    continue;
-                }
 
                 if ($authorType === AuthorType::TRANSLATOR) {
                     $productAttributeData['translator'] = new Text($authorsString);

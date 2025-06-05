@@ -30,9 +30,12 @@ use NumaxLab\Lunar\Geslib\FieldTypes\Date;
 use NumaxLab\Lunar\Geslib\Geslib\AuthorCommand;
 use NumaxLab\Lunar\Geslib\Geslib\BindingTypeCommand;
 use NumaxLab\Lunar\Geslib\Geslib\ClassificationCommand;
+use NumaxLab\Lunar\Geslib\Geslib\CollectionCommand;
 use NumaxLab\Lunar\Geslib\Geslib\EditorialCommand;
+use NumaxLab\Lunar\Geslib\Geslib\IbicCommand;
 use NumaxLab\Lunar\Geslib\Geslib\LanguageCommand;
 use NumaxLab\Lunar\Geslib\Geslib\StatusCommand;
+use NumaxLab\Lunar\Geslib\Geslib\TopicCommand;
 use NumaxLab\Lunar\Geslib\Geslib\TypeCommand;
 
 use function Laravel\Prompts\confirm;
@@ -283,17 +286,17 @@ class Install extends Command
 
         CollectionGroup::create([
             'name' => 'Materias',
-            'handle' => 'categories',
+            'handle' => TopicCommand::HANDLE,
         ]);
 
         CollectionGroup::create([
             'name' => 'Materias IBIC',
-            'handle' => 'ibic',
+            'handle' => IbicCommand::HANDLE,
         ]);
 
         CollectionGroup::create([
             'name' => 'Colecciones editoriales',
-            'handle' => 'editorial-collections',
+            'handle' => CollectionCommand::HANDLE,
         ]);
 
         CollectionGroup::create([

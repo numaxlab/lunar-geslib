@@ -52,8 +52,8 @@ use NumaxLab\Lunar\Geslib\Geslib\RecordLabelCommand;
 use NumaxLab\Lunar\Geslib\Geslib\StockCommand;
 use NumaxLab\Lunar\Geslib\Geslib\TopicCommand;
 use NumaxLab\Lunar\Geslib\Geslib\TypeCommand;
-use NumaxLab\LunarGeslib\Models\GeslibInterFile;
-use NumaxLab\LunarGeslib\Notifications\GeslibFileImportFailed; // Added
+use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
+use NumaxLab\Lunar\Geslib\Notifications\GeslibFileImportFailed; // Added
 use RuntimeException;
 use Illuminate\Support\Facades\Notification as NotificationFacade; // Added
 use Illuminate\Support\Facades\Cache; // Added

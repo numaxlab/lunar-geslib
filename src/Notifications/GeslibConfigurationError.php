@@ -1,11 +1,12 @@
 <?php
 
-namespace NumaxLab\LunarGeslib\Notifications;
+namespace NumaxLab\Lunar\Geslib\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use NumaxLab\Lunar\Geslib\Filament\Pages\GeslibDashboardPage; // Added for Filament URL
 
 class GeslibConfigurationError extends Notification implements ShouldQueue
 {
@@ -46,10 +47,11 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         $dashboardUrl = null;
-        if (class_exists(\NumaxLab\LunarGeslib\Admin\Http\Livewire\Components\GeslibDashboard::class) && config('lunar.admin.route_prefix')) {
+        if (class_exists(GeslibDashboardPage::class) && method_exists(GeslibDashboardPage::class, 'getUrl')) {
             try {
-                $dashboardUrl = route('adminhub.geslib.dashboard');
+                $dashboardUrl = GeslibDashboardPage::getUrl();
             } catch (\Exception $e) {
+                // In case URL generation fails
                 $dashboardUrl = null;
             }
         }
@@ -65,7 +67,7 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
         if ($dashboardUrl) {
             $mailMessage->action('Go to Geslib Dashboard', $dashboardUrl);
         } else {
-            $mailMessage->line('Please check the Geslib Dashboard in your admin panel for more details and to review your settings.');
+            $mailMessage->line('Please check the Geslib Dashboard in your Filament admin panel for more details and to review your settings.');
         }
 
         $mailMessage->line('Resolving this configuration issue is important for the correct functioning of the Geslib integration.');

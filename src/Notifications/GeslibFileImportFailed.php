@@ -1,12 +1,13 @@
 <?php
 
-namespace NumaxLab\LunarGeslib\Notifications;
+namespace NumaxLab\Lunar\Geslib\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use NumaxLab\LunarGeslib\Models\GeslibInterFile;
+use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
+use NumaxLab\Lunar\Geslib\Filament\Resources\GeslibFileInterResource; // Added for Filament URL
 
 class GeslibFileImportFailed extends Notification implements ShouldQueue
 {
@@ -47,16 +48,16 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         $fileImportLogUrl = null;
-        if (class_exists(\NumaxLab\LunarGeslib\Admin\Http\Livewire\Components\GeslibFileImportLog::class) && config('lunar.admin.route_prefix')) {
-             // Try to generate the URL if the route might exist
+        // Check if Filament classes and GeslibFileInterResource are available to generate URL
+        if (class_exists(GeslibFileInterResource::class) && method_exists(GeslibFileInterResource::class, 'getUrl')) {
             try {
-                $fileImportLogUrl = route('adminhub.geslib.file-import-log', ['q_filename' => $this->file->name]);
+                // Link to the GeslibFileInterResource list page, filtered by status 'error'
+                $fileImportLogUrl = GeslibFileInterResource::getUrl('index', ['tableFilters[status][value]' => 'error', 'tableSearchQuery' => $this->file->name]);
             } catch (\Exception $e) {
-                // Route might not be defined yet or other issue
+                // In case URL generation fails for any reason (e.g., panel not registered yet during certain operations)
                 $fileImportLogUrl = null;
             }
         }
-
 
         $mailMessage = (new MailMessage)
             ->subject('Geslib File Import Failed: ' . $this->file->name)
@@ -67,9 +68,9 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
             ->line('Error Message: ' . $this->errorMessage);
 
         if ($fileImportLogUrl) {
-            $mailMessage->action('View Import Logs', $fileImportLogUrl);
+            $mailMessage->action('View File Import Log', $fileImportLogUrl);
         } else {
-            $mailMessage->line('Please check the Geslib File Import Logs in your admin panel for more details.');
+            $mailMessage->line('Please check the Geslib File Import Logs in your Filament admin panel for more details.');
         }
 
         $mailMessage->line('Thank you for using our application!');

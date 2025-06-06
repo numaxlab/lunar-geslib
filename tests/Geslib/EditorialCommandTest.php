@@ -5,7 +5,7 @@ namespace NumaxLab\Lunar\Geslib\Tests;
 use NumaxLab\Geslib\Lines\Action;
 use NumaxLab\Geslib\Lines\Editorial;
 use NumaxLab\Lunar\Geslib\Geslib\EditorialCommand;
-use PHPUnit\Framework\TestCase;
+use NumaxLab\Lunar\Geslib\Tests\TestCase;
 
 class EditorialCommandTest extends TestCase
 {

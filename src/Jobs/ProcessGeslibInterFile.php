@@ -58,11 +58,21 @@ use NumaxLab\Lunar\Geslib\Geslib\StockCommand;
 use NumaxLab\Lunar\Geslib\Geslib\TopicCommand;
 use NumaxLab\Lunar\Geslib\Geslib\TypeCommand;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
+use NumaxLab\Lunar\Geslib\Notifications\GeslibFileImportFailed; // Added
 use RuntimeException;
+use Illuminate\Support\Facades\Notification as NotificationFacade; // Added
+use Illuminate\Support\Facades\Cache; // Added
+use Throwable; // Added
 
 class ProcessGeslibInterFile implements ShouldQueue
 {
     use Queueable;
+
+    // Default number of times the job may be attempted.
+    public $tries = 3;
+
+    // Default timeout for the job.
+    public $timeout = 120; // 2 minutes
 
     public function __construct(
         public GeslibInterFile $geslibInterFile,
@@ -172,5 +182,48 @@ class ProcessGeslibInterFile implements ShouldQueue
         $this->geslibInterFile->update([
             'finished_at' => Carbon::now(),
         ]);
+
+        // If successful, update status and clear any previous error notes
+        $this->geslibInterFile->update([
+            'status' => 'processed', // Assuming 'processed' is the success status
+            'notes' => null,
+        ]);
+    }
+
+    /**
+     * Handle a job failure.
+     *
+     * @param  \Throwable  $exception
+     * @return void
+     */
+    public function failed(Throwable $exception)
+    {
+        // Update model status to 'error' and store the error message
+        $this->geslibInterFile->update([
+            'status' => 'error',
+            'notes' => $exception->getMessage(),
+            'finished_at' => Carbon::now(), // Also mark as finished if it failed
+        ]);
+
+        // Check if notifications are enabled and mail_to is configured
+        if (!config('lunar.geslib.notifications.enabled') || !config('lunar.geslib.notifications.mail_to')) {
+            return;
+        }
+
+        $mailTo = config('lunar.geslib.notifications.mail_to');
+        $throttlePeriodMinutes = config('lunar.geslib.notifications.throttle_period_minutes', 60);
+        $cacheKey = 'geslib_notification_import_failed_' . $this->geslibInterFile->id;
+
+        // Throttle notifications
+        if (Cache::has($cacheKey)) {
+            return; // Already notified recently
+        }
+
+        // Send notification
+        NotificationFacade::route('mail', $mailTo)
+            ->notify(new GeslibFileImportFailed($this->geslibInterFile, $exception->getMessage()));
+
+        // Cache that notification has been sent
+        Cache::put($cacheKey, true, now()->addMinutes($throttlePeriodMinutes));
     }
 }

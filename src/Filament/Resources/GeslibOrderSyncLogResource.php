@@ -7,17 +7,23 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use NumaxLab\Lunar\Geslib\Models\LunarGeslibOrderSyncLog;
+use NumaxLab\Lunar\Geslib\Filament\Resources\GeslibOrderSyncLogResource\Pages\ListGeslibOrderSyncLogs;
+use NumaxLab\Lunar\Geslib\Models\GeslibOrderSyncLog;
 
 class GeslibOrderSyncLogResource extends Resource
 {
-    protected static ?string $model = LunarGeslibOrderSyncLog::class;
+    protected static ?string $model = GeslibOrderSyncLog::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-arrows-right-left';
 
-    protected static ?string $navigationGroup = 'Geslib Integration';
+    protected static ?string $navigationGroup = 'Geslib';
 
-    protected static ?string $pluralModelLabel = 'Geslib Order Sync Logs';
+    protected static ?string $pluralModelLabel = 'Order Sync Logs';
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Envío de pedidos';
+    }
 
     public static function form(Form $form): Form
     {
@@ -61,12 +67,12 @@ class GeslibOrderSyncLogResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->limit(40)
-                    ->tooltip(fn ($record) => $record->geslib_endpoint_called),
+                    ->tooltip(fn($record) => $record->geslib_endpoint_called),
                 Tables\Columns\TextColumn::make('status')
                     ->searchable()
                     ->sortable()
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'success' => 'success',
                         'error' => 'danger',
                         'pending' => 'warning',
@@ -74,7 +80,7 @@ class GeslibOrderSyncLogResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('message')
                     ->limit(50)
-                    ->tooltip(fn ($record) => $record->message),
+                    ->tooltip(fn($record) => $record->message),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -87,48 +93,22 @@ class GeslibOrderSyncLogResource extends Resource
                         'success' => 'Success',
                         'error' => 'Error',
                     ]),
-                // Consider adding a date range filter if needed
-                // Tables\Filters\Filter::make('created_at')
-                //     ->form([
-                //         Forms\Components\DatePicker::make('created_from'),
-                //         Forms\Components\DatePicker::make('created_until'),
-                //     ])
-                //     ->query(function (Builder $query, array $data): Builder {
-                //         return $query
-                //             ->when(
-                //                 $data['created_from'],
-                //                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
-                //             )
-                //             ->when(
-                //                 $data['created_until'],
-                //                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
-                //             );
-                //     })
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(), // Uses the form schema for a modal view
-            ])
-            ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
+                Tables\Actions\ViewAction::make(),
             ])
             ->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListGeslibOrderSyncLogs::route('/'),
-            // ViewAction uses a modal by default, so a dedicated view page is often not needed
-            // 'view' => Pages\ViewGeslibOrderSyncLog::route('/{record}'),
+            'index' => ListGeslibOrderSyncLogs::route('/'),
         ];
     }
 }

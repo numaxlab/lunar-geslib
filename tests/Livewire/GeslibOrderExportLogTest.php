@@ -5,7 +5,7 @@ namespace NumaxLab\Lunar\Geslib\Tests\Livewire;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use NumaxLab\Lunar\Geslib\Admin\Http\Livewire\Components\GeslibOrderExportLog;
-use NumaxLab\Lunar\Geslib\Models\LunarGeslibOrderSyncLog;
+use NumaxLab\Lunar\Geslib\Models\GeslibOrderSyncLog;
 use NumaxLab\Lunar\Geslib\Tests\TestCase;
 
 class GeslibOrderExportLogTest extends TestCase
@@ -24,7 +24,7 @@ class GeslibOrderExportLogTest extends TestCase
     /** @test */
     public function it_displays_logs_with_pagination()
     {
-        LunarGeslibOrderSyncLog::factory()->count(20)->create(['order_id' => 123]); // Assuming a factory or simple creation
+        GeslibOrderSyncLog::factory()->count(20)->create(['order_id' => 123]); // Assuming a factory or simple creation
 
         Livewire::test(GeslibOrderExportLog::class)
             ->assertSee('Order ID') // Column header
@@ -37,8 +37,8 @@ class GeslibOrderExportLogTest extends TestCase
     /** @test */
     public function search_by_order_id_works()
     {
-        LunarGeslibOrderSyncLog::create(['order_id' => 1001, 'status' => 'success', 'geslib_endpoint_called' => 'ep1']);
-        LunarGeslibOrderSyncLog::create(['order_id' => 1002, 'status' => 'error', 'geslib_endpoint_called' => 'ep2']);
+        GeslibOrderSyncLog::create(['order_id' => 1001, 'status' => 'success', 'geslib_endpoint_called' => 'ep1']);
+        GeslibOrderSyncLog::create(['order_id' => 1002, 'status' => 'error', 'geslib_endpoint_called' => 'ep2']);
 
         Livewire::test(GeslibOrderExportLog::class)
             ->set('searchOrderId', '1001')
@@ -46,11 +46,11 @@ class GeslibOrderExportLogTest extends TestCase
             ->assertDontSee('1002');
     }
 
-     /** @test */
+    /** @test */
     public function filter_by_status_works()
     {
-        LunarGeslibOrderSyncLog::create(['order_id' => 2001, 'status' => 'success', 'geslib_endpoint_called' => 'ep1']);
-        LunarGeslibOrderSyncLog::create(['order_id' => 2002, 'status' => 'error', 'geslib_endpoint_called' => 'ep2']);
+        GeslibOrderSyncLog::create(['order_id' => 2001, 'status' => 'success', 'geslib_endpoint_called' => 'ep1']);
+        GeslibOrderSyncLog::create(['order_id' => 2002, 'status' => 'error', 'geslib_endpoint_called' => 'ep2']);
 
         Livewire::test(GeslibOrderExportLog::class)
             ->set('filterStatus', 'error')
@@ -61,7 +61,7 @@ class GeslibOrderExportLogTest extends TestCase
     /** @test */
     public function show_details_modal_works()
     {
-        $log = LunarGeslibOrderSyncLog::create([
+        $log = GeslibOrderSyncLog::create([
             'order_id' => 3001,
             'status' => 'success',
             'geslib_endpoint_called' => '/api/orders',
@@ -74,7 +74,7 @@ class GeslibOrderExportLogTest extends TestCase
             ->call('showDetailsModal', $log->id)
             ->assertSet('showingModal', true)
             ->assertSet('selectedLog.id', $log->id)
-            ->assertSee('Order Export Log Details (ID: '.$log->id.')')
+            ->assertSee('Order Export Log Details (ID: ' . $log->id . ')')
             ->assertSee('{"id":3001}') // payload_to_geslib
             ->assertSee('{"geslib_id":"G123"}'); // payload_from_geslib
     }

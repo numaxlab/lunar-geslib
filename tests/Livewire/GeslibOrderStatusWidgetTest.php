@@ -4,10 +4,12 @@ namespace NumaxLab\Lunar\Geslib\Tests\Livewire;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Lunar\Models\Order; // Assuming Lunar's Order model is available
+use Lunar\Models\Order;
 use NumaxLab\Lunar\Geslib\Admin\Http\Livewire\Components\GeslibOrderStatusWidget;
-use NumaxLab\Lunar\Geslib\Models\LunarGeslibOrderSyncLog;
+use NumaxLab\Lunar\Geslib\Models\GeslibOrderSyncLog;
 use NumaxLab\Lunar\Geslib\Tests\TestCase;
+
+// Assuming Lunar's Order model is available
 
 class GeslibOrderStatusWidgetTest extends TestCase
 {
@@ -20,6 +22,17 @@ class GeslibOrderStatusWidgetTest extends TestCase
     // For simplicity, we'll try creating a basic one if Lunar's migrations are run.
     // If Lunar's base migrations are not run by default by TestCase, this will fail
     // and require a more sophisticated Order mock or factory setup.
+    /** @test */
+    public function component_renders_with_no_sync_information()
+    {
+        $order = $this->createTestOrder(['id' => 1]);
+
+        Livewire::test(GeslibOrderStatusWidget::class, ['order' => $order])
+            ->assertStatus(200)
+            ->assertSee('Geslib Sync Status')
+            ->assertSee('No Geslib sync information for this order.');
+    }
+
     private function createTestOrder(array $attributes = []): Order
     {
         // This is a simplified creation. Lunar's Order model has many relations and attributes.
@@ -37,7 +50,7 @@ class GeslibOrderStatusWidgetTest extends TestCase
 
         // Attempt to use factory if available (requires Lunar test setup)
         if (method_exists(Order::class, 'factory')) {
-             return Order::factory()->create($attributes);
+            return Order::factory()->create($attributes);
         }
 
         // Fallback to simple create if no factory and class exists
@@ -78,28 +91,16 @@ class GeslibOrderStatusWidgetTest extends TestCase
         return $mockOrder;
     }
 
-
-    /** @test */
-    public function component_renders_with_no_sync_information()
-    {
-        $order = $this->createTestOrder(['id' => 1]);
-
-        Livewire::test(GeslibOrderStatusWidget::class, ['order' => $order])
-            ->assertStatus(200)
-            ->assertSee('Geslib Sync Status')
-            ->assertSee('No Geslib sync information for this order.');
-    }
-
     /** @test */
     public function component_renders_with_sync_information()
     {
         $order = $this->createTestOrder(['id' => 2]);
-        LunarGeslibOrderSyncLog::create([
+        GeslibOrderSyncLog::create([
             'order_id' => $order->id,
             'status' => 'success',
             'created_at' => now()->subHour(),
             'geslib_endpoint_called' => 'test/endpoint',
-            'message' => 'Order synced. Geslib ID: G123'
+            'message' => 'Order synced. Geslib ID: G123',
         ]);
 
         Livewire::test(GeslibOrderStatusWidget::class, ['order' => $order])
@@ -118,8 +119,10 @@ class GeslibOrderStatusWidgetTest extends TestCase
     public function link_to_order_export_log_is_correct()
     {
         $order = $this->createTestOrder(['id' => 3]);
-        LunarGeslibOrderSyncLog::create([
-            'order_id' => $order->id, 'status' => 'error', 'created_at' => now()
+        GeslibOrderSyncLog::create([
+            'order_id' => $order->id,
+            'status' => 'error',
+            'created_at' => now(),
         ]);
 
         $expectedLink = route('adminhub.geslib.order-export-log', ['q_order_id' => $order->id]);

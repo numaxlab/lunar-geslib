@@ -4,22 +4,28 @@ namespace NumaxLab\Lunar\Geslib\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
+use NumaxLab\Lunar\Geslib\Filament\Resources\GeslibFileInterResource\Pages\ListGeslibInterFiles;
 use NumaxLab\Lunar\Geslib\Jobs\ProcessGeslibInterFile;
-use Filament\Notifications\Notification as FilamentNotification; // Alias to avoid conflict
+use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
+
+// Alias to avoid conflict
 
 class GeslibFileInterResource extends Resource
 {
     protected static ?string $model = GeslibInterFile::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-command-line';
 
-    protected static ?string $navigationGroup = 'Geslib Integration'; // Or 'Settings' or a new custom group
+    protected static ?string $navigationGroup = 'Geslib';
 
-    protected static ?string $pluralModelLabel = 'Geslib Inter Files';
+    public static function getPluralModelLabel(): string
+    {
+        return 'Ficheros de intercambio';
+    }
 
     public static function form(Form $form): Form
     {
@@ -34,10 +40,10 @@ class GeslibFileInterResource extends Resource
                     ->columnSpanFull()
                     ->disabled(),
                 Forms\Components\DateTimePicker::make('created_at')
-                     ->label('Imported At')
+                    ->label('Imported At')
                     ->disabled(),
                 Forms\Components\DateTimePicker::make('updated_at')
-                     ->label('Processed At')
+                    ->label('Processed At')
                     ->disabled(),
             ]);
     }
@@ -48,7 +54,7 @@ class GeslibFileInterResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('name') // Filament uses 'name' for TextColumn by default for the main text
+                Tables\Columns\TextColumn::make('name')
                     ->label('Filename')
                     ->searchable()
                     ->sortable(),
@@ -56,7 +62,7 @@ class GeslibFileInterResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'processed' => 'success',
                         'error' => 'danger',
                         'pending' => 'warning',
@@ -65,16 +71,16 @@ class GeslibFileInterResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('notes')
                     ->limit(50)
-                    ->tooltip(fn ($record) => $record->notes), // Show full notes on hover
+                    ->tooltip(fn($record) => $record->notes),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->label('Imported At'),
-                Tables\Columns\TextColumn::make('updated_at') // This is Laravel's default updated_at
+                Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->label('Last Update'),
-                 Tables\Columns\TextColumn::make('finished_at') // Assuming 'finished_at' is when processing ended
+                Tables\Columns\TextColumn::make('finished_at')
                     ->dateTime()
                     ->sortable()
                     ->label('Processed At'),
@@ -86,7 +92,7 @@ class GeslibFileInterResource extends Resource
                         'processing' => 'Processing',
                         'processed' => 'Processed',
                         'error' => 'Error',
-                        'archived' => 'Archived', // Assuming this status might exist
+                        'archived' => 'Archived',
                     ]),
             ])
             ->actions([
@@ -94,7 +100,7 @@ class GeslibFileInterResource extends Resource
                     ->label('Reprocess')
                     ->icon('heroicon-s-arrow-path')
                     ->color('info')
-                    ->visible(fn (GeslibInterFile $record): bool => $record->status === 'error')
+                    ->visible(fn(GeslibInterFile $record): bool => $record->status === 'error')
                     ->requiresConfirmation()
                     ->action(function (GeslibInterFile $record) {
                         ProcessGeslibInterFile::dispatch($record);
@@ -105,27 +111,13 @@ class GeslibFileInterResource extends Resource
                             ->send();
                     }),
             ])
-            ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
-            ])
             ->defaultSort('created_at', 'desc');
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListGeslibInterFiles::route('/'),
-            // 'create' => Pages\CreateGeslibFileInter::route('/create'), // No create page for logs
-            // 'edit' => Pages\EditGeslibFileInter::route('/{record}/edit'), // No edit page for logs
+            'index' => ListGeslibInterFiles::route('/'),
         ];
     }
 }

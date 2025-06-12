@@ -3,7 +3,7 @@
 namespace NumaxLab\Lunar\Geslib\Tests\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use NumaxLab\Lunar\Geslib\Models\LunarGeslibOrderSyncLog;
+use NumaxLab\Lunar\Geslib\Models\GeslibOrderSyncLog;
 use NumaxLab\Lunar\Geslib\Tests\TestCase;
 
 class LunarGeslibOrderSyncLogTest extends TestCase
@@ -25,9 +25,9 @@ class LunarGeslibOrderSyncLogTest extends TestCase
             'payload_from_geslib' => json_encode(['geslib_id' => 'GSLB_ORD_001', 'status' => 'received']),
         ];
 
-        $log = LunarGeslibOrderSyncLog::create($data);
+        $log = GeslibOrderSyncLog::create($data);
 
-        $this->assertInstanceOf(LunarGeslibOrderSyncLog::class, $log);
+        $this->assertInstanceOf(GeslibOrderSyncLog::class, $log);
         $this->assertDatabaseHas('lunar_geslib_order_sync_log', [
             'order_id' => 12345,
             'status' => 'success',
@@ -39,7 +39,7 @@ class LunarGeslibOrderSyncLogTest extends TestCase
     /** @test */
     public function status_and_message_can_be_updated()
     {
-        $log = LunarGeslibOrderSyncLog::create([
+        $log = GeslibOrderSyncLog::create([
             'order_id' => 67890,
             'geslib_endpoint_called' => '/api/v1/order_update',
             'status' => 'pending',

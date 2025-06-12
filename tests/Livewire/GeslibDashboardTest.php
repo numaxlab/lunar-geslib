@@ -3,32 +3,18 @@
 namespace NumaxLab\Lunar\Geslib\Tests\Livewire;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 use NumaxLab\Lunar\Geslib\Admin\Http\Livewire\Components\GeslibDashboard;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
-use NumaxLab\Lunar\Geslib\Models\LunarGeslibOrderSyncLog;
+use NumaxLab\Lunar\Geslib\Models\GeslibOrderSyncLog;
 use NumaxLab\Lunar\Geslib\Notifications\GeslibConfigurationError;
 use NumaxLab\Lunar\Geslib\Tests\TestCase;
 
 class GeslibDashboardTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Notification::fake();
-
-        // Default valid config for most tests
-        config()->set('lunar.geslib.inter_files_disk', 'local');
-        config()->set('lunar.geslib.inter_files_path', 'geslib_test_inter_files');
-        config()->set('lunar.geslib.product_types_taxation', ['L0' => 1]);
-        config()->set('lunar.geslib.notifications.enabled', true);
-        config()->set('lunar.geslib.notifications.mail_to', 'test@example.com');
-        config()->set('lunar.geslib.notifications.throttle_period_minutes', 60);
-    }
 
     /** @test */
     public function component_renders_correctly()
@@ -45,7 +31,9 @@ class GeslibDashboardTest extends TestCase
     public function it_displays_file_import_stats()
     {
         GeslibInterFile::create(['name' => 'file1.txt', 'status' => 'processed', 'created_at' => now()->subDay()]);
-        GeslibInterFile::create(['name' => 'file2.txt', 'status' => 'error', 'notes' => 'test error', 'created_at' => now()]);
+        GeslibInterFile::create(
+            ['name' => 'file2.txt', 'status' => 'error', 'notes' => 'test error', 'created_at' => now()],
+        );
 
         Livewire::test(GeslibDashboard::class)
             ->assertSee('Last Import Run Status:')
@@ -68,14 +56,21 @@ class GeslibDashboardTest extends TestCase
     /** @test */
     public function it_displays_order_export_stats_with_data()
     {
-        LunarGeslibOrderSyncLog::create([
-            'order_id' => 1, 'status' => 'success', 'geslib_endpoint_called' => 'ep1'
+        GeslibOrderSyncLog::create([
+            'order_id' => 1,
+            'status' => 'success',
+            'geslib_endpoint_called' => 'ep1',
         ]);
-        LunarGeslibOrderSyncLog::create([
-            'order_id' => 2, 'status' => 'pending', 'geslib_endpoint_called' => 'ep1'
+        GeslibOrderSyncLog::create([
+            'order_id' => 2,
+            'status' => 'pending',
+            'geslib_endpoint_called' => 'ep1',
         ]);
-        LunarGeslibOrderSyncLog::create([
-            'order_id' => 3, 'status' => 'error', 'geslib_endpoint_called' => 'ep2', 'message' => 'sync failed'
+        GeslibOrderSyncLog::create([
+            'order_id' => 3,
+            'status' => 'error',
+            'geslib_endpoint_called' => 'ep2',
+            'message' => 'sync failed',
         ]);
 
         Livewire::test(GeslibDashboard::class)
@@ -109,8 +104,8 @@ class GeslibDashboardTest extends TestCase
             GeslibConfigurationError::class,
             function ($notification, $channels, $notifiable) {
                 return $notifiable->routes['mail'] === 'test@example.com' &&
-                       $notification->configKey === 'inter_files_disk';
-            }
+                    $notification->configKey === 'inter_files_disk';
+            },
         );
     }
 
@@ -120,8 +115,14 @@ class GeslibDashboardTest extends TestCase
         config()->set('lunar.geslib.inter_files_path', null); // Missing path
 
         // First time
-        Cache::shouldReceive('has')->once()->with('geslib_notification_config_error_inter_files_path')->andReturn(false);
-        Cache::shouldReceive('put')->once()->with('geslib_notification_config_error_inter_files_path', true, \Mockery::any());
+        Cache::shouldReceive('has')->once()->with('geslib_notification_config_error_inter_files_path')->andReturn(
+            false,
+        );
+        Cache::shouldReceive('put')->once()->with(
+            'geslib_notification_config_error_inter_files_path',
+            true,
+            \Mockery::any(),
+        );
         Livewire::test(GeslibDashboard::class);
 
         Notification::assertSentTimes(GeslibConfigurationError::class, 1);
@@ -142,5 +143,19 @@ class GeslibDashboardTest extends TestCase
         Livewire::test(GeslibDashboard::class);
 
         Notification::assertNothingSent();
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Notification::fake();
+
+        // Default valid config for most tests
+        config()->set('lunar.geslib.inter_files_disk', 'local');
+        config()->set('lunar.geslib.inter_files_path', 'geslib_test_inter_files');
+        config()->set('lunar.geslib.product_types_taxation', ['L0' => 1]);
+        config()->set('lunar.geslib.notifications.enabled', true);
+        config()->set('lunar.geslib.notifications.mail_to', 'test@example.com');
+        config()->set('lunar.geslib.notifications.throttle_period_minutes', 60);
     }
 }

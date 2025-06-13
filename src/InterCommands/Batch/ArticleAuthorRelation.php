@@ -1,6 +1,6 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Geslib\Batch;
+namespace NumaxLab\Lunar\Geslib\InterCommands\Batch;
 
 use Illuminate\Support\Collection;
 use Lunar\FieldTypes\Text;
@@ -8,10 +8,11 @@ use Lunar\Models\Collection as LunarCollection;
 use Lunar\Models\CollectionGroup;
 use Lunar\Models\ProductVariant;
 use NumaxLab\Geslib\Lines\AuthorType;
-use NumaxLab\Lunar\Geslib\Geslib\AuthorCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\AuthorCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\Contracts\CommandContract;
 use NumaxLab\Lunar\Geslib\Managers\CollectionGroupSync;
 
-class ArticleAuthorRelation
+class ArticleAuthorRelation extends AbstractBatchCommand
 {
     private Collection $byArticleCommands;
 
@@ -26,6 +27,10 @@ class ArticleAuthorRelation
             $variant = ProductVariant::where('sku', $articleId)->first();
 
             if (!$variant) {
+                $this->addLog(
+                    CommandContract::LEVEL_WARNING,
+                    "Product with code [{$articleId}] not found in line type [{$articleCommands->first()->getType()}].",
+                );
                 continue;
             }
 

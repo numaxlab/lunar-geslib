@@ -1,26 +1,26 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Geslib;
+namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Lunar\FieldTypes\Text;
 use Lunar\Models\Collection;
 use Lunar\Models\CollectionGroup;
-use NumaxLab\Geslib\Lines\Type;
+use NumaxLab\Geslib\Lines\Language;
 
-class TypeCommand extends AbstractCommand
+class LanguageCommand extends AbstractCommand
 {
-    public const HANDLE = 'product-types';
+    public const HANDLE = 'languages';
 
-    public function __invoke(Type $type): void
+    public function __invoke(Language $language): void
     {
         $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
 
-        $collection = Collection::where('attribute_data->geslib-code->value', $type->id())
+        $collection = Collection::where('attribute_data->geslib-code->value', $language->id())
             ->where('collection_group_id', $group->id)->first();
 
         $attributeData = [
-            'geslib-code' => new Text($type->id()),
-            'name' => new Text($type->name()),
+            'geslib-code' => new Text($language->id()),
+            'name' => new Text($language->name()),
         ];
 
         if (!$collection) {

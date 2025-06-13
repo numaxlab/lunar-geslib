@@ -4,6 +4,7 @@ namespace NumaxLab\Lunar\Geslib\Filament\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Str;
 use NumaxLab\Lunar\Geslib\Filament\Resources\GeslibFileInterResource;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 
@@ -39,7 +40,7 @@ class GeslibFileImportStatsWidget extends BaseWidget
             array_unshift(
                 $stats,
                 Stat::make('Last Import Run', $lastRun->created_at->diffForHumans())
-                    ->description('File: ' . $lastRun->name . ' | Status: ' . 'Processed')
+                    ->description('File: ' . $lastRun->name . ' | Status: ' . Str::ucfirst($lastRun->status))
                     ->color('success'),
             );
         } else {

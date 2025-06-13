@@ -63,13 +63,13 @@ class GeslibFileInterResource extends Resource
                     ->sortable()
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
-                        'processed' => 'success',
-                        'error' => 'danger',
-                        'pending' => 'warning',
-                        'processing' => 'info',
+                        GeslibInterFile::STATUS_SUCCESS => 'success',
+                        GeslibInterFile::STATUS_FAILED => 'danger',
+                        GeslibInterFile::STATUS_WARNING => 'warning',
+                        GeslibInterFile::STATUS_PROCESSING => 'info',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('notes')
+                Tables\Columns\TextColumn::make('log')
                     ->limit(50)
                     ->tooltip(fn($record) => $record->notes),
                 Tables\Columns\TextColumn::make('created_at')

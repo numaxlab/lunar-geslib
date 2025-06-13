@@ -1,6 +1,6 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Geslib;
+namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Lunar\FieldTypes\Dropdown;
 use Lunar\FieldTypes\Number;

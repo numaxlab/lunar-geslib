@@ -3,6 +3,7 @@
 namespace NumaxLab\Lunar\Geslib\Jobs;
 
 use Carbon\Carbon;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Storage;
@@ -35,52 +36,56 @@ use NumaxLab\Geslib\Lines\Status;
 use NumaxLab\Geslib\Lines\Stock;
 use NumaxLab\Geslib\Lines\Topic;
 use NumaxLab\Geslib\Lines\Type;
-use NumaxLab\Lunar\Geslib\Geslib\ArticleAuthorCommand;
-use NumaxLab\Lunar\Geslib\Geslib\ArticleCommand;
-use NumaxLab\Lunar\Geslib\Geslib\ArticleIndexCommand;
-use NumaxLab\Lunar\Geslib\Geslib\ArticleTopicCommand;
-use NumaxLab\Lunar\Geslib\Geslib\AuthorCommand;
-use NumaxLab\Lunar\Geslib\Geslib\Batch\ArticleAuthorRelation;
-use NumaxLab\Lunar\Geslib\Geslib\Batch\ArticleIbicRelation;
-use NumaxLab\Lunar\Geslib\Geslib\Batch\ArticleTopicRelation;
-use NumaxLab\Lunar\Geslib\Geslib\BindingTypeCommand;
-use NumaxLab\Lunar\Geslib\Geslib\BookshopReferenceCommand;
-use NumaxLab\Lunar\Geslib\Geslib\ClassificationCommand;
-use NumaxLab\Lunar\Geslib\Geslib\CollectionCommand;
-use NumaxLab\Lunar\Geslib\Geslib\EditorialCommand;
-use NumaxLab\Lunar\Geslib\Geslib\EditorialReferenceCommand;
-use NumaxLab\Lunar\Geslib\Geslib\IbicCommand;
-use NumaxLab\Lunar\Geslib\Geslib\LanguageCommand;
-use NumaxLab\Lunar\Geslib\Geslib\PressPublicationCommand;
-use NumaxLab\Lunar\Geslib\Geslib\RecordLabelCommand;
-use NumaxLab\Lunar\Geslib\Geslib\StatusCommand;
-use NumaxLab\Lunar\Geslib\Geslib\StockCommand;
-use NumaxLab\Lunar\Geslib\Geslib\TopicCommand;
-use NumaxLab\Lunar\Geslib\Geslib\TypeCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\ArticleAuthorCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\ArticleCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\ArticleIndexCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\ArticleTopicCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\AuthorBiographyCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\AuthorCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\Batch\ArticleAuthorRelation;
+use NumaxLab\Lunar\Geslib\InterCommands\Batch\ArticleIbicRelation;
+use NumaxLab\Lunar\Geslib\InterCommands\Batch\ArticleTopicRelation;
+use NumaxLab\Lunar\Geslib\InterCommands\BindingTypeCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\BookshopReferenceCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\ClassificationCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\CollectionCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\Contracts\CommandContract;
+use NumaxLab\Lunar\Geslib\InterCommands\EditorialCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\EditorialReferenceCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\IbicCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\LanguageCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\PressPublicationCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\RecordLabelCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\StockCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\TopicCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\TypeCommand;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
-use NumaxLab\Lunar\Geslib\Notifications\GeslibFileImportFailed; // Added
-use RuntimeException;
-use Illuminate\Support\Facades\Notification as NotificationFacade; // Added
-use Illuminate\Support\Facades\Cache; // Added
-use Throwable; // Added
+use Throwable;
 
-class ProcessGeslibInterFile implements ShouldQueue
+class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
 {
     use Queueable;
 
-    // Default number of times the job may be attempted.
-    public $tries = 3;
+    public $tries = 2;
 
-    // Default timeout for the job.
-    public $timeout = 120; // 2 minutes
+    public $uniqueFor = 3600;
 
     public function __construct(
         public GeslibInterFile $geslibInterFile,
-    ) {}
+    ) {
+        $this->onQueue('geslib-inter-files');
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->geslibInterFile->id;
+    }
 
     public function handle(): void
     {
         $this->geslibInterFile->update([
+            'status' => GeslibInterFile::STATUS_PROCESSING,
             'started_at' => Carbon::now(),
         ]);
 
@@ -89,6 +94,8 @@ class ProcessGeslibInterFile implements ShouldQueue
         $geslibFile = GeslibFile::parse(
             $storage->get(config('lunar.geslib.inter_files_path') . '/' . $this->geslibInterFile->name),
         );
+
+        $log = [];
 
         $batchCommands = collect();
 
@@ -128,14 +135,14 @@ class ProcessGeslibInterFile implements ShouldQueue
                 'PC' => null,
                 'VTA' => null,
                 Country::CODE => null,
-                'CLOTE' => null,
-                'LLOTE' => null,
+                'CLOTE' => null, // TODO: Implement CLOTE command
+                'LLOTE' => null, // TODO: Implement LLOTE command
                 Type::CODE => $command = new TypeCommand(),
                 Classification::CODE => $command = new ClassificationCommand(),
                 'ATRA' => null,
                 'CA' => null,
-                'CLOTCLI' => null,
-                'LLOTCLI' => null,
+                'CLOTCLI' => null, // TODO: Implement CLOTCLI command
+                'LLOTCLI' => null, // TODO: Implement LLOTCLI command
                 'PROFES' => null,
                 Province::CODE => null,
                 'CAGRDTV' => null,
@@ -143,7 +150,7 @@ class ProcessGeslibInterFile implements ShouldQueue
                 'CLIDTO' => null,
                 'CDG' => null,
                 'LDG' => null,
-                AuthorBiography::CODE => null,
+                AuthorBiography::CODE => $command = new AuthorBiographyCommand(),
                 'EMBALA' => null,
                 'PACK' => null,
                 'TRACKS' => null,
@@ -152,7 +159,10 @@ class ProcessGeslibInterFile implements ShouldQueue
                 'ARTREC' => null,
                 'CDP' => null,
                 'LDP' => null,
-                default => throw new RuntimeException(sprintf('Unknown line type: %s', $line->getCode())),
+                default => $log[] = [
+                    'level' => CommandContract::LEVEL_WARNING,
+                    'message' => sprintf('Unknown line code: %s', $line->getCode()),
+                ],
             };
 
             if ($command !== null) {
@@ -161,6 +171,8 @@ class ProcessGeslibInterFile implements ShouldQueue
                 if ($command->isBatch()) {
                     $batchCommands->push($command);
                 }
+
+                $log = array_merge($log, $command->getLog());
             }
         }
 
@@ -169,44 +181,52 @@ class ProcessGeslibInterFile implements ShouldQueue
 
             match ((string)$lineType) {
                 ArticleAuthor::CODE => $batchCommand = new ArticleAuthorRelation($commands->groupBy('articleId')),
-                ArticleTopic::CODE => $batchCommand = new ArticleTopicRelation($commands->groupBy('topicId')),
+                ArticleTopic::CODE => $batchCommand = new ArticleTopicRelation($commands->groupBy('articleId')),
                 Ibic::CODE => $batchCommand = new ArticleIbicRelation($commands->groupBy('articleId')),
-                default => throw new RuntimeException(sprintf('Unexpected batch command for line type: %s', $lineType)),
+                default => $log[] = [
+                    'level' => CommandContract::LEVEL_WARNING,
+                    'message' => sprintf('Unexpected batch command for line type: %s', $lineType),
+                ],
             };
 
-            if ($batchCommand !== null) {
-                $batchCommand();
-            }
+            $batchCommand();
+
+            $log = array_merge($log, $batchCommand->getLog());
         }
 
         $this->geslibInterFile->update([
+            'status' => $this->getStatusFromLog($log),
             'finished_at' => Carbon::now(),
-        ]);
-
-        // If successful, update status and clear any previous error notes
-        $this->geslibInterFile->update([
-            'status' => 'processed', // Assuming 'processed' is the success status
-            'notes' => null,
+            'log' => $log,
         ]);
     }
 
-    /**
-     * Handle a job failure.
-     *
-     * @param  \Throwable  $exception
-     * @return void
-     */
-    public function failed(Throwable $exception)
+    private function getStatusFromLog(array $log): string
     {
-        // Update model status to 'error' and store the error message
+        foreach ($log as $line) {
+            if ($line['level'] === CommandContract::LEVEL_ERROR) {
+                return GeslibInterFile::STATUS_FAILED;
+            }
+            if ($line['level'] === CommandContract::LEVEL_WARNING) {
+                return GeslibInterFile::STATUS_WARNING;
+            }
+        }
+
+        return GeslibInterFile::STATUS_SUCCESS;
+    }
+
+    public function failed(Throwable $exception): void
+    {
         $this->geslibInterFile->update([
-            'status' => 'error',
-            'notes' => $exception->getMessage(),
-            'finished_at' => Carbon::now(), // Also mark as finished if it failed
+            'status' => GeslibInterFile::STATUS_FAILED,
+            'log' => [
+                'error' => $exception->getMessage(),
+            ],
+            'finished_at' => Carbon::now(),
         ]);
 
         // Check if notifications are enabled and mail_to is configured
-        if (!config('lunar.geslib.notifications.enabled') || !config('lunar.geslib.notifications.mail_to')) {
+        /*if (!config('lunar.geslib.notifications.enabled') || !config('lunar.geslib.notifications.mail_to')) {
             return;
         }
 
@@ -224,6 +244,6 @@ class ProcessGeslibInterFile implements ShouldQueue
             ->notify(new GeslibFileImportFailed($this->geslibInterFile, $exception->getMessage()));
 
         // Cache that notification has been sent
-        Cache::put($cacheKey, true, now()->addMinutes($throttlePeriodMinutes));
+        Cache::put($cacheKey, true, now()->addMinutes($throttlePeriodMinutes));*/
     }
 }

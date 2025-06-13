@@ -47,6 +47,7 @@ class Import extends Command
             $interFile = new GeslibInterFile([
                 'name' => $filename,
                 'received_at' => $fileLastModified,
+                'status' => GeslibInterFile::STATUS_PENDING,
             ]);
 
             $interFile->save();

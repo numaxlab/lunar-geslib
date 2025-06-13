@@ -27,16 +27,16 @@ use Lunar\Models\TaxRate;
 use Lunar\Models\TaxRateAmount;
 use Lunar\Models\TaxZone;
 use NumaxLab\Lunar\Geslib\FieldTypes\Date;
-use NumaxLab\Lunar\Geslib\Geslib\AuthorCommand;
-use NumaxLab\Lunar\Geslib\Geslib\BindingTypeCommand;
-use NumaxLab\Lunar\Geslib\Geslib\ClassificationCommand;
-use NumaxLab\Lunar\Geslib\Geslib\CollectionCommand;
-use NumaxLab\Lunar\Geslib\Geslib\EditorialCommand;
-use NumaxLab\Lunar\Geslib\Geslib\IbicCommand;
-use NumaxLab\Lunar\Geslib\Geslib\LanguageCommand;
-use NumaxLab\Lunar\Geslib\Geslib\StatusCommand;
-use NumaxLab\Lunar\Geslib\Geslib\TopicCommand;
-use NumaxLab\Lunar\Geslib\Geslib\TypeCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\AuthorCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\BindingTypeCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\ClassificationCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\CollectionCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\EditorialCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\IbicCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\LanguageCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\TopicCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\TypeCommand;
 
 use function Laravel\Prompts\confirm;
 
@@ -445,7 +445,7 @@ class Install extends Command
             'name' => collect([
                 'es' => 'Datos básicos',
             ]),
-            'handle' => 'main',
+            'handle' => 'collection-main',
             'position' => 1,
         ]);
 
@@ -492,6 +492,37 @@ class Install extends Command
             ],
             'system' => false,
             'searchable' => true,
+        ]);
+
+        $group = AttributeGroup::create([
+            'attributable_type' => Collection::morphName(),
+            'name' => collect([
+                'es' => 'Datos de autoras',
+            ]),
+            'handle' => 'collection-author',
+            'position' => 2,
+        ]);
+
+        Attribute::create([
+            'attribute_type' => Collection::morphName(),
+            'attribute_group_id' => $group->id,
+            'position' => 2,
+            'handle' => 'biography',
+            'name' => [
+                'es' => 'Biografía',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Text::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => true,
+            ],
+            'system' => false,
+            'searchable' => false,
         ]);
     }
 

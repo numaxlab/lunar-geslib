@@ -3,12 +3,12 @@
 return [
 
     /*
-     *
+     * Filesystem disk where inter files are stored.
      */
     'inter_files_disk' => 'local',
 
     /*
-     *
+     * Path where inter files are stored in the configured disk.
      */
     'inter_files_path' => '/geslib/inter',
 
@@ -23,13 +23,31 @@ return [
     ],
 
     /*
-    |--------------------------------------------------------------------------
-    | Notification Settings
-    |--------------------------------------------------------------------------
-    |
-    | Configure email notifications for important events within the Geslib integration.
-    |
-    */
+     * Dilve API configuration
+     */
+    'dilve' => [
+        'enabled' => env('GESLIB_DILVE_ENABLED', false),
+        'username' => env('GESLIB_DILVE_USERNAME', ''),
+        'password' => env('GESLIB_DILVE_PASSWORD', ''),
+    ],
+
+    /*
+     * CEGAL API configuration
+     */
+    'cegal' => [
+        'enabled' => env('GESLIB_CEGAL_ENABLED', false),
+        'username' => env('GESLIB_CEGAL_USERNAME', ''),
+        'password' => env('GESLIB_CEGAL_PASSWORD', ''),
+    ],
+
+    /*
+     *--------------------------------------------------------------------------
+     * Notification Settings
+     *--------------------------------------------------------------------------
+     *
+     * Configure email notifications for important events within the Geslib integration.
+     *
+     */
     'notifications' => [
         'enabled' => env('GESLIB_NOTIFICATIONS_ENABLED', true),
 

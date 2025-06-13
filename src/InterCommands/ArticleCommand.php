@@ -1,6 +1,6 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Geslib;
+namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Lunar\FieldTypes\Number;
 use Lunar\FieldTypes\Text;

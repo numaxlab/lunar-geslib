@@ -4,8 +4,10 @@ namespace NumaxLab\Lunar\Geslib\Tests\Geslib;
 
 use NumaxLab\Geslib\Lines\Action;
 use NumaxLab\Geslib\Lines\Editorial;
-use NumaxLab\Lunar\Geslib\Geslib\EditorialCommand;
-use PHPUnit\Framework\TestCase; // This test does not use the Laravel TestCase
+use NumaxLab\Lunar\Geslib\InterCommands\EditorialCommand;
+use PHPUnit\Framework\TestCase;
+
+// This test does not use the Laravel TestCase
 
 class EditorialCommandTest extends TestCase
 {

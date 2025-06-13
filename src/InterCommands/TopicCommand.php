@@ -1,26 +1,27 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Geslib;
+namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Lunar\FieldTypes\Text;
 use Lunar\Models\Collection;
 use Lunar\Models\CollectionGroup;
-use NumaxLab\Geslib\Lines\Status;
+use NumaxLab\Geslib\Lines\Topic;
 
-class StatusCommand extends AbstractCommand
+class TopicCommand extends AbstractCommand
 {
-    public const HANDLE = 'statuses';
+    public const HANDLE = 'categories';
 
-    public function __invoke(Status $status): void
+    public function __invoke(Topic $topic): void
     {
         $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
 
-        $collection = Collection::where('attribute_data->geslib-code->value', $status->id())
-            ->where('collection_group_id', $group->id)->first();
+        $collection = Collection::where('attribute_data->geslib-code->value', $topic->id())
+            ->where('collection_group_id', $group->id)
+            ->first();
 
         $attributeData = [
-            'geslib-code' => new Text($status->id()),
-            'name' => new Text($status->name()),
+            'geslib-code' => new Text($topic->id()),
+            'name' => new Text($topic->description()),
         ];
 
         if (!$collection) {

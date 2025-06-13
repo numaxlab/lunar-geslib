@@ -32,8 +32,12 @@ This package relies on the `numaxlab/geslib-files` library to parse the Geslib I
    composer require numaxlab/lunar-geslib
    ```
    The package service provider will be auto-discovered by Laravel.
+2. **Add the Filament Plugin to the Lunar Panel**
+   ```php
+   LunarPanel::panel(fn($panel) => $panel->path('admin')->plugin(GeslibPlugin::make()))->register();
+   ```
 
-2. **Run the installation command:**
+3. **Run the installation command:**
    ```bash
    php artisan lunar:geslib:install
    ```
@@ -112,6 +116,31 @@ php artisan lunar:geslib:import
 
 It's recommended to run this command periodically (e.g., via a scheduled task/cron job) to keep your Lunar catalog
 synchronized with updates from Geslib.
+
+### Queue configuration
+
+It's very important to configure your queue system properly to ensure that the `ProcessGeslibInterFile` jobs are
+executed with a FIFO (First In, First Out) strategy. This is crucial because the order of processing Geslib INTER files
+matters. For that we dispatch the jobs to a specific queue named `geslib-inter-files`.
+
+We recommend using a queue driver that supports FIFO, such as Redis and a process monitor like Supervisor. If you use
+Supervisor here is a configuration example:
+
+```ini
+[program:lunar-geslib-inter-files]
+process_name = %(program_name)s_%(process_num)02d
+command = php /var/www/your-laravel-app/artisan queue:work --queue=geslib-inter-files --timeout=3600 --sleep=3
+autostart = true
+autorestart = true
+user = www-data ; Or your web server user
+numprocs = 1 ; <-- This should be set to 1 to ensure FIFO processing
+redirect_stderr = true
+stdout_logfile = /var/www/html/your-laravel-app/storage/logs/queue-geslib-inter-files.log
+stopwaitsecs = 3600
+```
+
+You have more information about how to configure your queue system in
+the [Laravel documentation](https://laravel.com/docs/queues).
 
 ## Data Mapping Overview
 

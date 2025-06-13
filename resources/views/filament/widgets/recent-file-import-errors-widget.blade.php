@@ -3,9 +3,9 @@
         <x-slot name="heading">
             Recent File Import Errors
         </x-slot>
-        <x-slot name="headerEnd" >
-             @if($recentErrors->isNotEmpty())
-                <x-filament::link :href="app($getTableResource())::getUrl('index', ['tableFilters[status][value]' => 'error'])">
+        <x-slot name="headerEnd">
+            @if($recentErrors->isNotEmpty())
+                <x-filament::link href="">
                     View all errors
                 </x-filament::link>
             @endif
@@ -31,7 +31,9 @@
                             {{ Str::limit($error->notes ?? 'No specific error message.', 100) }}
                         </p>
                         <div class="mt-2">
-                             <x-filament::link :href="app($getTableResource())::getUrl('index', ['tableSearchQuery' => $error->name])" size="xs">
+                            <x-filament::link
+                                href=""
+                                size="xs">
                                 View Log
                             </x-filament::link>
                         </div>

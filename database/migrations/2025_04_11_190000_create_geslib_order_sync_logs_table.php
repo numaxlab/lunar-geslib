@@ -13,11 +13,8 @@ return new class extends Migration {
         Schema::create($this->prefix . 'geslib_order_sync_logs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')->index();
-            $table->string('geslib_endpoint_called');
             $table->string('status');
-            $table->text('message')->nullable();
-            $table->text('payload_to_geslib')->nullable();
-            $table->text('payload_from_geslib')->nullable();
+            $table->json('log')->nullable();
             $table->timestamps();
         });
     }

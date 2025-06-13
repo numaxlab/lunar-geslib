@@ -56,4 +56,14 @@ return [
         // Throttle period in minutes to avoid spamming notifications for the same issue.
         'throttle_period_minutes' => env('GESLIB_NOTIFICATIONS_THROTTLE_MINUTES', 60),
     ],
+
+    /*
+     *--------------------------------------------------------------------------
+     * API Routes Configuration
+     *--------------------------------------------------------------------------
+     *
+     * Enable or disable the API routes for Geslib.
+     *
+     */
+    'api_routes_enabled' => env('GESLIB_API_ROUTES_ENABLED', true),
 ];

@@ -3,9 +3,13 @@
 namespace NumaxLab\Lunar\Geslib\Models;
 
 use Lunar\Base\BaseModel;
+use Lunar\Models\Order;
 
 class GeslibOrderSyncLog extends BaseModel
 {
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_SYNCED = 'synced';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -13,10 +17,12 @@ class GeslibOrderSyncLog extends BaseModel
      */
     protected $fillable = [
         'order_id',
-        'geslib_endpoint_called',
         'status',
-        'message',
-        'payload_to_geslib',
-        'payload_from_geslib',
+        'log',
     ];
+
+    public function order(): void
+    {
+        $this->belongsTo(Order::modelClass());
+    }
 }

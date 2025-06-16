@@ -1,10 +1,10 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Filament\Widgets;
+namespace NumaxLab\Lunar\Geslib\Admin\Filament\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use NumaxLab\Lunar\Geslib\Filament\Resources\GeslibOrderSyncLogResource;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibOrderSyncLogResource;
 use NumaxLab\Lunar\Geslib\Models\GeslibOrderSyncLog;
 
 // For linking

@@ -1,10 +1,10 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Filament\Widgets;
+namespace NumaxLab\Lunar\Geslib\Admin\Filament\Widgets;
 
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Collection;
-use NumaxLab\Lunar\Geslib\Filament\Resources\GeslibFileInterResource;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibFileInterResource;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 
 // For linking

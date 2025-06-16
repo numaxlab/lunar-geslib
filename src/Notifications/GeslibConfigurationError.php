@@ -6,7 +6,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use NumaxLab\Lunar\Geslib\Filament\Pages\GeslibDashboardPage; // Added for Filament URL
+use NumaxLab\Lunar\Geslib\Admin\Filament\Pages\GeslibDashboardPage;
+
+// Added for Filament URL
 
 class GeslibConfigurationError extends Notification implements ShouldQueue
 {
@@ -30,7 +32,7 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
     public function via($notifiable)
@@ -41,7 +43,7 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
@@ -67,10 +69,14 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
         if ($dashboardUrl) {
             $mailMessage->action('Go to Geslib Dashboard', $dashboardUrl);
         } else {
-            $mailMessage->line('Please check the Geslib Dashboard in your Filament admin panel for more details and to review your settings.');
+            $mailMessage->line(
+                'Please check the Geslib Dashboard in your Filament admin panel for more details and to review your settings.',
+            );
         }
 
-        $mailMessage->line('Resolving this configuration issue is important for the correct functioning of the Geslib integration.');
+        $mailMessage->line(
+            'Resolving this configuration issue is important for the correct functioning of the Geslib integration.',
+        );
 
         return $mailMessage;
     }
@@ -78,7 +84,7 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
     public function toArray($notifiable)

@@ -1,6 +1,6 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Filament\Resources;
+namespace NumaxLab\Lunar\Geslib\Admin\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -8,7 +8,7 @@ use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use NumaxLab\Lunar\Geslib\Filament\Resources\GeslibFileInterResource\Pages\ListGeslibInterFiles;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibFileInterResource\Pages\ListGeslibInterFiles;
 use NumaxLab\Lunar\Geslib\Jobs\ProcessGeslibInterFile;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 

@@ -1,16 +1,16 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Filament;
+namespace NumaxLab\Lunar\Geslib\Admin\Filament;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use NumaxLab\Lunar\Geslib\Filament\Pages\GeslibDashboardPage;
-use NumaxLab\Lunar\Geslib\Filament\Resources\GeslibFileInterResource;
-use NumaxLab\Lunar\Geslib\Filament\Resources\GeslibOrderSyncLogResource;
-use NumaxLab\Lunar\Geslib\Filament\Widgets\GeslibFileImportStatsWidget;
-use NumaxLab\Lunar\Geslib\Filament\Widgets\GeslibOrderSyncStatsWidget;
-use NumaxLab\Lunar\Geslib\Filament\Widgets\RecentFileImportErrorsWidget;
-use NumaxLab\Lunar\Geslib\Filament\Widgets\RecentOrderSyncErrorsWidget;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Pages\GeslibDashboardPage;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibFileInterResource;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibOrderSyncLogResource;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\GeslibFileImportStatsWidget;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\GeslibOrderSyncStatsWidget;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\RecentFileImportErrorsWidget;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\RecentOrderSyncErrorsWidget;
 
 // Note: GeslibOrderStatusWidget is not registered globally here,
 // as it's intended for a specific resource page (Lunar's OrderResource)

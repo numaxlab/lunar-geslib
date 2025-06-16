@@ -2,8 +2,8 @@
 
 namespace NumaxLab\Lunar\Geslib;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Lunar\Admin\Support\Facades\AttributeData;
 use NumaxLab\Lunar\Geslib\Admin\Support\FieldTypes\DateField;
@@ -25,17 +25,17 @@ class LunarGeslibServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'lunar-geslib');
+        Blade::anonymousComponentPath(__DIR__ . '/../resources/views/storefront/components', 'lunar-geslib');
 
         if (config('lunar.geslib.api_routes_enabled', false)) {
-            Route::prefix('api/geslib')
-                ->middleware('api')
-                ->group(__DIR__ . '/../routes/api.php');
+            $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
         }
 
         $this->publishes([
             __DIR__ . '/../config/geslib.php' => config_path('lunar/geslib.php'),
-            __DIR__ . '/../resources/views' => resource_path('views/vendor/lunar-geslib'), // Optional: publish views
-        ], ['lunar', 'lunar-geslib']); // Added group for views, kept 'lunar' for config
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/lunar/geslib'),
+            __DIR__ . '/../routes/storefront.php' => base_path('routes/storefront.php'),
+        ], ['lunar']);
 
         Response::macro(
             'xml',

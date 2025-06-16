@@ -1,6 +1,6 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Filament\Pages;
+namespace NumaxLab\Lunar\Geslib\Admin\Filament\Pages;
 
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;

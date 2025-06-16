@@ -13,6 +13,11 @@ return [
     'inter_files_path' => '/geslib/inter',
 
     /*
+     * Geslib product type ID.
+     */
+    'product_type_id' => 1,
+
+    /*
      * Geslib code => Tax Class ID pairs
      */
     'product_types_taxation' => [

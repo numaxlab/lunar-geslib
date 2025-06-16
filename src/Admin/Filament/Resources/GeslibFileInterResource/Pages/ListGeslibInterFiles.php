@@ -1,10 +1,9 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Filament\Resources\GeslibFileInterResource\Pages;
+namespace NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibFileInterResource\Pages;
 
-use NumaxLab\Lunar\Geslib\Filament\Resources\GeslibFileInterResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibFileInterResource;
 
 class ListGeslibInterFiles extends ListRecords
 {

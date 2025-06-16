@@ -1,13 +1,13 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Filament\Resources;
+namespace NumaxLab\Lunar\Geslib\Admin\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use NumaxLab\Lunar\Geslib\Filament\Resources\GeslibOrderSyncLogResource\Pages\ListGeslibOrderSyncLogs;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibOrderSyncLogResource\Pages\ListGeslibOrderSyncLogs;
 use NumaxLab\Lunar\Geslib\Models\GeslibOrderSyncLog;
 
 class GeslibOrderSyncLogResource extends Resource

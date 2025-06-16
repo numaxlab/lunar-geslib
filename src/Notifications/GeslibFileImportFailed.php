@@ -6,8 +6,10 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibFileInterResource;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
-use NumaxLab\Lunar\Geslib\Filament\Resources\GeslibFileInterResource; // Added for Filament URL
+
+// Added for Filament URL
 
 class GeslibFileImportFailed extends Notification implements ShouldQueue
 {
@@ -31,7 +33,7 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
     public function via($notifiable)
@@ -42,7 +44,7 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
@@ -52,7 +54,10 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
         if (class_exists(GeslibFileInterResource::class) && method_exists(GeslibFileInterResource::class, 'getUrl')) {
             try {
                 // Link to the GeslibFileInterResource list page, filtered by status 'error'
-                $fileImportLogUrl = GeslibFileInterResource::getUrl('index', ['tableFilters[status][value]' => 'error', 'tableSearchQuery' => $this->file->name]);
+                $fileImportLogUrl = GeslibFileInterResource::getUrl(
+                    'index',
+                    ['tableFilters[status][value]' => 'error', 'tableSearchQuery' => $this->file->name],
+                );
             } catch (\Exception $e) {
                 // In case URL generation fails for any reason (e.g., panel not registered yet during certain operations)
                 $fileImportLogUrl = null;
@@ -70,7 +75,9 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
         if ($fileImportLogUrl) {
             $mailMessage->action('View File Import Log', $fileImportLogUrl);
         } else {
-            $mailMessage->line('Please check the Geslib File Import Logs in your Filament admin panel for more details.');
+            $mailMessage->line(
+                'Please check the Geslib File Import Logs in your Filament admin panel for more details.',
+            );
         }
 
         $mailMessage->line('Thank you for using our application!');
@@ -81,7 +88,7 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
     public function toArray($notifiable)

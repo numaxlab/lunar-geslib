@@ -1,11 +1,11 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Filament\Widgets;
+namespace NumaxLab\Lunar\Geslib\Admin\Filament\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Str;
-use NumaxLab\Lunar\Geslib\Filament\Resources\GeslibFileInterResource;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibFileInterResource;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 
 // For linking

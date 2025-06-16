@@ -1,10 +1,9 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Filament\Resources\GeslibOrderSyncLogResource\Pages;
+namespace NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibOrderSyncLogResource\Pages;
 
-use NumaxLab\Lunar\Geslib\Filament\Resources\GeslibOrderSyncLogResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibOrderSyncLogResource;
 
 class ListGeslibOrderSyncLogs extends ListRecords
 {

@@ -10,6 +10,7 @@
         "lunarphp/core": "^1.0.0",
         "lunarphp/lunar": "^1.0.0",
         "numaxlab/geslib-files": "^1.0@beta",
+        "numaxlab/dilve-client": "@dev",
         "spatie/array-to-xml": "^3.4"
     },
     "require-dev": {

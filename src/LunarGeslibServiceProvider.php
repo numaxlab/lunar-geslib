@@ -3,13 +3,16 @@
 namespace NumaxLab\Lunar\Geslib;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
 use Lunar\Admin\Support\Facades\AttributeData;
+use Lunar\Facades\ModelManifest;
 use NumaxLab\Lunar\Geslib\Admin\Support\FieldTypes\DateField;
 use NumaxLab\Lunar\Geslib\Console\Commands\Geslib\Import;
 use NumaxLab\Lunar\Geslib\Console\Commands\Install;
 use NumaxLab\Lunar\Geslib\FieldTypes\Date;
+use NumaxLab\Lunar\Geslib\Listeners\EnrichProductFromDilveSubscriber;
 use Spatie\ArrayToXml\ArrayToXml;
 
 class LunarGeslibServiceProvider extends ServiceProvider
@@ -36,6 +39,13 @@ class LunarGeslibServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/views' => resource_path('views/vendor/lunar/geslib'),
             __DIR__ . '/../routes/storefront.php' => base_path('routes/storefront.php'),
         ], ['lunar']);
+
+        ModelManifest::replace(
+            \Lunar\Models\Contracts\Product::class,
+            \NumaxLab\Lunar\Geslib\Models\Product::class,
+        );
+
+        Event::subscribe(EnrichProductFromDilveSubscriber::class);
 
         Response::macro(
             'xml',

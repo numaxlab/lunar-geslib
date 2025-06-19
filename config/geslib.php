@@ -13,9 +13,14 @@ return [
     'inter_files_path' => '/geslib/inter',
 
     /*
-     * Geslib product type ID.
+     * Product type ID.
      */
     'product_type_id' => 1,
+
+    /*
+     * Currency ID
+     */
+    'currency_id' => 1,
 
     /*
      * Geslib code => Tax Class ID pairs
@@ -25,6 +30,24 @@ return [
         'P0' => 1, // Papelería => general
         'R0' => 3, // Prensa => superreducido
         'A0' => 1, // Audiovisuales => general
+    ],
+
+    /*
+     * Geslib statuses codes that make a product not purchasable
+     */
+    'not_purchasable_statuses' => [
+        2, // Descatalogado
+        3, // Agotado
+    ],
+
+    /*
+     * Geslib products measurements units
+     * Check Lunar shipping config to find out the available valid units
+     */
+    'measurements' => [
+        'width_unit' => 'mm',
+        'height_unit' => 'mm',
+        'weight_unit' => 'g',
     ],
 
     /*

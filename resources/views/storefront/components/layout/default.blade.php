@@ -9,12 +9,19 @@
     @if (isset($head))
         {{ $head }}
     @endif
-    @stack('head')
 </head>
 <body>
+
+<x-lunar-geslib::header/>
+
 <main>
-    {{ $slot }}
+    <div class="container mx-auto px-2">
+        {{ $slot }}
+    </div>
 </main>
+
+<x-lunar-geslib::footer/>
+
 @vite('resources/js/app.js')
 @livewireScripts
 @if (isset($scripts))

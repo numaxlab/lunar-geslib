@@ -10,6 +10,8 @@ use Lunar\Models\CollectionGroup;
 use Lunar\Models\Product;
 use Lunar\Models\ProductVariant;
 use NumaxLab\Geslib\Lines\Article;
+use NumaxLab\Lunar\Geslib\Events\GeslibArticleCreated;
+use NumaxLab\Lunar\Geslib\Events\GeslibArticleUpdated;
 use NumaxLab\Lunar\Geslib\FieldTypes\Date;
 use NumaxLab\Lunar\Geslib\Managers\CollectionGroupSync;
 
@@ -78,6 +80,7 @@ class ArticleCommand extends AbstractCommand
             $variant = ProductVariant::create([
                 'product_id' => $product->id,
                 'tax_class_id' => config('lunar.geslib.product_types_taxation.' . $article->typeId(), 1),
+                'tax_ref' => $article->taxes(),
                 'unit_quantity' => 1,
                 'min_quantity' => 1,
                 'quantity_increment' => 1,
@@ -85,11 +88,11 @@ class ArticleCommand extends AbstractCommand
                 'gtin' => $article->isbn(),
                 'ean' => $article->ean(),
                 'width_value' => $article->width(),
-                'width_unit' => 'mm',
+                'width_unit' => config('lunar.geslib.measurements.width_unit', 'mm'),
                 'height_value' => $article->height(),
-                'height_unit' => 'mm',
+                'height_unit' => config('lunar.geslib.measurements.height_unit', 'mm'),
                 'weight_value' => $article->weight(),
-                'weight_unit' => 'g',
+                'weight_unit' => config('lunar.geslib.measurements.weight_unit', 'g'),
                 'shippable' => !$this->isEbook,
                 'stock' => $article->stock() ?? 0,
                 'backorder' => 0,
@@ -98,10 +101,13 @@ class ArticleCommand extends AbstractCommand
 
             $variant->prices()->create([
                 'price' => $article->priceWithoutTaxes(),
-                'currency_id' => 1,
+                'compare_price' => $article->referencePrice(),
+                'currency_id' => config('lunar.geslib.currency_id', 1),
                 'min_quantity' => 1,
                 'customer_group_id' => null,
             ]);
+
+            GeslibArticleCreated::dispatch($variant);
         } else {
             $product = $variant->product;
 
@@ -111,6 +117,8 @@ class ArticleCommand extends AbstractCommand
             ]);
 
             $variant->update([
+                'tax_class_id' => config('lunar.geslib.product_types_taxation.' . $article->typeId(), 1),
+                'tax_ref' => $article->taxes(),
                 'gtin' => $article->isbn(),
                 'ean' => $article->ean(),
                 'width_value' => $article->width(),
@@ -121,7 +129,10 @@ class ArticleCommand extends AbstractCommand
 
             $variant->prices()->first()->update([
                 'price' => $article->priceWithoutTaxes(),
+                'compare_price' => $article->referencePrice(),
             ]);
+
+            GeslibArticleUpdated::dispatch($variant);
         }
 
         // Product type collection

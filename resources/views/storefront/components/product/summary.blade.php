@@ -1,6 +1,6 @@
 <article>
-    <a href="{{ $attributes->get('href') }}">
-        <img src="https://picsum.photos/600/800" alt="">
+    <a href="{{ $attributes->get('href') }}" wire:navigate>
+        <img src="{{ $attributes->get('image') }}" alt=""/>
 
         <h3 class="at-heading is-4 mt-3">
             {{ $slot }}

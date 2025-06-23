@@ -1,9 +1,10 @@
-<x-lunar-geslib::layout.default>
-    <ul class="grid gap-6 grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
+<div>
+    <ul class="grid gap-6 grid-cols-2 mb-9 md:grid-cols-4 lg:grid-cols-6">
         @foreach ($products as $product)
             <li>
                 <x-lunar-geslib::product.summary
                     href="{{ route('lunar.geslib.storefront.products.show', $product->defaultUrl->slug) }}"
+                    image="{{ $product->thumbnail?->getUrl('medium') }}"
                 >
                     {{ $product->recordTitle }}
 
@@ -28,4 +29,6 @@
             </li>
         @endforeach
     </ul>
-</x-lunar-geslib::layouts.default>
+
+    {{ $products->links() }}
+</div>

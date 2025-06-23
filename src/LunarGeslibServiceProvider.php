@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
+use Livewire\Component;
+use Livewire\Livewire;
 use Lunar\Admin\Support\Facades\AttributeData;
 use Lunar\Facades\ModelManifest;
 use NumaxLab\Lunar\Geslib\Admin\Support\FieldTypes\DateField;
@@ -14,6 +17,7 @@ use NumaxLab\Lunar\Geslib\Console\Commands\Install;
 use NumaxLab\Lunar\Geslib\FieldTypes\Date;
 use NumaxLab\Lunar\Geslib\Listeners\EnrichProductFromDilveSubscriber;
 use Spatie\ArrayToXml\ArrayToXml;
+use Symfony\Component\Finder\Finder;
 
 class LunarGeslibServiceProvider extends ServiceProvider
 {
@@ -28,7 +32,10 @@ class LunarGeslibServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'lunar-geslib');
-        Blade::anonymousComponentPath(__DIR__ . '/../resources/views/storefront/components', 'lunar-geslib');
+
+        if (config('lunar.geslib.storefront_enabled', true)) {
+            $this->registerStorefront();
+        }
 
         if (config('lunar.geslib.api_routes_enabled', false)) {
             $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
@@ -63,6 +70,24 @@ class LunarGeslibServiceProvider extends ServiceProvider
                 Install::class,
                 Import::class,
             ]);
+        }
+    }
+
+    public function registerStorefront()
+    {
+        Blade::anonymousComponentPath(__DIR__ . '/../resources/views/storefront/components', 'lunar-geslib');
+
+        $namespace = 'NumaxLab\Lunar\Geslib\Storefront\Livewire\\';
+
+        $path = __DIR__ . '/Storefront/Livewire';
+
+        foreach ((new Finder())->in($path)->files() as $file) {
+            $component = $namespace . str_replace(['/', '.php'], ['\\', ''], $file->getRelativePathname());
+
+            if (is_subclass_of($component, Component::class)) {
+                $alias = str_replace('.-', '.', Str::kebab(str_replace('\\', '.', $component)));
+                Livewire::component($alias, $component);
+            }
         }
     }
 }

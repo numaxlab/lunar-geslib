@@ -70,6 +70,26 @@ return [
 
     /*
      *--------------------------------------------------------------------------
+     * API Routes Configuration
+     *--------------------------------------------------------------------------
+     *
+     * Enable or disable the API routes for Geslib.
+     *
+     */
+    'api_routes_enabled' => env('GESLIB_API_ROUTES_ENABLED', true),
+
+    /*
+     *--------------------------------------------------------------------------
+     * Storefront Configuration
+     *--------------------------------------------------------------------------
+     *
+     * Enable or disable the Geslib storefront features.
+     *
+     */
+    'storefront_enabled' => env('GESLIB_STOREFRONT_ENABLED', true),
+
+    /*
+     *--------------------------------------------------------------------------
      * Notification Settings
      *--------------------------------------------------------------------------
      *
@@ -84,14 +104,4 @@ return [
         // Throttle period in minutes to avoid spamming notifications for the same issue.
         'throttle_period_minutes' => env('GESLIB_NOTIFICATIONS_THROTTLE_MINUTES', 60),
     ],
-
-    /*
-     *--------------------------------------------------------------------------
-     * API Routes Configuration
-     *--------------------------------------------------------------------------
-     *
-     * Enable or disable the API routes for Geslib.
-     *
-     */
-    'api_routes_enabled' => env('GESLIB_API_ROUTES_ENABLED', true),
 ];

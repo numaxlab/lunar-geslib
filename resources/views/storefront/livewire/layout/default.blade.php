@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{!!  isset($metaTitle) ? $metaTitle . ' | ' : ''  !!}{{ config('app.name') }}</title>
+
+    <title>{{ $title ?? config('app.name') }}</title>
+
     @vite('resources/css/app.css')
-    @livewireStyles
     @if (isset($head))
         {{ $head }}
     @endif
 </head>
 <body>
-
 <x-lunar-geslib::header/>
 
 <main>
@@ -23,7 +23,6 @@
 <x-lunar-geslib::footer/>
 
 @vite('resources/js/app.js')
-@livewireScripts
 @if (isset($scripts))
     {{ $scripts }}
 @endif

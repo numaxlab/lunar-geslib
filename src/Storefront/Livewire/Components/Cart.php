@@ -9,9 +9,6 @@ use Lunar\Facades\CartSession;
 
 class Cart extends Component
 {
-    /**
-     * The editable cart lines.
-     */
     public array $lines;
 
     public bool $linesVisible = false;

@@ -81,9 +81,6 @@ class ArticleCommand extends AbstractCommand
                 'product_id' => $product->id,
                 'tax_class_id' => config('lunar.geslib.product_types_taxation.' . $article->typeId(), 1),
                 'tax_ref' => $article->taxes(),
-                'unit_quantity' => 1,
-                'min_quantity' => 1,
-                'quantity_increment' => 1,
                 'sku' => $article->id(),
                 'gtin' => $article->isbn(),
                 'ean' => $article->ean(),
@@ -95,8 +92,14 @@ class ArticleCommand extends AbstractCommand
                 'weight_unit' => config('lunar.geslib.measurements.weight_unit', 'g'),
                 'shippable' => !$this->isEbook,
                 'stock' => $article->stock() ?? 0,
+                'unit_quantity' => 1,
+                'min_quantity' => 1,
+                'quantity_increment' => 1,
                 'backorder' => 0,
-                'purchasable' => true,
+                'purchasable' => in_array(
+                    $article->statusId(),
+                    config('lunar.geslib.not_purchasable_statuses', []),
+                ) ? 'in_stock' : 'always',
             ]);
 
             $variant->prices()->create([

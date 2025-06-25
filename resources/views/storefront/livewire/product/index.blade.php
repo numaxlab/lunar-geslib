@@ -4,7 +4,7 @@
             <li>
                 <x-lunar-geslib::product.summary
                     href="{{ route('lunar.geslib.storefront.products.show', $product->defaultUrl->slug) }}"
-                    image="{{ $product->thumbnail?->getUrl('medium') }}"
+                    image="{{ $product->getFirstMediaUrl(config('lunar.media.collection'), 'medium') }}"
                 >
                     {{ $product->recordTitle }}
 

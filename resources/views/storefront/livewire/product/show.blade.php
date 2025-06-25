@@ -1,7 +1,7 @@
 <article>
     <div class="flex gap-5">
         <div class="w-1/4">
-            <img src="{{ $product->thumbnail?->getUrl('large') }}" alt="">
+            <img src="{{ $product->getFirstMediaUrl(config('lunar.media.collection'), 'large') }}" alt="">
 
             @if ($pricing)
                 <div class="mt-5 text-xl">
@@ -42,7 +42,10 @@
                     @endif
                 </div>
                 <div class="w-1/4">
-                    <dl class="ml-tech-info">
+                    <a href="" class="at-tag is-primary">Sección</a>
+                    <a href="" class="at-tag is-primary">Tema</a>
+
+                    <dl class="ml-tech-info mt-5">
                         @if ($product->translateAttribute('issue-date'))
                             <dt>Fecha de edición</dt>
                             <dd>

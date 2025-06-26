@@ -43,5 +43,5 @@
             "email": "noa@numax.org"
         }
     ],
-    "minimum-stability": "beta"
+    "minimum-stability": "dev"
 }

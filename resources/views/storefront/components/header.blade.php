@@ -21,10 +21,17 @@
                 </ul>
                 <ul class="flex gap-5 text-lg">
                     <li>
-                        <a href="">
-                            <i class="fa-solid fa-user" aria-hidden="true"></i>
-                            <span class="sr-only">Acceder</span>
-                        </a>
+                        @auth
+                            <a href="{{ route('dashboard') }}" wire:navigate>
+                                <i class="fa-solid fa-user" aria-hidden="true"></i>
+                                <span class="sr-only">Mi perfil</span>
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" wire:navigate>
+                                <i class="fa-solid fa-user" aria-hidden="true"></i>
+                                <span class="sr-only">Acceder</span>
+                            </a>
+                        @endauth
                     </li>
                     <li>
                         @livewire('numax-lab.lunar.geslib.storefront.livewire.components.cart')

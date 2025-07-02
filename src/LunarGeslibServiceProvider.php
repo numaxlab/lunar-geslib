@@ -34,7 +34,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'lunar-geslib');
 
         if (config('lunar.geslib.storefront_enabled', true)) {
-            $this->registerStorefront();
+            $this->bootStorefront();
         }
 
         if (config('lunar.geslib.api_routes_enabled', false)) {
@@ -73,7 +73,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
         }
     }
 
-    public function registerStorefront()
+    public function bootStorefront(): void
     {
         Blade::anonymousComponentPath(__DIR__ . '/../resources/views/storefront/components', 'lunar-geslib');
 

@@ -468,7 +468,7 @@ class Install extends Command
         Attribute::create([
             'attribute_type' => Collection::morphName(),
             'attribute_group_id' => $group->id,
-            'position' => 2,
+            'position' => 1,
             'handle' => 'geslib-code',
             'name' => [
                 'es' => 'Código Geslib',
@@ -478,7 +478,7 @@ class Install extends Command
             ],
             'section' => 'main',
             'type' => Text::class,
-            'required' => true,
+            'required' => false,
             'default_value' => null,
             'configuration' => [
                 'min' => null,
@@ -510,22 +510,35 @@ class Install extends Command
             'searchable' => true,
         ]);
 
-        $group = AttributeGroup::create([
-            'attributable_type' => Collection::morphName(),
-            'name' => collect([
-                'es' => 'Datos de autoras',
-            ]),
-            'handle' => 'collection-author',
-            'position' => 2,
+        Attribute::create([
+            'attribute_type' => Collection::morphName(),
+            'attribute_group_id' => $group->id,
+            'position' => 3,
+            'handle' => 'subtitle',
+            'name' => [
+                'es' => 'Subtítulo',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Text::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => false,
+            ],
+            'system' => false,
+            'searchable' => false,
         ]);
 
         Attribute::create([
             'attribute_type' => Collection::morphName(),
             'attribute_group_id' => $group->id,
-            'position' => 2,
-            'handle' => 'biography',
+            'position' => 4,
+            'handle' => 'description',
             'name' => [
-                'es' => 'Biografía',
+                'es' => 'Descripción',
             ],
             'description' => [
                 'es' => '',

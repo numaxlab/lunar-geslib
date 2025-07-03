@@ -12,7 +12,8 @@ class ForgotPasswordPage extends Component
 
     public function render(): View
     {
-        return view('lunar-geslib::storefront.livewire.auth.forgot-password');
+        return view('lunar-geslib::storefront.livewire.auth.forgot-password')
+            ->title(__('Recuperar contraseña'));
     }
 
     public function sendPasswordResetLink(): void

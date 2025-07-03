@@ -24,7 +24,8 @@ class LoginPage extends Component
 
     public function render(): View
     {
-        return view('lunar-geslib::storefront.livewire.auth.login');
+        return view('lunar-geslib::storefront.livewire.auth.login')
+            ->title(__('Iniciar sesión'));
     }
 
     public function login(): void

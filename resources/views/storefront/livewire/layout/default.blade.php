@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{{ $title ?? config('app.name') }}</title>
+    <title>{{ !empty($title) ? $title . ' | ' . config('app.name') : config('app.name') }}</title>
 
     @vite('resources/css/app.css')
     @if (isset($head))
@@ -15,7 +15,7 @@
 <x-lunar-geslib::header/>
 
 <main>
-    <div class="container mx-auto px-2">
+    <div class="container mx-auto px-4">
         {{ $slot }}
     </div>
 </main>

@@ -19,9 +19,12 @@ class RegisterPage extends Component
 
     public string $password_confirmation = '';
 
+    public string $privacy_policy = '';
+
     public function render(): View
     {
-        return view('lunar-geslib::storefront.livewire.auth.register');
+        return view('lunar-geslib::storefront.livewire.auth.register')
+            ->title(__('Regístrate'));
     }
 
     public function register(): void
@@ -37,6 +40,7 @@ class RegisterPage extends Component
                 'unique:' . config('auth.providers.users.model'),
             ],
             'password' => ['required', 'string', 'confirmed', Password::defaults()],
+            'privacy_policy' => ['accepted', 'required'],
         ]);
 
         $validated['password'] = Hash::make($validated['password']);

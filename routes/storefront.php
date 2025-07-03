@@ -18,7 +18,7 @@ use NumaxLab\Lunar\Geslib\Storefront\Livewire\CollectionPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\ProductListPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\ProductPage;
 
-Route::get('/', ProductListPage::class)
+Route::get('/libreria', ProductListPage::class)
     ->name('lunar.geslib.storefront.products.index');
 
 Route::get('/products/{slug}', ProductPage::class)
@@ -44,9 +44,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware('guest')->group(function () {
     Route::get('login', LoginPage::class)->name('login');
-    Route::get('register', RegisterPage::class)->name('register');
-    Route::get('forgot-password', ForgotPasswordPage::class)->name('password.request');
-    Route::get('reset-password/{token}', ResetPasswordPage::class)->name('password.reset');
+    Route::get('registrate', RegisterPage::class)->name('register');
+    Route::get('recuperar-contrasenha', ForgotPasswordPage::class)->name('password.request');
+    Route::get('recuperar-ctonrasenha/{token}', ResetPasswordPage::class)->name('password.reset');
 });
 
 Route::middleware('auth')->group(function () {

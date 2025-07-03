@@ -1,4 +1,4 @@
-<div class="container mx-auto px-2">
+<div class="container mx-auto px-4">
     <footer class="org-site-footer">
         <div class="lg:w-1/3 lg:flex lg:justify-between">
             <a class="block text-xl font-bold mb-5"

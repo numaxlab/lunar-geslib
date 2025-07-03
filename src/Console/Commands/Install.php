@@ -27,6 +27,7 @@ use Lunar\Models\TaxRate;
 use Lunar\Models\TaxRateAmount;
 use Lunar\Models\TaxZone;
 use NumaxLab\Lunar\Geslib\FieldTypes\Date;
+use NumaxLab\Lunar\Geslib\Handle;
 use NumaxLab\Lunar\Geslib\InterCommands\AuthorCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\BindingTypeCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\ClassificationCommand;
@@ -317,6 +318,21 @@ class Install extends Command
         CollectionGroup::create([
             'name' => 'Clasificaciones',
             'handle' => ClassificationCommand::HANDLE,
+        ]);
+
+        CollectionGroup::create([
+            'name' => 'Destacados',
+            'handle' => Handle::COLLECTION_GROUP_FEATURED,
+        ]);
+
+        CollectionGroup::create([
+            'name' => 'Secciones',
+            'handle' => Handle::COLLECTION_GROUP_SECTIONS,
+        ]);
+
+        CollectionGroup::create([
+            'name' => 'Itinerarios',
+            'handle' => Handle::COLLECTION_GROUP_ITINERARIES,
         ]);
     }
 

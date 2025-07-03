@@ -1,5 +1,11 @@
-<div class="flex flex-col gap-6 px-100">
-    <!-- Session Status -->
+<section class="flex flex-col gap-6">
+    <h1 class="at-heading is-1">{{ __('Recuperar contraseña') }}</h1>
+
+    <p>
+        Indica el correo electrónico con el que te registraste para recuperar tu contraseña. Si no lo recuerdas,
+        <a href="">contacta con la tienda</a>.
+    </p>
+
     <x-lunar-geslib::auth.session-status class="text-center" :status="session('status')"/>
 
     <form wire:submit="sendPasswordResetLink" class="flex flex-col gap-6">
@@ -8,21 +14,21 @@
                 type="email"
                 name="email"
                 id="email"
-                placeholder="email@example.com"
+                placeholder="email@ejemplo.com"
                 required
                 autofocus
                 autocomplete="email"
         >
-            {{ __('Email address') }}
+            {{ __('Correo electrónico') }}
         </x-numaxlab-atomic::atoms.input>
 
         <x-numaxlab-atomic::atoms.button type="submit" class="is-primary w-full">
-            {{ __('Email password reset link') }}
+            {{ __('Recuperar contraseña') }}
         </x-numaxlab-atomic::atoms.button>
     </form>
 
-    <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-400">
-        {{ __('Or, return to') }}
-        <a href="{{ route('login') }}" wire:navigate>{{ __('log in') }}</a>
-    </div>
-</div>
+    <p>
+        {{ __('Volver a') }}
+        <a href="{{ route('login') }}" wire:navigate>{{ __('iniciar sesión') }}</a>.
+    </p>
+</section>

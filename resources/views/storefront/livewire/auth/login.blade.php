@@ -1,4 +1,13 @@
-<div class="flex flex-col gap-6 px-100">
+<section class="flex flex-col gap-6">
+    <h1 class="at-heading is-1">{{ __('Iniciar sesión') }}</h1>
+
+    @if (Route::has('register'))
+        <p class="">
+            {{ __('¿No tienes cuenta de usuaria?') }}<br>
+            <a href="{{ route('register') }}" wire:navigate>{{ __('Regístrate aquí') }}</a>.
+        </p>
+    @endif
+
     <x-lunar-geslib::auth.session-status class="text-center" :status="session('status')"/>
 
     <form wire:submit="login" class="flex flex-col gap-6">
@@ -7,17 +16,17 @@
                 type="email"
                 name="email"
                 id="email"
-                placeholder="email@example.com"
+                placeholder="email@ejemplo.com"
                 required
                 autofocus
                 autocomplete="email"
         >
-            {{ __('Email address') }}
+            {{ __('Correo electrónico') }}
         </x-numaxlab-atomic::atoms.input>
 
         <div class="relative">
             <x-numaxlab-atomic::atoms.forms.label for="password">
-                {{ __('Password') }}
+                {{ __('Contraseña') }}
             </x-numaxlab-atomic::atoms.forms.label>
             <x-numaxlab-atomic::atoms.forms.input
                     wire:model="password"
@@ -25,12 +34,12 @@
                     id="password"
                     required
                     autocomplete="current-password"
-                    placeholder="{{ __('Password') }}"
+                    :placeholder="__('Contraseña')"
             ></x-numaxlab-atomic::atoms.forms.input>
 
             @if (Route::has('password.request'))
-                <a class="absolute end-0 top-0 text-sm" href="{{ route('password.request') }}" wire:navigate>
-                    {{ __('Forgot your password?') }}
+                <a class="at-small absolute end-0 top-0" href="{{ route('password.request') }}" wire:navigate>
+                    {{ __('Olvidé mi contraseña') }}
                 </a>
             @endif
         </div>
@@ -41,19 +50,12 @@
                     value="1"
                     id="remember-me"
             >
-                {{ __('Remember me') }}
+                {{ __('Acuérdate de mi') }}
             </x-numaxlab-atomic::atoms.forms.checkbox>
         </div>
 
         <x-numaxlab-atomic::atoms.button type="submit" class="is-primary w-full">
-            {{ __('Log in') }}
+            {{ __('Entrar') }}
         </x-numaxlab-atomic::atoms.button>
     </form>
-
-    @if (Route::has('register'))
-        <div class="space-x-1 text-center text-sm text-zinc-600">
-            {{ __('Don\'t have an account?') }}
-            <a href="{{ route('register') }}" wire:navigate>{{ __('Sign up') }}</a>
-        </div>
-    @endif
-</div>
+</section>

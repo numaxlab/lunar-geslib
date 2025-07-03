@@ -8,6 +8,7 @@ use Filament\Forms\Get;
 use Illuminate\Database\Eloquent\Model;
 use Lunar\Admin\Support\Extending\ResourceExtension;
 use Lunar\Models\Collection as LunarCollection;
+use NumaxLab\Lunar\Geslib\Handle;
 use NumaxLab\Lunar\Geslib\InterCommands\AuthorCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\BindingTypeCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\ClassificationCommand;
@@ -50,6 +51,19 @@ class CollectionResourceExtension extends ResourceExtension
         ClassificationCommand::HANDLE => [
             'subtitle',
             'description',
+        ],
+        Handle::COLLECTION_GROUP_FEATURED => [
+            'geslib-code',
+            'subtitle',
+            'description',
+        ],
+        Handle::COLLECTION_GROUP_SECTIONS => [
+            'geslib-code',
+            'subtitle',
+            'description',
+        ],
+        Handle::COLLECTION_GROUP_ITINERARIES => [
+            'geslib-code',
         ],
     ];
 

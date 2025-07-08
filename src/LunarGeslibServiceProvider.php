@@ -10,10 +10,12 @@ use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
 use Lunar\Admin\Filament\Resources\CollectionResource;
+use Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductCollections;
 use Lunar\Admin\Support\Facades\AttributeData;
 use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Facades\ModelManifest;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\CollectionResourceExtension;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\ManageProductCollectionsExtension;
 use NumaxLab\Lunar\Geslib\Admin\Support\FieldTypes\DateField;
 use NumaxLab\Lunar\Geslib\Console\Commands\Geslib\Import;
 use NumaxLab\Lunar\Geslib\Console\Commands\Install;
@@ -57,6 +59,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
 
         LunarPanel::extensions([
             CollectionResource::class => CollectionResourceExtension::class,
+            ManageProductCollections::class => ManageProductCollectionsExtension::class,
         ]);
 
         Event::subscribe(EnrichProductFromDilveSubscriber::class);

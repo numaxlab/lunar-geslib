@@ -14,6 +14,8 @@ return new class extends Migration {
             $table->dateTime('received_at');
             $table->dateTime('started_at')->nullable();
             $table->dateTime('finished_at')->nullable();
+            $table->integer('total_lines')->default(0);
+            $table->integer('processed_lines')->default(0);
             $table->json('log')->nullable();
             $table->timestamps();
         });

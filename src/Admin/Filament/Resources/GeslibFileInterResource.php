@@ -69,9 +69,10 @@ class GeslibFileInterResource extends Resource
                         GeslibInterFile::STATUS_PROCESSING => 'info',
                         default => 'gray',
                     }),
+                Tables\Columns\TextColumn::make('progress'),
                 Tables\Columns\TextColumn::make('log')
                     ->limit(50)
-                    ->tooltip(fn($record) => $record->notes),
+                    ->tooltip(fn($record) => $record->log),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

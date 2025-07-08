@@ -26,4 +26,9 @@ class GeslibInterFile extends BaseModel
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
     ];
+
+    public function getProgressAttribute(): string
+    {
+        return $this->processed_lines . ' / ' . $this->total_lines;
+    }
 }

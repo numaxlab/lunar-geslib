@@ -61,7 +61,9 @@ use NumaxLab\Lunar\Geslib\InterCommands\StockCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\TopicCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\TypeCommand;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
+use RuntimeException;
 use Throwable;
+use ZipArchive;
 
 class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
 {
@@ -89,17 +91,37 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
             'started_at' => Carbon::now(),
         ]);
 
+        $zip = new ZipArchive();
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
-        $geslibFile = GeslibFile::parse(
-            $storage->get(config('lunar.geslib.inter_files_path') . '/' . $this->geslibInterFile->name),
-        );
+        $zipFilePath = $storage->path(config('lunar.geslib.inter_files_path') . '/' . $this->geslibInterFile->name);
+        $extractedFilePath = config('lunar.geslib.inter_files_path') . '/' . str_replace(
+                '.zip',
+                '',
+                $this->geslibInterFile->name,
+            );
+
+        if (!$storage->exists($extractedFilePath)) {
+            if ($zip->open($zipFilePath) === true) {
+                $zip->extractTo($storage->path(config('lunar.geslib.inter_files_path')));
+
+                $zip->close();
+            } else {
+                throw new RuntimeException('Unable to open zip file: ' . $zipFilePath);
+            }
+        }
+
+        $geslibFile = GeslibFile::parse($storage->get($extractedFilePath));
+
+        $this->geslibInterFile->update([
+            'total_lines' => count($geslibFile->lines()),
+        ]);
 
         $log = [];
 
         $batchCommands = collect();
 
-        foreach ($geslibFile->lines() as $line) {
+        foreach ($geslibFile->lines() as $key => $line) {
             $command = null;
 
             match ($line->getCode()) {
@@ -174,6 +196,10 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
 
                 $log = array_merge($log, $command->getLog());
             }
+
+            $this->geslibInterFile->update([
+                'processed_lines' => $key + 1,
+            ]);
         }
 
         foreach ($batchCommands->groupBy('type') as $lineType => $commands) {
@@ -199,6 +225,8 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
             'finished_at' => Carbon::now(),
             'log' => $log,
         ]);
+
+        $storage->delete($extractedFilePath);
     }
 
     private function getStatusFromLog(array $log): string

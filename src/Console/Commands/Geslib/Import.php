@@ -21,12 +21,19 @@ class Import extends Command
 
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
-        $files = $storage->allFiles(config('lunar.geslib.inter_files_path'));
+        $files = collect($storage->files(config('lunar.geslib.inter_files_path')))
+            ->filter(fn($file) => strtolower(pathinfo($file, PATHINFO_EXTENSION)) === 'zip')
+            ->sortBy(fn($file) => File::lastModified($storage->path($file)))
+            ->values()
+            ->all();
 
         $lastInterFile = GeslibInterFile::orderBy('received_at', 'desc')->first();
 
+        $count = 0;
+
         foreach ($files as $file) {
             $filename = basename($file);
+
             $fileLastModified = Carbon::createFromTimestamp(
                 File::lastModified($storage->path($file)),
                 config('app.timezone'),
@@ -52,15 +59,13 @@ class Import extends Command
 
             $interFile->save();
 
-            // Temp para dev: sync
-            ProcessGeslibInterFile::dispatchSync($interFile);
+            ProcessGeslibInterFile::dispatch($interFile);
 
             $this->components->info(sprintf('Dispatching %s...', $filename));
+
+            $count++;
         }
 
-        // Temp para dev
-        //GeslibInterFile::truncate();
-
-        $this->components->info('All Geslib INTER files have been dispatched for processing.');
+        $this->components->info(sprintf('%s Geslib INTER files have been dispatched for processing.', $count));
     }
 }

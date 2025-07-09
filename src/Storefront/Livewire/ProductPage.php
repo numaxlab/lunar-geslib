@@ -23,7 +23,7 @@ class ProductPage extends Page
             ->whereHas('urls', function ($query) use ($slug) {
                 $query->where('slug', $slug);
             })
-            ->with(['variant', 'variant.taxClass', 'authors', 'images', 'prices'])
+            ->with(['variant', 'variant.taxClass', 'authors', 'images', 'prices', 'collections'])
             ->firstOrFail();
 
         $this->pricing = $this->product->variant
@@ -36,6 +36,7 @@ class ProductPage extends Page
 
     public function render(): View
     {
-        return view('lunar-geslib::storefront.livewire.product.show');
+        return view('lunar-geslib::storefront.livewire.product.show')
+            ->title($this->product->recordFullTitle);
     }
 }

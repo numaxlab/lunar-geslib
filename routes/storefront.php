@@ -12,14 +12,15 @@ use NumaxLab\Lunar\Geslib\Storefront\Livewire\Auth\LoginPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\Auth\RegisterPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\Auth\ResetPasswordPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\Auth\VerifyEmailPage;
-use NumaxLab\Lunar\Geslib\Storefront\Livewire\CheckoutPage;
+use NumaxLab\Lunar\Geslib\Storefront\Livewire\Checkout\ShippingAndPaymentPage;
+use NumaxLab\Lunar\Geslib\Storefront\Livewire\Checkout\SummaryPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\CollectionListPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\CollectionPage;
-use NumaxLab\Lunar\Geslib\Storefront\Livewire\ProductListPage;
+use NumaxLab\Lunar\Geslib\Storefront\Livewire\HomePage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\ProductPage;
 
-Route::get('/libreria', ProductListPage::class)
-    ->name('lunar.geslib.storefront.products.index');
+Route::get('/libreria', HomePage::class)
+    ->name('lunar.geslib.storefront.homepage');
 
 Route::get('/products/{slug}', ProductPage::class)
     ->name('lunar.geslib.storefront.products.show');
@@ -30,8 +31,13 @@ Route::get('/collections', CollectionListPage::class)
 Route::get('/collections/{slug}', CollectionPage::class)
     ->name('lunar.geslib.storefront.collections.show');
 
-Route::get('/checkout', CheckoutPage::class)
-    ->name('lunar.geslib.storefront.checkout.index');
+Route::prefix('/checkout')->group(function () {
+    Route::get('/', SummaryPage::class)
+        ->name('lunar.geslib.storefront.checkout.summary');
+
+    Route::get('/delivery-and-payment', ShippingAndPaymentPage::class)
+        ->name('lunar.geslib.storefront.checkout.delivery-and-payment');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardPage::class)->name('dashboard');

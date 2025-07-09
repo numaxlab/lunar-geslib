@@ -1,16 +1,28 @@
 <div>
     <form wire:submit="updateProfileInformation" class="flex flex-col gap-6">
         <x-numaxlab-atomic::atoms.input
-                wire:model="name"
+                wire:model="first_name"
                 type="text"
-                name="name"
-                id="name"
+                name="first_name"
+                id="first_name"
                 required
                 autofocus
                 autocomplete="name"
-                placeholder="{{ __('Full name') }}"
+                placeholder="{{ __('Nombre') }}"
         >
-            {{ __('Name') }}
+            {{ __('Nombre') }}
+        </x-numaxlab-atomic::atoms.input>
+
+        <x-numaxlab-atomic::atoms.input
+                wire:model="last_name"
+                type="text"
+                name="last_name"
+                id="last_name"
+                required
+                autocomplete="last-name"
+                placeholder="{{ __('Apellidos') }}"
+        >
+            {{ __('Apellidos') }}
         </x-numaxlab-atomic::atoms.input>
 
         <x-numaxlab-atomic::atoms.input
@@ -23,6 +35,26 @@
                 autocomplete="email"
         >
             {{ __('Email address') }}
+        </x-numaxlab-atomic::atoms.input>
+
+        <x-numaxlab-atomic::atoms.input
+                wire:model="vat_no"
+                type="text"
+                name="vat_no"
+                id="vat_no"
+                placeholder="{{ __('NIF') }}"
+        >
+            {{ __('NIF') }}
+        </x-numaxlab-atomic::atoms.input>
+
+        <x-numaxlab-atomic::atoms.input
+                wire:model="company_name"
+                type="text"
+                name="company_name"
+                id="company_name"
+                placeholder="{{ __('Nombre de empresa') }}"
+        >
+            {{ __('Nombre de empresa') }}
         </x-numaxlab-atomic::atoms.input>
 
         @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail &&! auth()->user()->hasVerifiedEmail())

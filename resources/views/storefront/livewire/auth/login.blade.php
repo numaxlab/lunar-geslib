@@ -35,7 +35,7 @@
                     required
                     autocomplete="current-password"
                     :placeholder="__('Contraseña')"
-            ></x-numaxlab-atomic::atoms.forms.input>
+            />
 
             @if (Route::has('password.request'))
                 <a class="at-small absolute end-0 top-0" href="{{ route('password.request') }}" wire:navigate>

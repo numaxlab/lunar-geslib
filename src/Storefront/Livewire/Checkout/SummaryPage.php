@@ -1,22 +1,23 @@
 <?php
 
-namespace NumaxLab\Lunar\Geslib\Storefront\Livewire\Components;
+namespace NumaxLab\Lunar\Geslib\Storefront\Livewire\Checkout;
 
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
-use Livewire\Component;
 use Lunar\Facades\CartSession;
-use Lunar\Models\Contracts\Cart as CartContract;
+use Lunar\Models\Contracts\Cart;
+use NumaxLab\Lunar\Geslib\Storefront\Livewire\Page;
 
-class Cart extends Component
+class SummaryPage extends Page
 {
+    public ?Cart $cart;
+
     public array $lines;
 
-    public bool $linesVisible = false;
-
-    protected $listeners = [
-        'add-to-cart' => 'handleAddToCart',
-    ];
+    public function getCartLinesProperty(): Collection
+    {
+        return $this->cart->lines ?? collect();
+    }
 
     public function rules(): array
     {
@@ -27,6 +28,14 @@ class Cart extends Component
 
     public function mount(): void
     {
+        $this->cart = CartSession::current();
+
+        if (!$this->cart) {
+            $this->redirect('/');
+
+            return;
+        }
+
         $this->mapLines();
     }
 
@@ -43,16 +52,6 @@ class Cart extends Component
                 'unit_price' => $line->unitPrice->formatted(),
             ];
         })->toArray();
-    }
-
-    public function getCartProperty(): CartContract
-    {
-        return CartSession::current();
-    }
-
-    public function getCartLinesProperty(): Collection
-    {
-        return $this->cart->lines ?? collect();
     }
 
     public function updateLines(): void
@@ -73,14 +72,8 @@ class Cart extends Component
         $this->mapLines();
     }
 
-    public function handleAddToCart(): void
-    {
-        $this->mapLines();
-        $this->linesVisible = true;
-    }
-
     public function render(): View
     {
-        return view('lunar-geslib::storefront.livewire.components.cart');
+        return view('lunar-geslib::storefront.livewire.checkout.summary');
     }
 }

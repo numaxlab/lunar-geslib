@@ -18,6 +18,8 @@ class GeslibInterFile extends BaseModel
         'received_at',
         'started_at',
         'finished_at',
+        'total_lines',
+        'processed_lines',
         'log',
     ];
 

@@ -6,10 +6,25 @@ use Illuminate\View\View;
 use Livewire\Component;
 use Lunar\Base\Purchasable;
 use Lunar\Facades\CartSession;
+use Lunar\Facades\StorefrontSession;
+use Lunar\Models\Price;
 
 class AddToCart extends Component
 {
     public ?Purchasable $purchasable = null;
+    public bool $displayPrice = false;
+    public ?Price $pricing;
+
+    public function mount(): void
+    {
+        if ($this->displayPrice) {
+            $this->pricing = $this->purchasable
+                ->pricing()
+                ->currency(StorefrontSession::getCurrency())
+                ->customerGroups(StorefrontSession::getCustomerGroups())
+                ->get()->matched;
+        }
+    }
 
     public function render(): View
     {

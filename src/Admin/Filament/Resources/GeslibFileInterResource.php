@@ -76,15 +76,15 @@ class GeslibFileInterResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->label('Imported At'),
-                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Created at'),
+                Tables\Columns\TextColumn::make('started_at')
                     ->dateTime()
                     ->sortable()
-                    ->label('Last Update'),
+                    ->label('Started at'),
                 Tables\Columns\TextColumn::make('finished_at')
                     ->dateTime()
                     ->sortable()
-                    ->label('Processed At'),
+                    ->label('Finished at'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

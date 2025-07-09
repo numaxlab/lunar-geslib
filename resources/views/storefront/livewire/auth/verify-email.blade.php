@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-6 px-100">
+<div class="flex flex-col gap-6">
     <p>{{ __('Please verify your email address by clicking on the link we just emailed to you.') }}</p>
 
     @if (session('status') == 'verification-link-sent')

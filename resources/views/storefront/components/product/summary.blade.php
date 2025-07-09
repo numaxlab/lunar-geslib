@@ -1,25 +1,31 @@
 <article>
     <a href="{{ $attributes->get('href') }}" wire:navigate>
-        <img src="{{ $attributes->get('image') }}" alt=""/>
+        <img src="{{ $product->getFirstMediaUrl(config('lunar.media.collection'), 'medium') }}" alt=""/>
 
         <h3 class="at-heading is-4 mt-3">
-            {{ $slot }}
+            {{ $product->recordTitle }}
         </h3>
-        @if (isset($subtitle))
+        @if ($product->translateAttribute('subtitle'))
             <h4 class="at-heading is-5">
-                {{ $subtitle }}
+                {{ $product->translateAttribute('subtitle') }}
             </h4>
         @endif
     </a>
 
-    @if (isset($authors))
-        <div class="mt-2">
-            {{ $authors }}
+    @if ($product->authors->isNotEmpty())
+        <div class="my-2">
+            <ul>
+                @foreach ($product->authors as $author)
+                    <li>
+                        <p>{{ $author->translateAttribute('name') }}</p>
+                    </li>
+                @endforeach
+            </ul>
         </div>
     @endif
 
-    <button class="at-button mt-2">
-        <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
-        Comprar
-    </button>
+    @livewire('numax-lab.lunar.geslib.storefront.livewire.components.add-to-cart', [
+        'purchasable' => $product->variant,
+        'displayPrice' => true,
+    ])
 </article>

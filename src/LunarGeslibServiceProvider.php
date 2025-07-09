@@ -57,6 +57,11 @@ class LunarGeslibServiceProvider extends ServiceProvider
             \NumaxLab\Lunar\Geslib\Models\Product::class,
         );
 
+        ModelManifest::replace(
+            \Lunar\Models\Contracts\ProductVariant::class,
+            \NumaxLab\Lunar\Geslib\Models\ProductVariant::class,
+        );
+
         LunarPanel::extensions([
             CollectionResource::class => CollectionResourceExtension::class,
             ManageProductCollections::class => ManageProductCollectionsExtension::class,

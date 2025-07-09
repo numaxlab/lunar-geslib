@@ -3,6 +3,7 @@
 namespace NumaxLab\Lunar\Geslib\Storefront\Livewire\Account;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -11,9 +12,15 @@ use NumaxLab\Lunar\Geslib\Storefront\Livewire\Actions\Logout;
 
 class ProfilePage extends Component
 {
-    public string $name = '';
+    public string $first_name = '';
+
+    public string $last_name = '';
 
     public string $email = '';
+
+    public ?string $vat_no;
+
+    public ?string $company_name;
 
     public string $password = '';
 
@@ -24,8 +31,12 @@ class ProfilePage extends Component
 
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
-        $this->email = Auth::user()->email;
+        $user = Auth::user();
+        $this->first_name = $user->name;
+        $this->last_name = $user->last_name;
+        $this->email = $user->email;
+        $this->vat_no = $user->latestCustomer()?->vat_no;
+        $this->company_name = $user->latestCustomer()?->company_name;
     }
 
     public function updateProfileInformation(): void
@@ -33,7 +44,9 @@ class ProfilePage extends Component
         $user = Auth::user();
 
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+
+            'last_name' => ['required', 'string', 'max:255'],
 
             'email' => [
                 'required',
@@ -43,15 +56,30 @@ class ProfilePage extends Component
                 'max:255',
                 Rule::unique(config('auth.providers.users.model'))->ignore($user->id),
             ],
+
+            'vat_no' => ['nullable', 'string', 'max:255'],
+
+            'company_name' => ['nullable', 'string', 'max:255'],
         ]);
 
+        DB::beginTransaction();
+
         $user->fill($validated);
+
+        $user->latestCustomer()->update([
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'vat_no' => $validated['vat_no'],
+            'company_name' => $validated['company_name'],
+        ]);
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
 
         $user->save();
+
+        DB::commit();
 
         $this->dispatch('profile-updated', name: $user->name);
     }

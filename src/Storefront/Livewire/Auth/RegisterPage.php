@@ -4,14 +4,19 @@ namespace NumaxLab\Lunar\Geslib\Storefront\Livewire\Auth;
 
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 use Livewire\Component;
+use Lunar\Facades\StorefrontSession;
+use Lunar\Models\Customer;
 
 class RegisterPage extends Component
 {
-    public string $name = '';
+    public string $first_name = '';
+
+    public string $last_name = '';
 
     public string $email = '';
 
@@ -30,7 +35,8 @@ class RegisterPage extends Component
     public function register(): void
     {
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
                 'string',
@@ -45,7 +51,19 @@ class RegisterPage extends Component
 
         $validated['password'] = Hash::make($validated['password']);
 
+        DB::beginTransaction();
+
         $user = config('auth.providers.users.model')::create($validated);
+
+        $customer = Customer::create([
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+        ]);
+
+        $customer->users()->attach($user);
+        $customer->customerGroups()->attach(StorefrontSession::getCustomerGroups()->first());
+
+        DB::commit();
 
         event(new Registered($user));
 

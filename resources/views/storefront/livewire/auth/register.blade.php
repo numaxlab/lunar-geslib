@@ -5,16 +5,29 @@
 
     <form wire:submit="register" class="flex flex-col gap-6">
         <x-numaxlab-atomic::atoms.input
-                wire:model="name"
+                wire:model="first_name"
                 type="text"
-                name="name"
-                id="name"
+                name="first_name"
+                id="first_name"
                 required
                 autofocus
                 autocomplete="name"
                 :placeholder="__('Nombre')"
         >
             {{ __('Nombre') }}
+        </x-numaxlab-atomic::atoms.input>
+
+        <x-numaxlab-atomic::atoms.input
+                wire:model="last_name"
+                type="text"
+                name="last_name"
+                id="last_name"
+                required
+                autofocus
+                autocomplete="last-name"
+                :placeholder="__('Apellidos')"
+        >
+            {{ __('Apellidos') }}
         </x-numaxlab-atomic::atoms.input>
 
         <x-numaxlab-atomic::atoms.input

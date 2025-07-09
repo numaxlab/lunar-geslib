@@ -1,6 +1,6 @@
 <div class="container mx-auto px-4">
     <header class="org-site-header" x-data="{ menuExpanded: false }">
-        <a class="text-xl font-bold" href="{{ route('lunar.geslib.storefront.products.index') }}" wire:navigate>
+        <a class="text-xl font-bold" href="{{ route('lunar.geslib.storefront.homepage') }}" wire:navigate>
             {{ config('app.name') }}
         </a>
 
@@ -47,11 +47,8 @@
                 class="site-header-nav"
                 :class="{ 'block': menuExpanded }"
         >
-            <div class=""> {{-- w-full flex justify-between --}}
+            <div>
                 <ul class="site-header-main-menu">
-                    <li>
-                        <a href="{{ route('lunar.geslib.storefront.products.index') }}" wire:navigate>Productos</a>
-                    </li>
                     <li>
                         <a href="{{ route('lunar.geslib.storefront.collections.index') }}" wire:navigate>Colecciones</a>
                     </li>

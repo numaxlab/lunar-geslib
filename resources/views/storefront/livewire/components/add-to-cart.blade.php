@@ -1,6 +1,12 @@
 <div>
-    <button class="at-button is-primary w-full mt-5" wire:click.prevent="addToCart">
-        Comprar
+    <button class="at-button is-primary w-full" wire:click.prevent="addToCart">
+        @if ($displayPrice && $pricing)
+            <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+
+            {{ $pricing->price->formatted() }}
+        @else
+            Comprar
+        @endif
     </button>
 
     @if ($errors->has('quantity'))

@@ -2,17 +2,12 @@
     <footer class="org-site-footer">
         <div class="lg:w-1/3 lg:flex lg:justify-between">
             <a class="block text-xl font-bold mb-5"
-               href="{{ route('lunar.geslib.storefront.products.index') }}"
+               href="{{ route('lunar.geslib.storefront.homepage') }}"
                wire:navigate
             >
                 {{ config('app.name') }}
             </a>
             <ul class="text-sm mb-5">
-                <li>
-                    <a href="{{ route('lunar.geslib.storefront.products.index') }}" wire:navigate>
-                        Productos
-                    </a>
-                </li>
                 <li>
                     <a href="{{ route('lunar.geslib.storefront.collections.index') }}" wire:navigate>
                         Colecciones

@@ -77,7 +77,7 @@ class Install extends Command
 
         if (!Country::count()) {
             $this->components->info('Importing countries');
-            $this->call('lunar:import:address-data');
+            $this->call('lunar:geslib:import:address-data');
         }
 
         if (!Channel::whereDefault(true)->exists()) {

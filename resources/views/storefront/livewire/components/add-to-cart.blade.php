@@ -3,7 +3,7 @@
         @if ($displayPrice && $pricing)
             <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
 
-            {{ $pricing->price->formatted() }}
+            {{ $pricing->priceIncTax()->formatted() }}
         @else
             Comprar
         @endif

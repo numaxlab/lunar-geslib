@@ -66,15 +66,13 @@
             {{ __('Confirmar contraseña') }}
         </x-numaxlab-atomic::atoms.input>
 
-        <div>
-            <x-numaxlab-atomic::atoms.forms.checkbox
-                    wire:model="privacy_policy"
-                    value="1"
-                    id="privacy-policy"
-            >
-                {{ __('Acepto la política de privacidad') }}
-            </x-numaxlab-atomic::atoms.forms.checkbox>
-        </div>
+        <x-numaxlab-atomic::atoms.forms.checkbox
+                wire:model="privacy_policy"
+                value="1"
+                id="privacy-policy"
+        >
+            {{ __('Acepto la política de privacidad') }}
+        </x-numaxlab-atomic::atoms.forms.checkbox>
 
         <x-numaxlab-atomic::atoms.button type="submit" class="is-primary w-full">
             {{ __('Crear cuenta') }}

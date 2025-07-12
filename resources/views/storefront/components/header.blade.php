@@ -50,8 +50,28 @@
             <div>
                 <ul class="site-header-main-menu">
                     <li>
-                        <a href="{{ route('lunar.geslib.storefront.collections.index') }}" wire:navigate>Colecciones</a>
+                        <a href="{{ route('lunar.geslib.storefront.itineraries.index') }}" wire:navigate>
+                            Itinerarios
+                        </a>
                     </li>
+                    @if ($sectionCollections->isNotEmpty())
+                        <li>
+                            Secciones
+
+                            <ul>
+                                @foreach($sectionCollections as $collection)
+                                    <li>
+                                        <a
+                                                href="{{ route('lunar.geslib.storefront.sections.show', $collection->defaultUrl->slug) }}"
+                                                wire:navigate
+                                        >
+                                            {{ $collection->translateAttribute('name') }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </li>
+                    @endif
                 </ul>
             </div>
 

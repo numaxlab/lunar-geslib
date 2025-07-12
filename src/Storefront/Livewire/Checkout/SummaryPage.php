@@ -49,7 +49,7 @@ class SummaryPage extends Page
                 'description' => $line->purchasable->getDescription(),
                 'thumbnail' => $line->purchasable->getThumbnailUrl(),
                 'sub_total' => $line->subTotal->formatted(),
-                'unit_price' => $line->unitPrice->formatted(),
+                'unit_price' => $line->unitPriceInclTax->formatted(),
             ];
         })->toArray();
     }

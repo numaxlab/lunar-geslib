@@ -40,12 +40,12 @@ class Cart extends Component
                 'description' => $line->purchasable->getDescription(),
                 'thumbnail' => $line->purchasable->getThumbnailUrl(),
                 'sub_total' => $line->subTotal->formatted(),
-                'unit_price' => $line->unitPrice->formatted(),
+                'unit_price' => $line->unitPriceInclTax->formatted(),
             ];
         })->toArray();
     }
 
-    public function getCartProperty(): CartContract
+    public function getCartProperty(): ?CartContract
     {
         return CartSession::current();
     }

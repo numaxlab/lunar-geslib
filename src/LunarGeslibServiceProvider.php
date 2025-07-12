@@ -18,6 +18,7 @@ use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\CollectionResourceExtension;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\ManageProductCollectionsExtension;
 use NumaxLab\Lunar\Geslib\Admin\Support\FieldTypes\DateField;
 use NumaxLab\Lunar\Geslib\Console\Commands\Geslib\Import;
+use NumaxLab\Lunar\Geslib\Console\Commands\ImportAddressData;
 use NumaxLab\Lunar\Geslib\Console\Commands\Install;
 use NumaxLab\Lunar\Geslib\FieldTypes\Date;
 use NumaxLab\Lunar\Geslib\Listeners\EnrichProductFromDilveSubscriber;
@@ -84,12 +85,14 @@ class LunarGeslibServiceProvider extends ServiceProvider
             $this->commands([
                 Install::class,
                 Import::class,
+                ImportAddressData::class,
             ]);
         }
     }
 
     public function bootStorefront(): void
     {
+        Blade::componentNamespace('NumaxLab\\Lunar\\Geslib\\Storefront\\Views\\Components', 'lunar-geslib');
         Blade::anonymousComponentPath(__DIR__ . '/../resources/views/storefront/components', 'lunar-geslib');
 
         $namespace = 'NumaxLab\Lunar\Geslib\Storefront\Livewire\\';

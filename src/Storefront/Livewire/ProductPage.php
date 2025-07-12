@@ -31,7 +31,6 @@ class ProductPage extends Page
             ->currency(StorefrontSession::getCurrency())
             ->customerGroups(StorefrontSession::getCustomerGroups())
             ->get()->matched;
-        //$this->taxes->setPurchasable($this->product->variant);
     }
 
     public function render(): View

@@ -9,8 +9,8 @@
             </a>
             <ul class="text-sm mb-5">
                 <li>
-                    <a href="{{ route('lunar.geslib.storefront.collections.index') }}" wire:navigate>
-                        Colecciones
+                    <a href="{{ route('lunar.geslib.storefront.itineraries.index') }}" wire:navigate>
+                        Itinerarios
                     </a>
                 </li>
             </ul>

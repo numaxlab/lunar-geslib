@@ -60,9 +60,9 @@
 
     <a
             class="at-button is-primary mt-4"
-            href="{{ route('lunar.geslib.storefront.checkout.delivery-and-payment') }}"
+            href="{{ route('lunar.geslib.storefront.checkout.shipping-and-payment') }}"
             wire:navigate
     >
-        Tramitar pedido
+        Finalizar pedido
     </a>
 </article>

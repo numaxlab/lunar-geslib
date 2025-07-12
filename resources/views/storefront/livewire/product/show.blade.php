@@ -18,7 +18,7 @@
 
         @if ($pricing)
             <div class="mt-5 text-xl">
-                {{ $pricing->price->formatted() }}
+                {{ $pricing->priceIncTax()->formatted() }}
             </div>
         @endif
 

@@ -14,6 +14,7 @@ use NumaxLab\Lunar\Geslib\Storefront\Livewire\Auth\RegisterPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\Auth\ResetPasswordPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\Auth\VerifyEmailPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\Checkout\ShippingAndPaymentPage;
+use NumaxLab\Lunar\Geslib\Storefront\Livewire\Checkout\SuccessPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\Checkout\SummaryPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\HomePage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\ItinerariesListPage;
@@ -42,6 +43,9 @@ Route::prefix('/checkout')->group(function () {
 
     Route::get('/envio-y-pago', ShippingAndPaymentPage::class)
         ->name('lunar.geslib.storefront.checkout.shipping-and-payment');
+
+    Route::get('/finalizado', SuccessPage::class)
+        ->name('lunar.geslib.storefront.checkout.success');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

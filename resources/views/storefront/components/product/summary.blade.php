@@ -24,8 +24,8 @@
         </div>
     @endif
 
-    @livewire('numax-lab.lunar.geslib.storefront.livewire.components.add-to-cart', [
-        'purchasable' => $product->variant,
-        'displayPrice' => true,
-    ])
+    <livewire:numax-lab.lunar.geslib.storefront.livewire.components.add-to-cart
+            :key="'add-to-cart-' . $product->id"
+            :purchasable="$product->variant"
+            :display-price="true"/>
 </article>

@@ -9,6 +9,7 @@ use Lunar\Admin\Models\Staff;
 use Lunar\FieldTypes\Dropdown;
 use Lunar\FieldTypes\Number;
 use Lunar\FieldTypes\Text;
+use Lunar\FieldTypes\Toggle;
 use Lunar\Models\Attribute;
 use Lunar\Models\AttributeGroup;
 use Lunar\Models\Brand;
@@ -549,6 +550,28 @@ class Install extends Command
             'default_value' => null,
             'configuration' => [
                 'richtext' => true,
+            ],
+            'system' => false,
+            'searchable' => false,
+        ]);
+
+        Attribute::create([
+            'attribute_type' => Collection::morphName(),
+            'attribute_group_id' => $group->id,
+            'position' => 5,
+            'handle' => 'in-homepage',
+            'name' => [
+                'es' => 'Mostrar en portada',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Toggle::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => false,
             ],
             'system' => false,
             'searchable' => false,

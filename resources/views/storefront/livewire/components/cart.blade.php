@@ -2,7 +2,7 @@
         x-data="{
          linesVisible: @entangle('linesVisible').live
      }">
-    <button x-on:click="linesVisible = !linesVisible" class="relative">
+    <button x-on:click="linesVisible = !linesVisible" class="text-primary relative">
         <i class="fa-solid fa-shopping-bag" aria-hidden="true"></i>
         @if ($lines && count($lines) > 0)
             <span class="absolute bottom-0 end-0 inline-flex items-center justify-center w-4 h-4 text-xs font-medium text-white bg-primary rounded-full">

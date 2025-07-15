@@ -20,22 +20,28 @@ use NumaxLab\Lunar\Geslib\Storefront\Livewire\HomePage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\ItinerariesListPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\ItineraryPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\ProductPage;
+use NumaxLab\Lunar\Geslib\Storefront\Livewire\SearchPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\SectionPage;
 
-Route::get('/libreria', HomePage::class)
-    ->name('lunar.geslib.storefront.homepage');
+Route::prefix('/libreria')->group(function () {
+    Route::get('/', HomePage::class)
+        ->name('lunar.geslib.storefront.homepage');
 
-Route::get('/productos/{slug}', ProductPage::class)
-    ->name('lunar.geslib.storefront.products.show');
+    Route::get('/productos/{slug}', ProductPage::class)
+        ->name('lunar.geslib.storefront.products.show');
 
-Route::get('/itinerarios', ItinerariesListPage::class)
-    ->name('lunar.geslib.storefront.itineraries.index');
+    Route::get('/itinerarios', ItinerariesListPage::class)
+        ->name('lunar.geslib.storefront.itineraries.index');
 
-Route::get('/itinerarios/{slug}', ItineraryPage::class)
-    ->name('lunar.geslib.storefront.itineraries.show');
+    Route::get('/itinerarios/{slug}', ItineraryPage::class)
+        ->name('lunar.geslib.storefront.itineraries.show');
 
-Route::get('/secciones/{slug}', SectionPage::class)
-    ->name('lunar.geslib.storefront.sections.show');
+    Route::get('/secciones/{slug}', SectionPage::class)
+        ->name('lunar.geslib.storefront.sections.show');
+
+    Route::get('/buscar', SearchPage::class)
+        ->name('lunar.geslib.storefront.search');
+});
 
 Route::prefix('/checkout')->group(function () {
     Route::get('/', SummaryPage::class)

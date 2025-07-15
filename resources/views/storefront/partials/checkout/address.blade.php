@@ -6,7 +6,6 @@
 
         @if ($currentStep > $step)
             <x-numaxlab-atomic::atoms.button
-                    class="is-secondary"
                     type="button"
                     wire:click.prevent="$set('currentStep', {{ $step }})">
                 Modificar
@@ -15,16 +14,31 @@
     </x-numaxlab-atomic::organisms.tier.header>
     <form wire:submit="saveAddress('{{ $type }}')">
         @if ($type == 'shipping' && $step == $currentStep)
-            <x-numaxlab-atomic::atoms.forms.checkbox
-                    wire:model.live="shippingIsBilling"
-            >
+            <x-numaxlab-atomic::atoms.forms.checkbox wire:model.live="shippingIsBilling">
                 {{ __('Usar los mismos datos para facturación') }}
             </x-numaxlab-atomic::atoms.forms.checkbox>
         @endif
 
         @if ($currentStep >= $step)
             @if ($step == $currentStep)
-                <div class="flex flex-col gap-6">
+                <div class="flex flex-col gap-6 mt-6">
+                    @if ($customerAddresses->isNotEmpty())
+                        <x-numaxlab-atomic::atoms.select
+                                wire:model.live="{{ $type }}.customer_address_id"
+                                name="{{ $type }}.customer_address_id"
+                                id="{{ $type }}.customer_address_id"
+                                label="{{ __('Tus direcciones') }}"
+                        >
+                            <option value="">Selecciona una de tus direcciones</option>
+                            @foreach ($customerAddresses as $address)
+                                <option value="{{ $address->id }}"
+                                        wire:key="{{ $type . '-customer-address-' . $address->id }}">
+                                    {{ $address->id }}
+                                </option>
+                            @endforeach
+                        </x-numaxlab-atomic::atoms.select>
+                    @endif
+
                     <x-numaxlab-atomic::atoms.input
                             wire:model="{{ $type }}.first_name"
                             type="text"
@@ -80,6 +94,53 @@
                         {{ __('Email de contacto') }}
                     </x-numaxlab-atomic::atoms.input>
 
+                    <x-numaxlab-atomic::atoms.select
+                            wire:model.live="{{ $type }}.country_id"
+                            name="{{ $type }}.country_id"
+                            id="{{ $type }}.country_id"
+                            label="{{ __('País') }}"
+                    >
+                        <option value="">Selecciona un país</option>
+                        @foreach ($this->countries as $country)
+                            <option value="{{ $country->id }}" wire:key="{{ $type . '-country-' . $country->id }}">
+                                {{ $country->native }}
+                            </option>
+                        @endforeach
+                    </x-numaxlab-atomic::atoms.select>
+
+                    <x-numaxlab-atomic::atoms.input
+                            wire:model="{{ $type }}.state"
+                            type="text"
+                            name="{{ $type }}.state"
+                            id="{{ $type }}.state"
+                            required
+                            placeholder="{{ __('Provincia') }}"
+                    >
+                        {{ __('Provincia') }}
+                    </x-numaxlab-atomic::atoms.input>
+
+                    <x-numaxlab-atomic::atoms.input
+                            wire:model="{{ $type }}.city"
+                            type="text"
+                            name="{{ $type }}.city"
+                            id="{{ $type }}.city"
+                            required
+                            placeholder="{{ __('Ciudad') }}"
+                    >
+                        {{ __('Ciudad') }}
+                    </x-numaxlab-atomic::atoms.input>
+
+                    <x-numaxlab-atomic::atoms.input
+                            wire:model="{{ $type }}.postcode"
+                            type="text"
+                            name="{{ $type }}.postcode"
+                            id="{{ $type }}.postcode"
+                            required
+                            placeholder="{{ __('Código postal') }}"
+                    >
+                        {{ __('Código postal') }}
+                    </x-numaxlab-atomic::atoms.input>
+
                     <x-numaxlab-atomic::atoms.input
                             wire:model="{{ $type }}.line_one"
                             type="text"
@@ -101,52 +162,22 @@
                         {{ __('Línea de dirección 2') }}
                     </x-numaxlab-atomic::atoms.input>
 
-                    <x-numaxlab-atomic::atoms.input
-                            wire:model="{{ $type }}.city"
-                            type="text"
-                            name="{{ $type }}.city"
-                            id="{{ $type }}.city"
-                            required
-                            placeholder="{{ __('Ciudad') }}"
-                    >
-                        {{ __('Ciudad') }}
-                    </x-numaxlab-atomic::atoms.input>
+                    <x-numaxlab-atomic::atoms.button
+                            class="is-primary"
+                            type="submit"
+                            wire:loading.attr="disabled"
+                            wire:target="saveAddress"
+                            wire:key="{{ $type }}-submit-button">
+                        <span wire:loading.remove
+                              wire:target="saveAddress">
+                            Continuar
+                        </span>
 
-                    <x-numaxlab-atomic::atoms.input
-                            wire:model="{{ $type }}.state"
-                            type="text"
-                            name="{{ $type }}.state"
-                            id="{{ $type }}.state"
-                            required
-                            placeholder="{{ __('Provincia') }}"
-                    >
-                        {{ __('Provincia') }}
-                    </x-numaxlab-atomic::atoms.input>
-
-                    <x-numaxlab-atomic::atoms.input
-                            wire:model="{{ $type }}.postcode"
-                            type="text"
-                            name="{{ $type }}.postcode"
-                            id="{{ $type }}.postcode"
-                            required
-                            placeholder="{{ __('Código postal') }}"
-                    >
-                        {{ __('Código postal') }}
-                    </x-numaxlab-atomic::atoms.input>
-
-                    <x-numaxlab-atomic::atoms.select
-                            wire:model.live="{{ $type }}.country_id"
-                            name="{{ $type }}.country_id"
-                            id="{{ $type }}.country_id"
-                            label="{{ __('País') }}"
-                    >
-                        <option value="">Selecciona un país</option>
-                        @foreach ($this->countries as $country)
-                            <option value="{{ $country->id }}" wire:key="country_{{ $country->id }}">
-                                {{ $country->name }}
-                            </option>
-                        @endforeach
-                    </x-numaxlab-atomic::atoms.select>
+                        <span wire:loading
+                              wire:target="saveAddress">
+                            Guardando...
+                        </span>
+                    </x-numaxlab-atomic::atoms.button>
                 </div>
             @elseif($currentStep > $step)
                 <dl class="grid grid-cols-1 gap-8 text-sm sm:grid-cols-2">
@@ -154,7 +185,7 @@
                         <div class="space-y-4">
                             <div>
                                 <dt class="font-medium">
-                                    Name
+                                    Nombre
                                 </dt>
 
                                 <dd class="mt-0.5">
@@ -165,7 +196,7 @@
                             @if ($this->{$type}->company_name)
                                 <div>
                                     <dt class="font-medium">
-                                        Company
+                                        Empresa
                                     </dt>
 
                                     <dd class="mt-0.5">
@@ -177,7 +208,7 @@
                             @if ($this->{$type}->contact_phone)
                                 <div>
                                     <dt class="font-medium">
-                                        Phone Number
+                                        Teléfono
                                     </dt>
 
                                     <dd class="mt-0.5">
@@ -200,7 +231,7 @@
 
                     <div>
                         <dt class="font-medium">
-                            Address
+                            Dirección
                         </dt>
 
                         <dd class="mt-0.5">
@@ -219,27 +250,6 @@
                         </dd>
                     </div>
                 </dl>
-            @endif
-
-            @if ($step == $currentStep)
-                <x-numaxlab-atomic::atoms.button
-                        class="is-primary mt-10"
-                        type="submit"
-                        wire:key="submit_btn"
-                        wire:loading.attr="disabled"
-                        wire:target="saveAddress">
-                        <span wire:loading.remove
-                              wire:target="saveAddress">
-                            Save Address
-                        </span>
-
-                    <span wire:loading
-                          wire:target="saveAddress">
-                            <span class="inline-flex items-center">
-                                Saving
-                            </span>
-                        </span>
-                </x-numaxlab-atomic::atoms.button>
             @endif
         @endif
     </form>

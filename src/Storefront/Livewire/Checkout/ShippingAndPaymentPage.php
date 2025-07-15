@@ -5,6 +5,7 @@ namespace NumaxLab\Lunar\Geslib\Storefront\Livewire\Checkout;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Lunar\Base\PaymentTypeInterface;
 use Lunar\DataTypes\ShippingOption;
 use Lunar\Facades\CartSession;
 use Lunar\Facades\Payments;
@@ -12,6 +13,8 @@ use Lunar\Facades\ShippingManifest;
 use Lunar\Models\CartAddress;
 use Lunar\Models\Contracts\Cart;
 use Lunar\Models\Country;
+use Lunar\Models\Customer;
+use Lunar\Models\Order;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\Checkout\Forms\AddressForm;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\Page;
 
@@ -22,6 +25,8 @@ class ShippingAndPaymentPage extends Page
     public AddressForm $shipping;
 
     public AddressForm $billing;
+
+    public Collection $customerAddresses;
 
     public int $currentStep = 1;
 
@@ -50,7 +55,7 @@ class ShippingAndPaymentPage extends Page
 
     public function getCountriesProperty(): Collection
     {
-        return Country::orderBy('name')->get();
+        return Country::orderBy('native')->get();
     }
 
     public function mount(): void
@@ -76,8 +81,18 @@ class ShippingAndPaymentPage extends Page
             }
         }
 
+        $this->customerAddresses = collect();
+
         $user = Auth::user();
-        $customer = $user->latestCustomer();
+
+        if ($user) {
+            /** @var Customer $customer */
+            $customer = $user->latestCustomer();
+
+            if ($customer->addresses->isNotEmpty()) {
+                $this->customerAddresses = $customer->addresses;
+            }
+        }
 
         if ($this->cart->shippingAddress) {
             $this->shipping->fill($this->cart->shippingAddress->toArray());
@@ -212,17 +227,22 @@ class ShippingAndPaymentPage extends Page
 
     public function checkout()
     {
-        $payment = Payments::cart($this->cart)->withData([
-            'payment_intent_client_secret' => $this->payment_intent_client_secret,
-            'payment_intent' => $this->payment_intent,
-        ])->authorize();
+        /** @var PaymentTypeInterface $paymentDriver */
+        $paymentDriver = Payments::driver($this->paymentType)
+            ->cart($this->cart)
+            ->withData([
+                'payment_intent_client_secret' => $this->payment_intent_client_secret,
+                'payment_intent' => $this->payment_intent,
+            ]);
+
+        $payment = $paymentDriver->authorize();
 
         if ($payment->success) {
-            redirect()->route('lunar.geslib.storefront.checkout.success');
+            $order = Order::findOrFail($payment->orderId);
 
-            return;
+            return redirect()->route('lunar.geslib.storefront.checkout.success', $order->fingerprint);
         }
 
-        return redirect()->route('lunar.geslib.storefront.checkout.success');
+        return redirect()->route('lunar.geslib.storefront.shipping-and-payment');
     }
 }

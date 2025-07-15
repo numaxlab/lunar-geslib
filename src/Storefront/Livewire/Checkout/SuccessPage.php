@@ -4,29 +4,16 @@ namespace NumaxLab\Lunar\Geslib\Storefront\Livewire\Checkout;
 
 use Illuminate\View\View;
 use Lunar\Facades\CartSession;
-use Lunar\Models\Cart;
 use Lunar\Models\Order;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\Page;
 
 class SuccessPage extends Page
 {
-    public ?Cart $cart;
-
     public Order $order;
 
-    public function mount(): void
+    public function mount($fingerprint): void
     {
-        $this->cart = CartSession::current();
-
-        dd($this->cart);
-
-        if (!$this->cart || !$this->cart->completedOrder) {
-            $this->redirect('/');
-
-            return;
-        }
-
-        $this->order = $this->cart->completedOrder;
+        $this->order = Order::where('fingerprint', $fingerprint)->firstOrFail();
 
         CartSession::forget();
     }

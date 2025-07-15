@@ -1,6 +1,8 @@
 <article>
     <h1 class="at-heading is-1">
         ¿Cómo quieres recibir tu pedido?
+
+        {{ $cart->id }}
     </h1>
 
     @include('lunar-geslib::storefront.partials.checkout.address', [
@@ -46,7 +48,7 @@
             @endif
 
             @foreach ($cart->taxBreakdown->amounts as $tax)
-                <div class="flex flex-wrap py-4">
+                <div class="flex flex-wrap py-4" wire:key="{{ 'cart-tax-'.$tax->identifier }}">
                     <dt class="w-1/2 font-medium">
                         {{ $tax->description }}
                     </dt>

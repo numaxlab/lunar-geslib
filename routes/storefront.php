@@ -44,7 +44,7 @@ Route::prefix('/checkout')->group(function () {
     Route::get('/envio-y-pago', ShippingAndPaymentPage::class)
         ->name('lunar.geslib.storefront.checkout.shipping-and-payment');
 
-    Route::get('/finalizado', SuccessPage::class)
+    Route::get('/finalizado/{fingerprint}', SuccessPage::class)
         ->name('lunar.geslib.storefront.checkout.success');
 });
 

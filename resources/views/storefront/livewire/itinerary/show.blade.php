@@ -1,12 +1,21 @@
 <article>
     <header>
+        <nav class="ml-breadcrumb" aria-label="{{ __('Miga de pan') }}">
+            <ol>
+                <li><a href="{{ route('lunar.geslib.storefront.homepage') }}">{{ __('Librería') }}</a></li>
+                <li><a href="{{ route('lunar.geslib.storefront.itineraries.index') }}">Itinerarios</a></li>
+            </ol>
+        </nav>
+
         <h1 class="at-heading is-1">{{ $itineraryCollection->translateAttribute('name') }}</h1>
+
         @if ($itineraryCollection->translateAttribute('subtitle'))
-            <h2 class="at-heading is-3">{{ $itineraryCollection->translateAttribute('subtitle') }}</h2>
+            <h2 class="at-heading is-3 font-normal">{{ $itineraryCollection->translateAttribute('subtitle') }}</h2>
         @endif
 
         @if ($itineraryCollection->hasMedia(config('lunar.media.collection')))
-            <img src="{{ $itineraryCollection->getFirstMediaUrl(config('lunar.media.collection'), 'large') }}" alt="">
+            <img src="{{ $itineraryCollection->getFirstMediaUrl(config('lunar.media.collection'), 'large') }}" alt=""
+                 class="mt-5">
         @endif
 
         @if ($itineraryCollection->translateAttribute('description'))
@@ -22,6 +31,7 @@
                 Libros
             </h2>
         </x-numaxlab-atomic::organisms.tier.header>
+
         <ul class="grid gap-6 grid-cols-2 mb-9 md:grid-cols-4 lg:grid-cols-6">
             @foreach ($itineraryCollection->products as $product)
                 <li>

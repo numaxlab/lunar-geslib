@@ -1,65 +1,37 @@
-<div x-data="{ menuExpanded: false, searchExpanded: false }">
+<div x-data="{ menuExpanded: false, searchExpanded: {{ request()->routeIs('lunar.geslib.storefront.search') ? 'true' : 'false' }} }">
     <div class="container mx-auto px-4">
-        <header class="org-site-header">
+        <header class="org-site-header lg:gap-10">
             <a class="text-xl font-bold" href="{{ route('lunar.geslib.storefront.homepage') }}" wire:navigate>
                 {{ config('app.name') }}
             </a>
 
-            <ul class="flex gap-5 text-lg">
-                <li>
-                    @auth
-                        <a href="{{ route('dashboard') }}" wire:navigate>
-                            <i class="fa-solid fa-user" aria-hidden="true"></i>
-                            <span class="sr-only">Mi perfil</span>
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" wire:navigate>
-                            <i class="fa-solid fa-user" aria-hidden="true"></i>
-                            <span class="sr-only">Acceder</span>
-                        </a>
-                    @endauth
-                </li>
-                <li>
-                    @livewire('numax-lab.lunar.geslib.storefront.livewire.components.cart')
-                </li>
-                <li>
-                    <button class="text-primary" @click="searchExpanded = !searchExpanded">
-                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                        <span class="sr-only">Buscar</span>
-                    </button>
-                </li>
-                <li>
-                    <button
-                            class="site-header-nav-toggle text-primary"
-                            aria-label="Toggle navigation"
-                            aria-controls="site-header-nav"
-                            :aria-expanded="menuExpanded"
-                            @click="menuExpanded = !menuExpanded"
-                    >
-                        <i class="fa-solid fa-bars"
-                           :class="{ 'fa-bars': !menuExpanded, 'fa-xmark': menuExpanded }"
-                           aria-hidden="true"></i>
-                    </button>
-                </li>
-            </ul>
+            <div class="lg:hidden">
+                <x-lunar-geslib::header.actions/>
+            </div>
 
             <nav
                     id="site-header-nav"
-                    class="site-header-nav"
+                    class="site-header-nav lg:flex lg:flex-col-reverse lg:grow"
                     :class="{ 'block': menuExpanded }"
             >
-                <div>
+                <div class="lg:flex lg:w-full lg:justify-between">
                     <ul class="site-header-main-menu">
-                        <li>
-                            <a href="{{ route('lunar.geslib.storefront.itineraries.index') }}" wire:navigate>
-                                Itinerarios
-                            </a>
-                        </li>
                         @if ($sectionCollections->isNotEmpty())
-                            <li>
-                                Secciones
+                            <li x-data="collapsible">
+                                <button
+                                        @click="toggle"
+                                        aria-expanded="false"
+                                        aria-controls="sections-submenu"
+                                        class="text-primary"
+                                >
+                                    {{ __('Secciones') }}
 
-                                <ul>
+                                    <i class="collapsible-icon fa-solid fa-angle-down"
+                                       data-alt="fa-solid fa-angle-up"
+                                       aria-hidden="true"></i>
+                                </button>
+
+                                <ul id="sections-submenu" hidden class="lg:absolute lg:z-10 lg:bg-white">
                                     @foreach($sectionCollections as $collection)
                                         <li>
                                             <a
@@ -73,7 +45,17 @@
                                 </ul>
                             </li>
                         @endif
+
+                        <li>
+                            <a href="{{ route('lunar.geslib.storefront.itineraries.index') }}" wire:navigate>
+                                {{ __('Itinerarios') }}
+                            </a>
+                        </li>
                     </ul>
+
+                    <div class="hidden lg:block">
+                        <x-lunar-geslib::header.actions/>
+                    </div>
                 </div>
 
                 <ul class="mb-5">
@@ -84,6 +66,6 @@
     </div>
 
     <div class="-mt-10 mb-10 hidden" :class="{ 'hidden': !searchExpanded, 'block': searchExpanded }">
-        @livewire('numax-lab.lunar.geslib.storefront.livewire.components.search')
+        <livewire:numax-lab.lunar.geslib.storefront.livewire.components.search/>
     </div>
 </div>

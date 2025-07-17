@@ -1,19 +1,19 @@
 <article>
-    <a href="{{ $attributes->get('href') }}" wire:navigate>
+    <a href="{{ $attributes->get('href') }}" wire:navigate class="block mb-2">
         <img src="{{ $product->getFirstMediaUrl(config('lunar.media.collection'), 'medium') }}" alt=""/>
 
         <h3 class="at-heading is-4 mt-3">
             {{ $product->recordTitle }}
         </h3>
         @if ($product->translateAttribute('subtitle'))
-            <h4 class="at-heading is-5">
+            <h4 class="font-normal">
                 {{ $product->translateAttribute('subtitle') }}
             </h4>
         @endif
     </a>
 
     @if ($product->authors->isNotEmpty())
-        <div class="my-2">
+        <div class="mb-2">
             <ul>
                 @foreach ($product->authors as $author)
                     <li>

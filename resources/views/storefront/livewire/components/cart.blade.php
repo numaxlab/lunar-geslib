@@ -9,7 +9,7 @@
                 {{ count($lines) }}
             </span>
         @endif
-        <span class="sr-only">Carrito</span>
+        <span class="sr-only">{{ __('Abrir la cesta de compra') }}</span>
     </button>
 
     <div
@@ -19,11 +19,11 @@
             x-transition
             x-cloak>
 
-        <h2 class="at-heading is-3">Tu cesta</h2>
+        <h2 class="at-heading is-3">{{ __('Tu cesta') }}</h2>
 
         <button class="absolute text-primary transition-transform top-3 right-3 hover:scale-110"
                 type="button"
-                aria-label="Close"
+                aria-label="{{ __('Cerrar cesta de compra') }}"
                 x-on:click="linesVisible = false">
             <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         </button>
@@ -56,7 +56,7 @@
                                                 class="at-small text-primary"
                                                 type="button"
                                                 wire:click="removeLine('{{ $line['id'] }}')">
-                                            Eliminar
+                                            {{ __('Eliminar') }}
                                         </button>
                                     </x-slot:actions>
                                 </x-lunar-geslib::product.in-cart>
@@ -75,7 +75,7 @@
                     </ul>
                 @else
                     <p class="py-4 text-sm">
-                        Tu carrito está vacío
+                        {{ __('Tu cesta está vacía') }}
                     </p>
                 @endif
 
@@ -94,7 +94,7 @@
                 </div>
             @else
                 <p class="py-4 text-sm">
-                    Tu carrito está vacío
+                    {{ __('Tu cesta está vacía') }}
                 </p>
             @endif
         </div>
@@ -102,7 +102,7 @@
         @if ($this->cart)
             <a class="at-button is-primary" href="{{ route('lunar.geslib.storefront.checkout.summary') }}"
                wire:navigate>
-                Tramitar pedido
+                {{ __('Tramitar pedido') }}
             </a>
         @endif
     </div>

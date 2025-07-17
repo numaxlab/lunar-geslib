@@ -839,7 +839,7 @@ class Install extends Command
                 'richtext' => false,
             ],
             'system' => false,
-            'searchable' => false,
+            'searchable' => true,
         ]);
 
         Attribute::create([
@@ -883,7 +883,7 @@ class Install extends Command
                 'richtext' => false,
             ],
             'system' => false,
-            'searchable' => false,
+            'searchable' => true,
         ]);
 
         Attribute::create([
@@ -905,7 +905,7 @@ class Install extends Command
                 'richtext' => false,
             ],
             'system' => false,
-            'searchable' => false,
+            'searchable' => true,
         ]);
 
         Attribute::create([
@@ -927,7 +927,7 @@ class Install extends Command
                 'richtext' => false,
             ],
             'system' => false,
-            'searchable' => false,
+            'searchable' => true,
         ]);
 
         Attribute::create([
@@ -949,7 +949,7 @@ class Install extends Command
                 'richtext' => false,
             ],
             'system' => false,
-            'searchable' => false,
+            'searchable' => true,
         ]);
 
         Attribute::create([

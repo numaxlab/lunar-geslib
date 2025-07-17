@@ -9,9 +9,7 @@
             </a>
             <ul class="text-sm mb-5">
                 <li>
-                    <a href="{{ route('lunar.geslib.storefront.itineraries.index') }}" wire:navigate>
-                        Itinerarios
-                    </a>
+                    Menú del pié de página
                 </li>
             </ul>
         </div>

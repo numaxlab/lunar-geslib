@@ -1,5 +1,5 @@
 <div>
-    <h1 class="at-heading is-1 mb-10">Librería</h1>
+    <h1 class="at-heading is-1 mb-10">{{ __('Librería') }}</h1>
 
     @foreach ($featuredCollections as $collection)
         <x-numaxlab-atomic::organisms.tier>
@@ -33,7 +33,7 @@
                    wire:navigate
                    class="at-small"
                 >
-                    Ver máis
+                    {{ __('Ver máis') }}
                 </a>
             </x-numaxlab-atomic::organisms.tier.header>
 
@@ -54,18 +54,18 @@
         <x-numaxlab-atomic::organisms.tier>
             <x-numaxlab-atomic::organisms.tier.header>
                 <h2 class="at-heading is-2">
-                    Itinerarios
+                    {{ __('Itinerarios') }}
                 </h2>
 
-                <a {{ route('lunar.geslib.storefront.itineraries.index') }}
+                <a href="{{ route('lunar.geslib.storefront.itineraries.index') }}"
                    wire:navigate
                    class="at-small"
                 >
-                    Ver máis
+                    {{ __('Ver máis') }}
                 </a>
             </x-numaxlab-atomic::organisms.tier.header>
 
-            <ul>
+            <ul class="grid gap-6 md:grid-cols-2">
                 @foreach($itinerariesCollections as $collection)
                     <li>
                         <x-numaxlab-atomic::molecules.banner

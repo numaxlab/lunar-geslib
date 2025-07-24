@@ -5,6 +5,7 @@ namespace NumaxLab\Lunar\Geslib\Storefront\Livewire;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Lunar\Models\Product;
 
@@ -12,6 +13,21 @@ class SearchPage extends Page
 {
     #[Url]
     public ?string $q;
+
+    #[Url]
+    public ?int $ti;
+
+    #[Url]
+    public ?string $tt;
+
+    #[Url]
+    public ?int $l;
+
+    #[Url]
+    public ?string $p;
+
+    #[Url]
+    public ?int $a;
 
     public Collection $results;
 
@@ -45,8 +61,16 @@ class SearchPage extends Page
         return view('lunar-geslib::storefront.livewire.search');
     }
 
-    public function updatedQ(): void
+    #[On('search-updated')]
+    public function searchUpdated($q, $ti, $tt, $l, $p, $a): void
     {
+        $this->q = $q;
+        $this->ti = $ti;
+        $this->tt = $tt;
+        $this->l = $l;
+        $this->p = $p;
+        $this->a = $a;
+
         $this->search();
     }
 }

@@ -3,7 +3,6 @@
 namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Lunar\FieldTypes\Dropdown;
-use Lunar\FieldTypes\Number;
 use Lunar\FieldTypes\Text;
 use Lunar\Models\Brand;
 use NumaxLab\Geslib\Lines\Editorial;
@@ -12,32 +11,34 @@ class EditorialCommand extends AbstractCommand
 {
     public const BRAND_TYPE = 'editorial';
 
-    public function __invoke(Editorial $editorial): void
+    public function __construct(private readonly Editorial $editorial) {}
+
+    public function __invoke(): void
     {
-        if ($editorial->action()->isDelete()) {
-            $brand = Brand::where('attribute_data->geslib-code->value', $editorial->id())->first();
+        if ($this->editorial->action()->isDelete()) {
+            $brand = Brand::where('geslib_code', $this->editorial->id())->first();
 
             if ($brand) {
                 $brand->delete();
             }
         } else {
-            $brand = Brand::where('attribute_data->geslib-code->value', $editorial->id())->first();
+            $brand = Brand::where('geslib_code', $this->editorial->id())->first();
 
             $attributeData = [
                 'type' => new Dropdown(self::BRAND_TYPE),
-                'geslib-code' => new Number($editorial->id()),
-                'external-name' => new Text($editorial->externalName()),
-                'country' => new Text($editorial->countryId()),
+                'external-name' => new Text($this->editorial->externalName()),
+                'country' => new Text($this->editorial->countryId()),
             ];
 
             if (!$brand) {
                 Brand::create([
-                    'name' => $editorial->name(),
+                    'geslib_code' => $this->editorial->id(),
+                    'name' => $this->editorial->name(),
                     'attribute_data' => $attributeData,
                 ]);
             } else {
                 $brand->update([
-                    'name' => $editorial->name(),
+                    'name' => $this->editorial->name(),
                     'attribute_data' => $attributeData,
                 ]);
             }

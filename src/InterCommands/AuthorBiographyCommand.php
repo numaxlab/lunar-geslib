@@ -10,11 +10,13 @@ use NumaxLab\Geslib\Lines\AuthorBiography;
 
 class AuthorBiographyCommand extends AbstractCommand
 {
-    public function __invoke(AuthorBiography $authorBiography): void
+    public function __construct(private readonly AuthorBiography $authorBiography) {}
+
+    public function __invoke(): void
     {
         $group = CollectionGroup::where('handle', AuthorCommand::HANDLE)->firstOrFail();
 
-        $author = Collection::where('attribute_data->geslib-code->value', $authorBiography->authorId())
+        $author = Collection::where('geslib_code', $this->authorBiography->authorId())
             ->where('collection_group_id', $group->id)->first();
 
         if (!$author) {
@@ -23,7 +25,7 @@ class AuthorBiographyCommand extends AbstractCommand
 
         $author->update([
             'attribute_data' => array_merge($author->attribute_data->toArray(), [
-                'description' => new Text(Str::title($authorBiography->biography())),
+                'description' => new Text(Str::title($this->authorBiography->biography())),
             ]),
         ]);
     }

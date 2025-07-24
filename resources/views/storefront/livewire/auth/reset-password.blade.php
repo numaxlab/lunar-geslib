@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-6 px-100">
+<div class="flex flex-col gap-6 sm:w-sm sm:mx-auto">
     <!-- Session Status -->
     <x-lunar-geslib::auth.session-status class="text-center" :status="session('status')"/>
 

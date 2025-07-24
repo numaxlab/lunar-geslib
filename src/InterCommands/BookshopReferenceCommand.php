@@ -8,9 +8,11 @@ use NumaxLab\Geslib\Lines\BookshopReference;
 
 class BookshopReferenceCommand extends AbstractCommand
 {
-    public function __invoke(BookshopReference $bookshopReference)
+    public function __construct(private readonly BookshopReference $bookshopReference) {}
+
+    public function __invoke()
     {
-        $variant = ProductVariant::where('sku', $bookshopReference->articleId())->first();
+        $variant = ProductVariant::where('sku', $this->bookshopReference->articleId())->first();
 
         if (!$variant) {
             return;
@@ -20,7 +22,7 @@ class BookshopReferenceCommand extends AbstractCommand
 
         $product->update([
             'attribute_data' => array_merge($product->attribute_data->toArray(), [
-                'bookshop-reference' => new Text($bookshopReference->value()),
+                'bookshop-reference' => new Text($this->bookshopReference->value()),
             ]),
         ]);
     }

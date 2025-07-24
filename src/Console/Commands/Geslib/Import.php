@@ -4,6 +4,7 @@ namespace NumaxLab\Lunar\Geslib\Console\Commands\Geslib;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use NumaxLab\Lunar\Geslib\Jobs\ProcessGeslibInterFile;
@@ -15,7 +16,7 @@ class Import extends Command
 
     protected $description = 'Process Geslib INTER pending files';
 
-    public function handle(): void
+    public function handle(): int
     {
         $this->components->info('Getting all Geslib INTER files...');
 
@@ -28,8 +29,6 @@ class Import extends Command
             ->all();
 
         $lastInterFile = GeslibInterFile::orderBy('received_at', 'desc')->first();
-
-        $count = 0;
 
         foreach ($files as $file) {
             $filename = basename($file);
@@ -51,6 +50,16 @@ class Import extends Command
                 continue;
             }
 
+            $lock = Cache::lock(ProcessGeslibInterFile::CACHE_LOCK_NAME, 60 * 60 * 12); // 12 hours
+
+            if (!$lock->get()) {
+                $this->components->info(
+                    'The Geslib INTER files import worker is busy. Waiting until next execution...',
+                );
+
+                return self::SUCCESS;
+            }
+
             $interFile = new GeslibInterFile([
                 'name' => $filename,
                 'received_at' => $fileLastModified,
@@ -63,9 +72,9 @@ class Import extends Command
 
             $this->components->info(sprintf('Dispatching %s...', $filename));
 
-            $count++;
+            break;
         }
 
-        $this->components->info(sprintf('%s Geslib INTER files have been dispatched for processing.', $count));
+        return self::SUCCESS;
     }
 }

@@ -7,17 +7,18 @@ use NumaxLab\Geslib\Lines\Stock;
 
 class StockCommand extends AbstractCommand
 {
+    public function __construct(private readonly Stock $stock) {}
 
-    public function __invoke(Stock $stock): void
+    public function __invoke(): void
     {
-        $variant = ProductVariant::where('sku', $stock->articleId())->first();
+        $variant = ProductVariant::where('sku', $this->stock->articleId())->first();
 
         if (!$variant) {
             return;
         }
 
         $variant->update([
-            'stock' => $stock->quantity(),
+            'stock' => $this->stock->quantity(),
         ]);
     }
 }

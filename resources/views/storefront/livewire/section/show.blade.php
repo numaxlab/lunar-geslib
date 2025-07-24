@@ -13,8 +13,8 @@
                 <x-numaxlab-atomic::atoms.forms.input
                         type="search"
                         name="q"
-                        placeholder="Buscar"
-                        aria-label="Buscar por texto"
+                        placeholder="{{ __('Buscar en esta sección') }}"
+                        aria-label="{{ __('Buscar en esta sección') }}"
                         autocomplete="off"
                 />
                 <button type="submit" aria-label="Buscar" class="text-primary absolute inset-y-0 right-3">
@@ -22,15 +22,22 @@
                 </button>
             </div>
 
-            <div class="w-1/2">
-                <x-numaxlab-atomic::atoms.forms.select
-                        name="taxon"
-                        id="taxon"
-                        aria-label="{{ __('Filtrar por taxonomía') }}"
-                >
-                    <option value="">Todas las taxonomías</option>
-                </x-numaxlab-atomic::atoms.forms.select>
-            </div>
+            @if ($sectionCollection->children->isNotEmpty())
+                <div class="w-1/2">
+                    <x-numaxlab-atomic::atoms.forms.select
+                            name="taxon"
+                            id="taxon"
+                            aria-label="{{ __('Filtrar por taxonomía') }}"
+                    >
+                        <option value="">Todas las taxonomías</option>
+                        @foreach($sectionCollection->children as $child)
+                            <option value="{{ $child->id }}">
+                                {{ $child->translateAttribute('name') }}
+                            </option>
+                        @endforeach
+                    </x-numaxlab-atomic::atoms.forms.select>
+                </div>
+            @endif
         </form>
     </header>
 

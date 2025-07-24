@@ -49,7 +49,7 @@ class ImportAddressData extends Command
                     'name' => $country->name,
                     'iso3' => $country->iso3,
                     'iso2' => $country->iso2,
-                    'phonecode' => $country->phone_code,
+                    'phonecode' => $country->phonecode,
                     'capital' => $country->capital,
                     'currency' => $country->currency,
                     'native' => $country->native,
@@ -63,6 +63,10 @@ class ImportAddressData extends Command
                     })->filter(function ($state) {
                         if ($state->country_code === 'ES') {
                             return $state->type === 'province';
+                        }
+
+                        if ($state->state_code === null) {
+                            return false;
                         }
 
                         return true;

@@ -8,9 +8,11 @@ use NumaxLab\Geslib\Lines\EditorialReference;
 
 class EditorialReferenceCommand extends AbstractCommand
 {
-    public function __invoke(EditorialReference $editorialReference)
+    public function __construct(private readonly EditorialReference $editorialReference) {}
+
+    public function __invoke()
     {
-        $variant = ProductVariant::where('sku', $editorialReference->articleId())->first();
+        $variant = ProductVariant::where('sku', $this->editorialReference->articleId())->first();
 
         if (!$variant) {
             return;
@@ -20,7 +22,7 @@ class EditorialReferenceCommand extends AbstractCommand
 
         $product->update([
             'attribute_data' => array_merge($product->attribute_data->toArray(), [
-                'editorial-reference' => new Text($editorialReference->value()),
+                'editorial-reference' => new Text($this->editorialReference->value()),
             ]),
         ]);
     }

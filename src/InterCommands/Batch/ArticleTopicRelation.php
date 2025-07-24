@@ -19,6 +19,11 @@ class ArticleTopicRelation extends AbstractBatchCommand
         $this->byArticleCommands = $commandsGroupedByArticle;
     }
 
+    public function linesCount(): int
+    {
+        return $this->byArticleCommands->count();
+    }
+
     public function __invoke(): void
     {
         foreach ($this->byArticleCommands as $articleId => $articleCommands) {

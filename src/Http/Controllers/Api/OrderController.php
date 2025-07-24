@@ -2,58 +2,106 @@
 
 namespace NumaxLab\Lunar\Geslib\Http\Controllers\Api;
 
+use Lunar\Models\Order;
+
 class OrderController
 {
     public function indexPending()
     {
+        $orders = Order::whereIn('status', ['payment-received', 'dispatched'])
+            ->whereNotNull('placed_at')
+            ->orderBy('placed_at', 'desc')
+            ->with(['customer'])
+            ->get();
+
         $pendingOrders = [
-            'glmcpedcli' => [
-                [
-                    'n_pedido' => 103477,
-                    'cliente' => 1234,
-                ],
-                [
-                    'n_pedido' => 103478,
-                    'cliente' => null,
-                ],
-            ],
+            'glmcpedcli' => [],
         ];
+
+        foreach ($orders as $order) {
+            $pendingOrders['glmcpedcli'][] = [
+                'n_pedido' => $order->reference,
+                'cliente' => $order->customer->meta->offsetExists('geslib_id') ?
+                    $order->customer->meta->offsetGet('geslib_id') : null,
+            ];
+        }
 
         return response()->xml($pendingOrders, 200, [], 'pedidosPendientes');
     }
 
-    public function show($code)
+    public function show($reference)
     {
-        $order = [
-            'glmcpedcli' => [
-                'codigo' => $code,
-                'fecha' => '2025-06-13',
-                'hora' => '12:00:00',
+        $order = Order::where('reference', $reference)
+            ->whereNotNull('placed_at')
+            ->with([
+                'customer',
+                'shippingAddress',
+                'billingAddress',
+                'productLines',
+                'productLines.purchasable',
+            ])
+            ->first();
+
+        $response = [
+            'glmcpedcli' => [],
+        ];
+
+        if ($order) {
+            $geslibOrder = [
+                'codigo' => $order->reference,
+                'fecha' => $order->placed_at->format('Y-m-d'),
+                'hora' => $order->placed_at->format('H:i:s'),
                 'ip_origen' => '127.0.0.1',
-                'cod_cliente' => null,
-                'nombre' => 'Cliente de prueba',
-                'apellidos' => 'Apellido de prueba',
+                'cod_cliente' => $order->customer->meta->offsetExists('geslib_id') ?
+                    $order->customer->meta->offsetGet('geslib_id') : null,
+                'n_pedido' => $order->reference,
+                'cliente_web' => $order->customer->id,
+                'cliente_geslib' => $order->customer->meta->offsetExists('geslib_id') ?
+                    $order->customer->meta->offsetGet('geslib_id') : null,
+                'fecha_confirmación' => $order->placed_at->format('Y-m-d H:i:s'),
+                'gastos_envio' => $order->shipping_total,
+                'gastos_contrareembolso' => 0,
+                'observaciones' => $order->notes,
+                'importe_total' => $order->total,
+                'nombre' => null,
+                'apellidos' => null,
                 'cif' => null,
-                'direccion' => 'Calle de prueba, 123',
-                'email' => 'email@prueba.com',
-                'provincia' => 'A Coruña',
-                'localidad' => 'Santiago de Compostela',
-                'codigo_postal' => '15701',
-                'pais' => 'España',
-                'telefono' => '123456789',
+                'direccion' => null,
+                'email' => null,
+                'provincia' => null,
+                'localidad' => null,
+                'codigo_postal' => null,
+                'pais' => null,
+                'telefono' => null,
                 'fax' => null,
-                'nombre_fac' => 'Nombre de Facturación',
-                'cif_fac' => 'CIF12345678',
-                'direccion_fac' => 'Calle de Facturación, 456',
-                'email_fac' => 'email@prueba.com',
-                'provincia_fac' => 'A Coruña',
-                'localidad_fac' => 'Santiago de Compostela',
-                'codigo_postal_fac' => '15701',
-                'pais_fac' => 'España',
-                'telefono_fac' => '987654321',
+                'calle' => null,
+                'num_exterior' => null,
+                'num_interior' => null,
+                'entre_calle1' => null,
+                'entre_calle2' => null,
+                'colonia' => null,
+                'tlf_oficina' => null,
+                'tlf_movil' => null,
+                'movil' => null,
+                'enviar_factura' => false,
+                'nombre_fac' => null,
+                'cif_fac' => null,
+                'direccion_fac' => null,
+                'email_fac' => null,
+                'provincia_fac' => null,
+                'localidad_fac' => null,
+                'codigo_postal_fac' => null,
+                'pais_fac' => null,
+                'telefono_fac' => null,
                 'fax_fac' => null,
+                'calle_fac' => null,
+                'num_exterior_fac' => null,
+                'num_interior_fac' => null,
+                'entre_calle1_fac' => null,
+                'entre_calle2_fac' => null,
+                'colonia_fac' => null,
+                'movil_fac' => null,
                 'envolver' => null,
-                'enviar_factura' => null,
                 'cod_zona_envio' => 11,
                 'zona_envio' => 'España (península)',
                 'cod_forma_pago' => 4,
@@ -67,9 +115,7 @@ class OrderController
                 'tipo_tarjeta' => null,
                 'mes_tarjeta' => null,
                 'anio_tarjeta' => null,
-                'observaciones' => null,
                 'plazo_entrega' => null,
-                'gastos_envio' => 0,
                 'observaciones_gastos_envio' => null,
                 'estado' => 'C',
                 'sincronizado' => 'N',
@@ -91,22 +137,7 @@ class OrderController
                 'puntos' => 0,
                 'ebook_ref_pedido' => null,
                 'mensaje_regalo' => null,
-                'fecha_confirmación' => '2025-06-13 12:00:00',
-                'calle' => null,
-                'num_exterior' => null,
-                'num_interior' => null,
-                'entre_calle1' => null,
-                'entre_calle2' => null,
-                'colonia' => null,
-                'tlf_oficina' => null,
-                'tlf_movil' => null,
                 'horario_entrega' => null,
-                'calle_fac' => null,
-                'num_exterior_fac' => null,
-                'num_interior_fac' => null,
-                'entre_calle1_fac' => null,
-                'entre_calle2_fac' => null,
-                'colonia_fac' => null,
                 'num_modificaciones' => 1,
                 'paypal_transaction_id' => null,
                 'cfdi' => null,
@@ -119,22 +150,102 @@ class OrderController
                 'recibo' => null,
                 'fac_papel' => null,
                 'fac_electronica' => null,
-                'movil' => null,
-                'movil_fac' => null,
                 'login' => null,
                 'password' => null,
-                'n_pedido' => $code,
-                'cliente_web' => 12345,
-                'cliente_geslib' => null,
-                'gastos_contrareembolso' => 0,
-                'importe_total' => 3800,
-            ],
-        ];
+            ];
 
-        return response()->xml($order, 200, [], 'getPedido');
+            if ($order->shippingAddress) {
+                $geslibOrder = array_merge($response['glmcpedcli'], [
+                    'nombre' => null,
+                    'apellidos' => null,
+                    'cif' => null,
+                    'direccion' => null,
+                    'email' => null,
+                    'provincia' => null,
+                    'localidad' => null,
+                    'codigo_postal' => null,
+                    'pais' => null,
+                    'telefono' => null,
+                    'fax' => null,
+                    'calle' => null,
+                    'num_exterior' => null,
+                    'num_interior' => null,
+                    'entre_calle1' => null,
+                    'entre_calle2' => null,
+                    'colonia' => null,
+                    'tlf_oficina' => null,
+                    'tlf_movil' => null,
+                    'movil' => null,
+                ]);
+            }
+
+            if ($order->billingAddress) {
+                $geslibOrder = array_merge($response['glmcpedcli'], [
+                    'enviar_factura' => true,
+                    'nombre_fac' => null,
+                    'cif_fac' => null,
+                    'direccion_fac' => null,
+                    'email_fac' => null,
+                    'provincia_fac' => null,
+                    'localidad_fac' => null,
+                    'codigo_postal_fac' => null,
+                    'pais_fac' => null,
+                    'telefono_fac' => null,
+                    'fax_fac' => null,
+                    'calle_fac' => null,
+                    'num_exterior_fac' => null,
+                    'num_interior_fac' => null,
+                    'entre_calle1_fac' => null,
+                    'entre_calle2_fac' => null,
+                    'colonia_fac' => null,
+                    'movil_fac' => null,
+                ]);
+            }
+
+            $response['glmcpedcli'][] = $geslibOrder;
+
+            foreach ($order->productLines as $line) {
+                $response['glmcpedcli'][] = [
+                    'cod_linea' => $line->id,
+                    'cod_pedido' => $order->reference,
+                    'articulo' => $line->purchasable->translateAttribute('geslib-code'),
+                    'tipo_articulo' => null,
+                    'orden' => null,
+                    'cantidad' => $line->quantity,
+                    'precio' => null,
+                    'descripcion' => $line->purchasable->getDescription(),
+                    'isbn' => $line->purchasable->gtin,
+                    'ean' => $line->purchasable->ean,
+                    'respetar_precio' => 'S',
+                    'descuento' => null,
+                    'ebook_codigo' => null,
+                    'cod_distribuidora' => null,
+                    'ebook_formato' => null,
+                    'link_portada' => null,
+                    'cod_seguridad' => null,
+                    'estado_descarga' => null,
+                    'link_descarga' => null,
+                    'num_pedido_distribuidora' => null,
+                    'cancelado' => null,
+                    'num_ficheros' => null,
+                    'precio_bruto_original' => null,
+                    'cupon' => null,
+                    'descuento_cupon' => null,
+                    'disponibilidad' => null,
+                    'dispo_distri' => null,
+                    'ebook_drm' => null,
+                    'disponibilidad_web' => null,
+                    'precio_euros' => null,
+                    'pvp_euros' => null,
+                    'pvp_brutos' => null,
+                ];
+            }
+        }
+
+        return response()->xml($response, 200, [], 'getPedido');
     }
 
-    public function sync($code)
+    public function sync($reference)
     {
         $order = [];
 

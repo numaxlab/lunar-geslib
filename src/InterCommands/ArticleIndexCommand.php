@@ -8,9 +8,11 @@ use NumaxLab\Geslib\Lines\ArticleIndex;
 
 class ArticleIndexCommand extends AbstractCommand
 {
-    public function __invoke(ArticleIndex $articleIndex)
+    public function __construct(private readonly ArticleIndex $articleIndex) {}
+
+    public function __invoke()
     {
-        $variant = ProductVariant::where('sku', $articleIndex->articleId())->first();
+        $variant = ProductVariant::where('sku', $this->articleIndex->articleId())->first();
 
         if (!$variant) {
             return;
@@ -20,7 +22,7 @@ class ArticleIndexCommand extends AbstractCommand
 
         $product->update([
             'attribute_data' => array_merge($product->attribute_data->toArray(), [
-                'index' => new Text($articleIndex->value()),
+                'index' => new Text($this->articleIndex->value()),
             ]),
         ]);
     }

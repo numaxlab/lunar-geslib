@@ -1,9 +1,9 @@
-<section class="flex flex-col gap-6">
+<section class="flex flex-col gap-6 lg:w-4xl lg:mx-auto">
     <h1 class="at-heading is-1">{{ __('Regístrate') }}</h1>
 
     <x-lunar-geslib::auth.session-status class="text-center" :status="session('status')"/>
 
-    <form wire:submit="register" class="flex flex-col gap-6">
+    <form wire:submit="register" class="grid grid-cols-1 gap-6 md:grid-cols-2">
         <x-numaxlab-atomic::atoms.input
                 wire:model="first_name"
                 type="text"
@@ -30,17 +30,19 @@
             {{ __('Apellidos') }}
         </x-numaxlab-atomic::atoms.input>
 
-        <x-numaxlab-atomic::atoms.input
-                wire:model="email"
-                type="email"
-                name="email"
-                id="email"
-                placeholder="email@ejemplo.com"
-                required
-                autocomplete="email"
-        >
-            {{ __('Correo electrónico') }}
-        </x-numaxlab-atomic::atoms.input>
+        <div class="md:col-span-2">
+            <x-numaxlab-atomic::atoms.input
+                    wire:model="email"
+                    type="email"
+                    name="email"
+                    id="email"
+                    placeholder="email@ejemplo.com"
+                    required
+                    autocomplete="email"
+            >
+                {{ __('Correo electrónico') }}
+            </x-numaxlab-atomic::atoms.input>
+        </div>
 
         <x-numaxlab-atomic::atoms.input
                 wire:model="password"
@@ -66,19 +68,22 @@
             {{ __('Confirmar contraseña') }}
         </x-numaxlab-atomic::atoms.input>
 
-        <x-numaxlab-atomic::atoms.forms.checkbox
-                wire:model="privacy_policy"
-                value="1"
-                id="privacy-policy"
-        >
-            {{ __('Acepto la política de privacidad') }}
-        </x-numaxlab-atomic::atoms.forms.checkbox>
+        <div class="md:col-span-2">
+            <x-numaxlab-atomic::atoms.forms.checkbox
+                    wire:model="privacy_policy"
+                    value="1"
+                    id="privacy-policy"
+                    class="md:col-span-2"
+            >
+                {{ __('Acepto la política de privacidad') }}
+            </x-numaxlab-atomic::atoms.forms.checkbox>
+        </div>
 
-        <x-numaxlab-atomic::atoms.button type="submit" class="is-primary w-full">
+        <x-numaxlab-atomic::atoms.button type="submit" class="is-primary w-full md:col-span-2">
             {{ __('Crear cuenta') }}
         </x-numaxlab-atomic::atoms.button>
 
-        <p>
+        <p class="md:col-span-2">
             {{ __('Volver a') }}
             <a href="{{ route('login') }}" wire:navigate>{{ __('iniciar sesión') }}</a>.
         </p>

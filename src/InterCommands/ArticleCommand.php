@@ -20,12 +20,12 @@ class ArticleCommand extends AbstractCommand
     public const PRODUCT_TYPE_ID = 1;
     public const DEFAULT_STATUS = 'published';
 
-    public function __construct(private readonly bool $isEbook = false) {}
+    public function __construct(private readonly Article $article, private readonly bool $isEbook = false) {}
 
-    public function __invoke(Article $article): void
+    public function __invoke(): void
     {
-        if ($article->action()->isDelete()) {
-            $variant = ProductVariant::where('sku', $article->id())->first();
+        if ($this->article->action()->isDelete()) {
+            $variant = ProductVariant::where('sku', $this->article->id())->first();
 
             if ($variant) {
                 $variant->product->delete();
@@ -35,39 +35,38 @@ class ArticleCommand extends AbstractCommand
             return;
         }
 
-        $variant = ProductVariant::where('sku', $article->id())->first();
+        $variant = ProductVariant::where('sku', $this->article->id())->first();
 
         $languageCollectionGroup = CollectionGroup::where('handle', LanguageCommand::HANDLE)->firstOrFail();
 
-        $originalLanguageCollection = Collection::where(
-            'attribute_data->geslib-code->value',
-            $article->originalLanguageId(),
-        )->where('collection_group_id', $languageCollectionGroup->id)->first();
+        $originalLanguageCollection = Collection::where('geslib_code', $this->article->originalLanguageId())
+            ->where('collection_group_id', $languageCollectionGroup->id)
+            ->first();
 
         $productAttributeData = [
             // book-main group
-            'name' => new Text($article->title()),
-            'subtitle' => new Text($article->subtitle()),
-            'created-at' => new Date($article->createdAt()?->format('Y-m-d')),
-            'novelty-date' => new Date($article->noveltyDate()?->format('Y-m-d')),
+            'name' => new Text($this->article->title()),
+            'subtitle' => new Text($this->article->subtitle()),
+            'created-at' => new Date($this->article->createdAt()?->format('Y-m-d')),
+            'novelty-date' => new Date($this->article->noveltyDate()?->format('Y-m-d')),
             // bibliographic-data group
-            'issue-date' => new Date($article->edition()?->date()?->format('Y-m-d')),
-            'first-issue-year' => new Number($article->firstEditionYear()),
-            'edition-number' => new Number($article->edition()?->number()),
-            'reissue-date' => new Date($article->edition()?->reEditionDate()?->format('Y-m-d')),
-            'last-issue-year' => new Number($article->lastEditionYear()),
-            'edition-origin' => new Text($article->edition()?->editorial()),
-            'original-title' => new Text($article->originalTitle()),
+            'issue-date' => new Date($this->article->edition()?->date()?->format('Y-m-d')),
+            'first-issue-year' => new Number($this->article->firstEditionYear()),
+            'edition-number' => new Number($this->article->edition()?->number()),
+            'reissue-date' => new Date($this->article->edition()?->reEditionDate()?->format('Y-m-d')),
+            'last-issue-year' => new Number($this->article->lastEditionYear()),
+            'edition-origin' => new Text($this->article->edition()?->editorial()),
+            'original-title' => new Text($this->article->originalTitle()),
             'original-language' => new Text(
                 $originalLanguageCollection ?
                     $originalLanguageCollection->attribute_data->get('name')->getValue() :
                     null,
             ),
-            'pages' => new Number($article->pagesQty()),
-            'illustrations-quantity' => new Number($article->illustrationsQty()),
+            'pages' => new Number($this->article->pagesQty()),
+            'illustrations-quantity' => new Number($this->article->illustrationsQty()),
         ];
 
-        $brand = Brand::where('attribute_data->geslib-code->value', $article->editorialId())->first();
+        $brand = Brand::where('geslib_code', $this->article->editorialId())->first();
 
         if (!$variant) {
             $product = Product::create([
@@ -79,32 +78,32 @@ class ArticleCommand extends AbstractCommand
 
             $variant = ProductVariant::create([
                 'product_id' => $product->id,
-                'tax_class_id' => config('lunar.geslib.product_types_taxation.' . $article->typeId(), 1),
-                'tax_ref' => $article->taxes(),
-                'sku' => $article->id(),
-                'gtin' => $article->isbn(),
-                'ean' => $article->ean(),
-                'width_value' => $article->width(),
+                'tax_class_id' => config('lunar.geslib.product_types_taxation.' . $this->article->typeId(), 1),
+                'tax_ref' => $this->article->taxes(),
+                'sku' => $this->article->id(),
+                'gtin' => $this->article->isbn(),
+                'ean' => $this->article->ean(),
+                'width_value' => $this->article->width(),
                 'width_unit' => config('lunar.geslib.measurements.width_unit', 'mm'),
-                'height_value' => $article->height(),
+                'height_value' => $this->article->height(),
                 'height_unit' => config('lunar.geslib.measurements.height_unit', 'mm'),
-                'weight_value' => $article->weight(),
+                'weight_value' => $this->article->weight(),
                 'weight_unit' => config('lunar.geslib.measurements.weight_unit', 'g'),
                 'shippable' => !$this->isEbook,
-                'stock' => $article->stock() ?? 0,
+                'stock' => $this->article->stock() ?? 0,
                 'unit_quantity' => 1,
                 'min_quantity' => 1,
                 'quantity_increment' => 1,
                 'backorder' => 0,
                 'purchasable' => in_array(
-                    $article->statusId(),
+                    $this->article->statusId(),
                     config('lunar.geslib.not_purchasable_statuses', []),
                 ) ? 'in_stock' : 'always',
             ]);
 
             $variant->prices()->create([
-                'price' => $article->priceWithoutTaxes(),
-                'compare_price' => $article->referencePrice(),
+                'price' => $this->article->priceWithoutTaxes(),
+                'compare_price' => $this->article->referencePrice(),
                 'currency_id' => config('lunar.geslib.currency_id', 1),
                 'min_quantity' => 1,
                 'customer_group_id' => null,
@@ -120,19 +119,19 @@ class ArticleCommand extends AbstractCommand
             ]);
 
             $variant->update([
-                'tax_class_id' => config('lunar.geslib.product_types_taxation.' . $article->typeId(), 1),
-                'tax_ref' => $article->taxes(),
-                'gtin' => $article->isbn(),
-                'ean' => $article->ean(),
-                'width_value' => $article->width(),
-                'height_value' => $article->height(),
-                'weight_value' => $article->weight(),
-                'stock' => $article->stock() ?? 0,
+                'tax_class_id' => config('lunar.geslib.product_types_taxation.' . $this->article->typeId(), 1),
+                'tax_ref' => $this->article->taxes(),
+                'gtin' => $this->article->isbn(),
+                'ean' => $this->article->ean(),
+                'width_value' => $this->article->width(),
+                'height_value' => $this->article->height(),
+                'weight_value' => $this->article->weight(),
+                'stock' => $this->article->stock() ?? 0,
             ]);
 
             $variant->prices()->first()->update([
-                'price' => $article->priceWithoutTaxes(),
-                'compare_price' => $article->referencePrice(),
+                'price' => $this->article->priceWithoutTaxes(),
+                'compare_price' => $this->article->referencePrice(),
             ]);
 
             GeslibArticleUpdated::dispatch($variant);
@@ -140,20 +139,20 @@ class ArticleCommand extends AbstractCommand
 
         // Product type collection
         $group = CollectionGroup::where('handle', TypeCommand::HANDLE)->firstOrFail();
-        $statusCollection = Collection::where('attribute_data->geslib-code->value', $article->typeId())
+        $statusCollection = Collection::where('geslib_code', $this->article->typeId())
             ->where('collection_group_id', $group->id)->get();
 
         (new CollectionGroupSync($product, $group->id, $statusCollection))->handle();
 
         // Status collection
         $group = CollectionGroup::where('handle', TypeCommand::HANDLE)->firstOrFail();
-        $statusCollection = Collection::where('attribute_data->geslib-code->value', $article->statusId())
+        $statusCollection = Collection::where('geslib_code', $this->article->statusId())
             ->where('collection_group_id', $group->id)->get();
 
         (new CollectionGroupSync($product, $group->id, $statusCollection))->handle();
 
         // Language collection
-        $languageCollection = Collection::where('attribute_data->geslib-code->value', $article->languageId())
+        $languageCollection = Collection::where('geslib_code', $this->article->languageId())
             ->where('collection_group_id', $languageCollectionGroup->id)->get();
 
         (new CollectionGroupSync($product, $languageCollectionGroup->id, $languageCollection))->handle();

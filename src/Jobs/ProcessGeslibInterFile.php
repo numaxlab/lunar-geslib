@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use NumaxLab\Geslib\GeslibFile;
 use NumaxLab\Geslib\Lines\Article;
@@ -69,32 +70,29 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
 {
     use Queueable;
 
-    public $tries = 2;
+    public const CACHE_LOCK_NAME = 'geslib-inter-files';
 
-    public $uniqueFor = 3600;
+    public $tries = 1;
+
+    public $uniqueFor = 900; // 15 minutes
 
     public function __construct(
-        public GeslibInterFile $geslibInterFile,
+        protected GeslibInterFile $geslibInterFile,
+        protected int $startLine = 0,
+        protected int $chunkSize = 1000,
     ) {
         $this->onQueue('geslib-inter-files');
     }
 
     public function uniqueId(): string
     {
-        return $this->geslibInterFile->id;
+        return $this->geslibInterFile->id . '-' . $this->startLine . '-' . $this->chunkSize;
     }
 
     public function handle(): void
     {
-        $this->geslibInterFile->update([
-            'status' => GeslibInterFile::STATUS_PROCESSING,
-            'started_at' => Carbon::now(),
-        ]);
-
-        $zip = new ZipArchive();
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
-        $zipFilePath = $storage->path(config('lunar.geslib.inter_files_path') . '/' . $this->geslibInterFile->name);
         $extractedFilePath = config('lunar.geslib.inter_files_path') . '/' . str_replace(
                 '.zip',
                 '',
@@ -102,6 +100,10 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
             );
 
         if (!$storage->exists($extractedFilePath)) {
+            $zip = new ZipArchive();
+
+            $zipFilePath = $storage->path(config('lunar.geslib.inter_files_path') . '/' . $this->geslibInterFile->name);
+
             if ($zip->open($zipFilePath) === true) {
                 $zip->extractTo($storage->path(config('lunar.geslib.inter_files_path')));
 
@@ -113,58 +115,70 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
 
         $geslibFile = GeslibFile::parse($storage->get($extractedFilePath));
 
-        $this->geslibInterFile->update([
-            'total_lines' => count($geslibFile->lines()),
-        ]);
+        if ($this->geslibInterFile->status === GeslibInterFile::STATUS_PENDING) {
+            $this->geslibInterFile->update([
+                'status' => GeslibInterFile::STATUS_PROCESSING,
+                'started_at' => Carbon::now(),
+                'total_lines' => count($geslibFile->lines()),
+            ]);
+        }
 
-        $log = [];
+        $fileFinished = false;
+        $endLine = $this->startLine + $this->chunkSize;
+        if ($endLine > count($geslibFile->lines())) {
+            $fileFinished = true;
+            $endLine = count($geslibFile->lines());
+        }
+
+        $log = is_array($this->geslibInterFile->log) ? $this->geslibInterFile->log : [];
 
         $batchCommands = collect();
 
-        foreach ($geslibFile->lines() as $key => $line) {
+        for ($i = $this->startLine; $i < $endLine; $i++) {
+            $line = $geslibFile->lines()[$i];
             $command = null;
 
             match ($line->getCode()) {
-                Editorial::CODE => $command = new EditorialCommand(),
-                RecordLabel::CODE => $command = new RecordLabelCommand(),
+                Editorial::CODE => $command = new EditorialCommand($line),
+                RecordLabel::CODE => $command = new RecordLabelCommand($line),
                 '1P' => null,
-                PressPublication::CODE => $command = new PressPublicationCommand(),
-                Collection::CODE => $command = new CollectionCommand(),
-                Topic::CODE => $command = new TopicCommand(),
-                Article::CODE => $command = new ArticleCommand(),
-                EBook::CODE => $command = new ArticleCommand(true),
+                PressPublication::CODE => $command = new PressPublicationCommand($line),
+                Collection::CODE => $command = new CollectionCommand($line),
+                Topic::CODE => $command = new TopicCommand($line),
+                Article::CODE => $command = new ArticleCommand($line),
+                EBook::CODE => $command = new ArticleCommand($line, true),
                 EbookInfo::CODE => null,
-                ArticleTopic::CODE => $command = new ArticleTopicCommand(),
-                Ibic::CODE => $command = new IbicCommand(),
-                BookshopReference::CODE => $command = new BookshopReferenceCommand(),
-                EditorialReference::CODE => $command = new EditorialReferenceCommand(),
-                ArticleIndex::CODE => $command = new ArticleIndexCommand(),
+                ArticleTopic::CODE => $command = new ArticleTopicCommand($line),
+                Ibic::CODE => $command = new IbicCommand($line),
+                BookshopReference::CODE => $command = new BookshopReferenceCommand($line),
+                EditorialReference::CODE => $command = new EditorialReferenceCommand($line),
+                ArticleIndex::CODE => $command = new ArticleIndexCommand($line),
                 BookshopReferenceTranslation::CODE => null,
                 EditorialReferenceTranslation::CODE => null,
                 ArticleIndexTranslation::CODE => null,
-                ArticleAuthor::CODE => $command = new ArticleAuthorCommand(),
-                BindingType::CODE => $command = new BindingTypeCommand(),
-                Language::CODE => $command = new LanguageCommand(),
+                ArticleAuthor::CODE => $command = new ArticleAuthorCommand($line),
+                BindingType::CODE => $command = new BindingTypeCommand($line),
+                Language::CODE => $command = new LanguageCommand($line),
                 Preposition::CODE => null,
-                Stock::CODE => $command = new StockCommand(),
+                Stock::CODE => $command = new StockCommand($line),
                 'B2' => null,
-                Status::CODE => $command = new StatusCommand(),
+                Status::CODE => $command = new StatusCommand($line),
                 'CLI' => null,
-                Author::CODE => $command = new AuthorCommand(),
+                Author::CODE => $command = new AuthorCommand($line),
                 'IPC' => null,
                 'P' => null,
                 'PROCEN' => null,
                 'PC' => null,
                 'VTA' => null,
                 Country::CODE => null,
-                'CLOTE' => null, // TODO: Implement CLOTE command
-                'LLOTE' => null, // TODO: Implement LLOTE command
-                Type::CODE => $command = new TypeCommand(),
-                Classification::CODE => $command = new ClassificationCommand(),
+                'CLOTE' => null,
+                'LLOTE' => null,
+                Type::CODE => $command = new TypeCommand($line),
+                Classification::CODE => $command = new ClassificationCommand($line),
                 'ATRA' => null,
                 'CA' => null,
-                'CLOTCLI' => null, // TODO: Implement CLOTCLI command
-                'LLOTCLI' => null, // TODO: Implement LLOTCLI command
+                'CLOTCLI' => null,
+                'LLOTCLI' => null,
                 'PROFES' => null,
                 Province::CODE => null,
                 'CAGRDTV' => null,
@@ -172,7 +186,7 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
                 'CLIDTO' => null,
                 'CDG' => null,
                 'LDG' => null,
-                AuthorBiography::CODE => $command = new AuthorBiographyCommand(),
+                AuthorBiography::CODE => $command = new AuthorBiographyCommand($line),
                 'EMBALA' => null,
                 'PACK' => null,
                 'TRACKS' => null,
@@ -188,18 +202,16 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
             };
 
             if ($command !== null) {
-                $command($line);
+                $command();
 
                 if ($command->isBatch()) {
                     $batchCommands->push($command);
                 }
 
-                $log = array_merge($log, $command->getLog());
+                if (count($command->getLog()) > 0) {
+                    $log[] = $command->getLog();
+                }
             }
-
-            $this->geslibInterFile->update([
-                'processed_lines' => $key + 1,
-            ]);
         }
 
         foreach ($batchCommands->groupBy('type') as $lineType => $commands) {
@@ -217,16 +229,37 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
 
             $batchCommand();
 
-            $log = array_merge($log, $batchCommand->getLog());
+            if (count($batchCommand->getLog()) > 0) {
+                $log[] = $batchCommand->getLog();
+            }
         }
 
+        $log[] = [
+            'level' => CommandContract::LEVEL_INFO,
+            'message' => sprintf(
+                'Processed lines %s to %s',
+                $this->startLine + 1,
+                $endLine,
+            ),
+        ];
+
         $this->geslibInterFile->update([
-            'status' => $this->getStatusFromLog($log),
-            'finished_at' => Carbon::now(),
+            'processed_lines' => $endLine,
             'log' => $log,
         ]);
 
-        $storage->delete($extractedFilePath);
+        if (!$fileFinished) {
+            self::dispatch($this->geslibInterFile, $endLine, $this->chunkSize);
+        } else {
+            Cache::lock(self::CACHE_LOCK_NAME)->forceRelease();
+
+            $this->geslibInterFile->update([
+                'status' => $this->getStatusFromLog($this->geslibInterFile->log),
+                'finished_at' => Carbon::now(),
+            ]);
+
+            $storage->delete($extractedFilePath);
+        }
     }
 
     private function getStatusFromLog(array $log): string
@@ -245,11 +278,16 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
 
     public function failed(Throwable $exception): void
     {
+        Cache::lock(self::CACHE_LOCK_NAME)->forceRelease();
+
         $this->geslibInterFile->update([
             'status' => GeslibInterFile::STATUS_FAILED,
-            'log' => [
-                'error' => $exception->getMessage(),
-            ],
+            'log' => array_merge($this->geslibInterFile->log, [
+                [
+                    'level' => CommandContract::LEVEL_ERROR,
+                    'message' => $exception->getMessage(),
+                ],
+            ]),
             'finished_at' => Carbon::now(),
         ]);
 

@@ -66,7 +66,7 @@ class CollectionResourceExtension extends ResourceExtension
             'description',
             'in-homepage',
         ],
-        Handle::COLLECTION_GROUP_SECTIONS => [
+        Handle::COLLECTION_GROUP_TAXONOMIES => [
             'geslib-code',
             'subtitle',
             'description',

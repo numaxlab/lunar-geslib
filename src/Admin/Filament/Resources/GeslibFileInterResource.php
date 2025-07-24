@@ -2,7 +2,6 @@
 
 namespace NumaxLab\Lunar\Geslib\Admin\Filament\Resources;
 
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Resources\Resource;
@@ -30,22 +29,7 @@ class GeslibFileInterResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Filename')
-                    ->disabled(),
-                Forms\Components\TextInput::make('status')
-                    ->disabled(),
-                Forms\Components\Textarea::make('notes')
-                    ->columnSpanFull()
-                    ->disabled(),
-                Forms\Components\DateTimePicker::make('created_at')
-                    ->label('Imported At')
-                    ->disabled(),
-                Forms\Components\DateTimePicker::make('updated_at')
-                    ->label('Processed At')
-                    ->disabled(),
-            ]);
+            ->schema([]);
     }
 
     public static function table(Table $table): Table
@@ -70,9 +54,9 @@ class GeslibFileInterResource extends Resource
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('progress'),
-                Tables\Columns\TextColumn::make('log')
+                /*Tables\Columns\TextColumn::make('log')
                     ->limit(50)
-                    ->tooltip(fn($record) => $record->log),
+                    ->tooltip(fn($record) => json_encode($record->log)),*/
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -81,6 +65,10 @@ class GeslibFileInterResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->label('Started at'),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->label('Last updated at'),
                 Tables\Columns\TextColumn::make('finished_at')
                     ->dateTime()
                     ->sortable()

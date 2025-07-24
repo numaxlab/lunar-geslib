@@ -6,17 +6,68 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
+use Lunar\Facades\StorefrontSession;
+use Lunar\Models\Collection as LunarCollection;
 use Lunar\Models\Product;
+use NumaxLab\Lunar\Geslib\Handle;
+use NumaxLab\Lunar\Geslib\InterCommands\LanguageCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
 
 class Search extends Component
 {
-    public string $query = '';
+    public array $priceRanges = [
+        '0-10',
+        '10-20',
+        '20-30',
+        '30-40',
+        '40-50',
+        '50-1000',
+    ];
+
+    public ?string $query;
+
+    public ?string $taxonQuery;
+
+    public $taxonId;
+
+    public $taxonType;
+
+    public $languageId;
+
+    public $priceRange;
+
+    public $availabilityId;
 
     public Collection $results;
 
-    public function mount()
+    public Collection $taxonomies;
+
+    public Collection $languages;
+
+    public Collection $statuses;
+
+    public string $currentRouteName;
+
+    public function mount(): void
     {
         $this->results = collect();
+        $this->taxonomies = collect();
+        $this->languages = LunarCollection::whereHas('group', function ($query) {
+            $query->where('handle', LanguageCommand::HANDLE);
+        })->channel(StorefrontSession::getChannel())
+            ->customerGroup(StorefrontSession::getCustomerGroups())
+            ->get();
+        $this->statuses = LunarCollection::whereHas('group', function ($query) {
+            $query->where('handle', StatusCommand::HANDLE);
+        })->channel(StorefrontSession::getChannel())
+            ->customerGroup(StorefrontSession::getCustomerGroups())
+            ->get();
+
+        if (request()->has('q')) {
+            $this->query = request()->input('q');
+        }
+
+        $this->currentRouteName = request()->route()->getName();
     }
 
     public function render(): View
@@ -31,17 +82,14 @@ class Search extends Component
             return;
         }
 
-        $this->results = Product::search($this->query)
-            ->query(fn(Builder $query) => $query->with([
-                'variant',
-                'variant.taxClass',
-                'defaultUrl',
-                'urls',
-                'thumbnail',
-                'authors',
-                'prices',
-            ]))
-            ->get();
+        if ($this->currentRouteName !== 'lunar.geslib.storefront.search') {
+            $this->results = Product::search($this->query)
+                ->query(fn(Builder $query) => $query->with([
+                    'defaultUrl',
+                    'urls',
+                    'authors',
+                ]))->get();
+        }
     }
 
     public function search(): void
@@ -50,6 +98,48 @@ class Search extends Component
             return;
         }
 
-        $this->redirect(route('lunar.geslib.storefront.search', ['q' => $this->query]), true);
+        if ($this->currentRouteName === 'lunar.geslib.storefront.search') {
+            $this->dispatch(
+                'search-updated',
+                q: $this->query,
+                ti: $this->taxonId,
+                tt: $this->taxonType,
+                l: $this->languageId,
+                p: $this->priceRange,
+                a: $this->availabilityId,
+            );
+        } else {
+            $this->redirect(
+                route(
+                    'lunar.geslib.storefront.search',
+                    [
+                        'q' => $this->query,
+                        'ti' => $this->taxonId,
+                        'tt' => $this->taxonType,
+                        'l' => $this->languageId,
+                        'p' => $this->priceRange,
+                        'a' => $this->availabilityId,
+                    ],
+                ),
+                true,
+            );
+        }
+    }
+
+    public function updatedTaxonQuery(): void
+    {
+        if (empty($this->taxonQuery)) {
+            $this->taxonomies = collect();
+            return;
+        }
+
+        $this->taxonomies = LunarCollection::search($this->taxonQuery)
+            ->query(function (Builder $query) {
+                $query
+                    ->whereHas('group', function ($query) {
+                        $query->where('handle', Handle::COLLECTION_GROUP_TAXONOMIES);
+                    })->channel(StorefrontSession::getChannel())
+                    ->customerGroup(StorefrontSession::getCustomerGroups());
+            })->get();
     }
 }

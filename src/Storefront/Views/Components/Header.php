@@ -15,8 +15,10 @@ class Header extends Component
     public function render(): View
     {
         $sectionCollections = Collection::whereHas('group', function ($query) {
-            $query->where('handle', Handle::COLLECTION_GROUP_SECTIONS);
-        })->channel(StorefrontSession::getChannel())
+            $query->where('handle', Handle::COLLECTION_GROUP_TAXONOMIES);
+        })->whereNull('parent_id')
+            ->where('attribute_data->is-root->value', true)
+            ->channel(StorefrontSession::getChannel())
             ->customerGroup(StorefrontSession::getCustomerGroups())
             ->has('defaultUrl')
             ->orderBy('_lft', 'ASC')

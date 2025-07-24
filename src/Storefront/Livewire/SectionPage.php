@@ -19,6 +19,7 @@ class SectionPage extends Page
                 'element.thumbnail',
                 'element.products.variants.basePrices',
                 'element.products.defaultUrl',
+                'element.children',
             ],
         );
 

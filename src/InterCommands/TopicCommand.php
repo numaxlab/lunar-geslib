@@ -6,26 +6,29 @@ use Lunar\FieldTypes\Text;
 use Lunar\Models\Collection;
 use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\Topic;
+use NumaxLab\Lunar\Geslib\Handle;
 
 class TopicCommand extends AbstractCommand
 {
-    public const HANDLE = 'categories';
+    public const HANDLE = Handle::COLLECTION_GROUP_TAXONOMIES;
 
-    public function __invoke(Topic $topic): void
+    public function __construct(private readonly Topic $topic) {}
+
+    public function __invoke(): void
     {
         $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
 
-        $collection = Collection::where('attribute_data->geslib-code->value', $topic->id())
+        $collection = Collection::where('geslib_code', $this->topic->id())
             ->where('collection_group_id', $group->id)
             ->first();
 
         $attributeData = [
-            'geslib-code' => new Text($topic->id()),
-            'name' => new Text($topic->description()),
+            'name' => new Text($this->topic->description()),
         ];
 
         if (!$collection) {
             Collection::create([
+                'geslib_code' => $this->topic->id(),
                 'attribute_data' => $attributeData,
                 'collection_group_id' => $group->id,
             ]);

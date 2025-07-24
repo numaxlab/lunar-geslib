@@ -9,15 +9,15 @@ class ArticleTopicCommand extends AbstractCommand
     public string $articleId;
     public string $topicId;
 
-    public function __construct()
+    public function __construct(private readonly ArticleTopic $articleTopic)
     {
         $this->isBatch = true;
         $this->type = ArticleTopic::CODE;
     }
 
-    public function __invoke(ArticleTopic $articleTopic): void
+    public function __invoke(): void
     {
-        $this->articleId = $articleTopic->articleId();
-        $this->topicId = $articleTopic->topicId();
+        $this->articleId = $this->articleTopic->articleId();
+        $this->topicId = $this->articleTopic->topicId();
     }
 }

@@ -3,7 +3,6 @@
 namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Lunar\FieldTypes\Dropdown;
-use Lunar\FieldTypes\Number;
 use Lunar\FieldTypes\Text;
 use Lunar\Models\Brand;
 use NumaxLab\Geslib\Lines\PressPublication;
@@ -12,31 +11,33 @@ class PressPublicationCommand extends AbstractCommand
 {
     public const BRAND_TYPE = 'press-publication';
 
-    public function __invoke(PressPublication $pressPublication): void
+    public function __construct(private readonly PressPublication $pressPublication) {}
+
+    public function __invoke(): void
     {
-        if ($pressPublication->action()->isDelete()) {
-            $brand = Brand::where('attribute_data->geslib-code->value', $pressPublication->id())->first();
+        if ($this->pressPublication->action()->isDelete()) {
+            $brand = Brand::where('geslib_code', $this->pressPublication->id())->first();
 
             if ($brand) {
                 $brand->delete();
             }
         } else {
-            $brand = Brand::where('attribute_data->geslib-code->value', $pressPublication->id())->first();
+            $brand = Brand::where('geslib_code', $this->pressPublication->id())->first();
 
             $attributeData = [
                 'type' => new Dropdown(self::BRAND_TYPE),
-                'geslib-code' => new Number($pressPublication->id()),
-                'country' => new Text($pressPublication->countryId()),
+                'country' => new Text($this->pressPublication->countryId()),
             ];
 
             if (!$brand) {
                 Brand::create([
-                    'name' => $pressPublication->name(),
+                    'geslib_code' => $this->pressPublication->id(),
+                    'name' => $this->pressPublication->name(),
                     'attribute_data' => $attributeData,
                 ]);
             } else {
                 $brand->update([
-                    'name' => $pressPublication->name(),
+                    'name' => $this->pressPublication->name(),
                     'attribute_data' => $attributeData,
                 ]);
             }

@@ -12,16 +12,16 @@ class IbicCommand extends AbstractCommand
     public string $code;
     public string $description;
 
-    public function __construct()
+    public function __construct(private readonly Ibic $ibic)
     {
         $this->isBatch = true;
         $this->type = Ibic::CODE;
     }
 
-    public function __invoke(Ibic $ibic): void
+    public function __invoke(): void
     {
-        $this->articleId = $ibic->articleId();
-        $this->code = $ibic->code();
-        $this->description = $ibic->description();
+        $this->articleId = $this->ibic->articleId();
+        $this->code = $this->ibic->code();
+        $this->description = $this->ibic->description();
     }
 }

@@ -11,20 +11,22 @@ class LanguageCommand extends AbstractCommand
 {
     public const HANDLE = 'languages';
 
-    public function __invoke(Language $language): void
+    public function __construct(private readonly Language $language) {}
+
+    public function __invoke(): void
     {
         $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
 
-        $collection = Collection::where('attribute_data->geslib-code->value', $language->id())
+        $collection = Collection::where('geslib_code', $this->language->id())
             ->where('collection_group_id', $group->id)->first();
 
         $attributeData = [
-            'geslib-code' => new Text($language->id()),
-            'name' => new Text($language->name()),
+            'name' => new Text($this->language->name()),
         ];
 
         if (!$collection) {
             Collection::create([
+                'geslib_code' => $this->language->id(),
                 'attribute_data' => $attributeData,
                 'collection_group_id' => $group->id,
             ]);

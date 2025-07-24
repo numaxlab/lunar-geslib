@@ -27,6 +27,7 @@ class GeslibInterFile extends BaseModel
         'received_at' => 'datetime',
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
+        'log' => 'array',
     ];
 
     public function getProgressAttribute(): string

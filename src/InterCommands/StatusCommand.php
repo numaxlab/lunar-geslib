@@ -11,20 +11,22 @@ class StatusCommand extends AbstractCommand
 {
     public const HANDLE = 'statuses';
 
-    public function __invoke(Status $status): void
+    public function __construct(private readonly Status $status) {}
+
+    public function __invoke(): void
     {
         $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
 
-        $collection = Collection::where('attribute_data->geslib-code->value', $status->id())
+        $collection = Collection::where('geslib_code', $this->status->id())
             ->where('collection_group_id', $group->id)->first();
 
         $attributeData = [
-            'geslib-code' => new Text($status->id()),
-            'name' => new Text($status->name()),
+            'name' => new Text($this->status->name()),
         ];
 
         if (!$collection) {
             Collection::create([
+                'geslib_code' => $this->status->id(),
                 'attribute_data' => $attributeData,
                 'collection_group_id' => $group->id,
             ]);

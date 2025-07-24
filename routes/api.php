@@ -9,9 +9,9 @@ Route::prefix('api/geslib')
         Route::get('/orders/pending', [OrderController::class, 'indexPending'])
             ->name('lunar.geslib.orders.pending');
 
-        Route::get('/orders/{code}', [OrderController::class, 'show'])
+        Route::get('/orders/{reference}', [OrderController::class, 'show'])
             ->name('lunar.geslib.orders.show');
 
-        Route::get('/orders/{code}/sync', [OrderController::class, 'sync'])
+        Route::get('/orders/{reference}/sync', [OrderController::class, 'sync'])
             ->name('lunar.geslib.orders.sync');
     });

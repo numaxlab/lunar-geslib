@@ -37,7 +37,6 @@ use NumaxLab\Lunar\Geslib\InterCommands\EditorialCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\IbicCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\LanguageCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
-use NumaxLab\Lunar\Geslib\InterCommands\TopicCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\TypeCommand;
 
 use function Laravel\Prompts\confirm;
@@ -287,11 +286,6 @@ class Install extends Command
         ]);
 
         CollectionGroup::create([
-            'name' => 'Materias',
-            'handle' => TopicCommand::HANDLE,
-        ]);
-
-        CollectionGroup::create([
             'name' => 'Materias IBIC',
             'handle' => IbicCommand::HANDLE,
         ]);
@@ -322,13 +316,13 @@ class Install extends Command
         ]);
 
         CollectionGroup::create([
-            'name' => 'Destacados',
-            'handle' => Handle::COLLECTION_GROUP_FEATURED,
+            'name' => 'Taxonomías',
+            'handle' => Handle::COLLECTION_GROUP_TAXONOMIES,
         ]);
 
         CollectionGroup::create([
-            'name' => 'Secciones',
-            'handle' => Handle::COLLECTION_GROUP_SECTIONS,
+            'name' => 'Destacados',
+            'handle' => Handle::COLLECTION_GROUP_FEATURED,
         ]);
 
         CollectionGroup::create([
@@ -391,29 +385,6 @@ class Install extends Command
             'attribute_type' => Brand::morphName(),
             'attribute_group_id' => $group->id,
             'position' => 2,
-            'handle' => 'geslib-code',
-            'name' => [
-                'es' => 'Código Geslib',
-            ],
-            'description' => [
-                'es' => '',
-            ],
-            'section' => 'main',
-            'type' => Number::class,
-            'required' => true,
-            'default_value' => null,
-            'configuration' => [
-                'min' => null,
-                'max' => null,
-            ],
-            'system' => true,
-            'searchable' => true,
-        ]);
-
-        Attribute::create([
-            'attribute_type' => Brand::morphName(),
-            'attribute_group_id' => $group->id,
-            'position' => 3,
             'handle' => 'external-name',
             'name' => [
                 'es' => 'Nombre externo',
@@ -435,7 +406,7 @@ class Install extends Command
         Attribute::create([
             'attribute_type' => Brand::morphName(),
             'attribute_group_id' => $group->id,
-            'position' => 2,
+            'position' => 3,
             'handle' => 'country',
             'name' => [
                 'es' => 'País',
@@ -464,29 +435,6 @@ class Install extends Command
             ]),
             'handle' => 'collection-main',
             'position' => 1,
-        ]);
-
-        Attribute::create([
-            'attribute_type' => Collection::morphName(),
-            'attribute_group_id' => $group->id,
-            'position' => 1,
-            'handle' => 'geslib-code',
-            'name' => [
-                'es' => 'Código Geslib',
-            ],
-            'description' => [
-                'es' => '',
-            ],
-            'section' => 'main',
-            'type' => Text::class,
-            'required' => false,
-            'default_value' => null,
-            'configuration' => [
-                'min' => null,
-                'max' => null,
-            ],
-            'system' => true,
-            'searchable' => true,
         ]);
 
         Attribute::create([
@@ -559,6 +507,28 @@ class Install extends Command
             'attribute_type' => Collection::morphName(),
             'attribute_group_id' => $group->id,
             'position' => 5,
+            'handle' => 'is-section',
+            'name' => [
+                'es' => 'Es sección',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Toggle::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => false,
+            ],
+            'system' => false,
+            'searchable' => false,
+        ]);
+
+        Attribute::create([
+            'attribute_type' => Collection::morphName(),
+            'attribute_group_id' => $group->id,
+            'position' => 6,
             'handle' => 'in-homepage',
             'name' => [
                 'es' => 'Mostrar en portada',

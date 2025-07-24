@@ -20,4 +20,6 @@ abstract class AbstractBatchCommand implements CommandContract
     {
         return $this->log;
     }
+
+    abstract public function linesCount(): int;
 }

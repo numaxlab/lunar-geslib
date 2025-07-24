@@ -36,7 +36,7 @@ class HomePage extends Page
             ])->get();
 
         $sectionsCollections = Collection::whereHas('group', function ($query) {
-            $query->where('handle', Handle::COLLECTION_GROUP_SECTIONS);
+            $query->where('handle', Handle::COLLECTION_GROUP_TAXONOMIES);
         })->channel(StorefrontSession::getChannel())
             ->customerGroup(StorefrontSession::getCustomerGroups())
             ->where('attribute_data->in-homepage->value', true)

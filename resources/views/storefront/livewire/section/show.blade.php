@@ -8,11 +8,13 @@
 
         <h1 class="at-heading is-1">{{ $sectionCollection->translateAttribute('name') }}</h1>
 
-        <form class="my-6 flex flex-col gap-3 md:flex-row md:gap-6">
+        <form class="my-6 flex flex-col gap-3 md:flex-row md:gap-6" wire:submit.prevent="search">
             <div class="relative w-1/2">
                 <x-numaxlab-atomic::atoms.forms.input
                         type="search"
+                        wire:model="q"
                         name="q"
+                        id="sectionQuery"
                         placeholder="{{ __('Buscar en esta sección') }}"
                         aria-label="{{ __('Buscar en esta sección') }}"
                         autocomplete="off"
@@ -25,13 +27,15 @@
             @if ($sectionCollection->children->isNotEmpty())
                 <div class="w-1/2">
                     <x-numaxlab-atomic::atoms.forms.select
-                            name="taxon"
-                            id="taxon"
+                            wire:model="t"
+                            wire:change="search"
+                            name="t"
+                            id="sectionTaxon"
                             aria-label="{{ __('Filtrar por taxonomía') }}"
                     >
                         <option value="">Todas las taxonomías</option>
                         @foreach($sectionCollection->children as $child)
-                            <option value="{{ $child->id }}">
+                            <option value="{{ $child->id }}" wire:key="taxon-{{ $child->id }}">
                                 {{ $child->translateAttribute('name') }}
                             </option>
                         @endforeach
@@ -41,10 +45,10 @@
         </form>
     </header>
 
-    @if ($sectionCollection->products->isNotEmpty())
+    @if ($products->isNotEmpty())
         <ul class="grid gap-6 grid-cols-2 mb-9 md:grid-cols-4 lg:grid-cols-6">
-            @foreach ($sectionCollection->products as $product)
-                <li>
+            @foreach ($products as $product)
+                <li wire:key="product-{{ $product->id }}">
                     <x-lunar-geslib::product.summary
                             :product="$product"
                             :href="route('lunar.geslib.storefront.products.show', $product->defaultUrl->slug)"
@@ -52,6 +56,8 @@
                 </li>
             @endforeach
         </ul>
+
+        {{ $products->links() }}
     @else
         <p>Esta sección no tiene artículos.</p>
     @endif

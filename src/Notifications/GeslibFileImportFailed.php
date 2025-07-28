@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibFileInterResource;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibInterFileResource;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 
 // Added for Filament URL
@@ -51,10 +51,10 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
     {
         $fileImportLogUrl = null;
         // Check if Filament classes and GeslibFileInterResource are available to generate URL
-        if (class_exists(GeslibFileInterResource::class) && method_exists(GeslibFileInterResource::class, 'getUrl')) {
+        if (class_exists(GeslibInterFileResource::class) && method_exists(GeslibInterFileResource::class, 'getUrl')) {
             try {
                 // Link to the GeslibFileInterResource list page, filtered by status 'error'
-                $fileImportLogUrl = GeslibFileInterResource::getUrl(
+                $fileImportLogUrl = GeslibInterFileResource::getUrl(
                     'index',
                     ['tableFilters[status][value]' => 'error', 'tableSearchQuery' => $this->file->name],
                 );

@@ -24,55 +24,62 @@ class CollectionResourceExtension extends ResourceExtension
         TypeCommand::HANDLE => [
             'subtitle',
             'description',
+            'is-section',
             'in-homepage',
         ],
         LanguageCommand::HANDLE => [
             'subtitle',
             'description',
+            'is-section',
             'in-homepage',
         ],
         TopicCommand::HANDLE => [
             'subtitle',
             'description',
+            'is-section',
             'in-homepage',
         ],
         IbicCommand::HANDLE => [
             'subtitle',
             'description',
+            'is-section',
             'in-homepage',
         ],
         AuthorCommand::HANDLE => [
             'subtitle',
+            'is-section',
             'in-homepage',
         ],
         BindingTypeCommand::HANDLE => [
             'subtitle',
             'description',
+            'is-section',
             'in-homepage',
         ],
         StatusCommand::HANDLE => [
             'subtitle',
             'description',
+            'is-section',
             'in-homepage',
         ],
         ClassificationCommand::HANDLE => [
             'subtitle',
             'description',
+            'is-section',
             'in-homepage',
         ],
         Handle::COLLECTION_GROUP_FEATURED => [
-            'geslib-code',
             'subtitle',
             'description',
+            'is-section',
             'in-homepage',
         ],
         Handle::COLLECTION_GROUP_TAXONOMIES => [
-            'geslib-code',
             'subtitle',
             'description',
         ],
         Handle::COLLECTION_GROUP_ITINERARIES => [
-            'geslib-code',
+            'is-section',
         ],
     ];
 

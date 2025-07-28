@@ -4,7 +4,7 @@ namespace NumaxLab\Lunar\Geslib\Admin\Filament\Widgets;
 
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Collection;
-use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibFileInterResource;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibInterFileResource;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 
 // For linking
@@ -25,6 +25,6 @@ class RecentFileImportErrorsWidget extends Widget
 
     public function getTableResource(): string
     {
-        return GeslibFileInterResource::class;
+        return GeslibInterFileResource::class;
     }
 }

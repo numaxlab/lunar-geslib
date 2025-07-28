@@ -3,6 +3,7 @@
 namespace NumaxLab\Lunar\Geslib\Jobs;
 
 use Carbon\Carbon;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -72,7 +73,7 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
 
     public const CACHE_LOCK_NAME = 'geslib-inter-files';
 
-    public $tries = 1;
+    public $tries = 2;
 
     public $uniqueFor = 900; // 15 minutes
 
@@ -100,39 +101,29 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
             );
 
         if (!$storage->exists($extractedFilePath)) {
-            $zip = new ZipArchive();
-
-            $zipFilePath = $storage->path(config('lunar.geslib.inter_files_path') . '/' . $this->geslibInterFile->name);
-
-            if ($zip->open($zipFilePath) === true) {
-                $zip->extractTo($storage->path(config('lunar.geslib.inter_files_path')));
-
-                $zip->close();
-            } else {
-                throw new RuntimeException('Unable to open zip file: ' . $zipFilePath);
-            }
+            $this->extractZipFile($storage);
         }
 
         $geslibFile = GeslibFile::parse($storage->get($extractedFilePath));
+        $totalLines = count($geslibFile->lines());
 
         if ($this->geslibInterFile->status === GeslibInterFile::STATUS_PENDING) {
             $this->geslibInterFile->update([
                 'status' => GeslibInterFile::STATUS_PROCESSING,
                 'started_at' => Carbon::now(),
-                'total_lines' => count($geslibFile->lines()),
+                'total_lines' => $totalLines,
             ]);
         }
 
         $fileFinished = false;
         $endLine = $this->startLine + $this->chunkSize;
-        if ($endLine > count($geslibFile->lines())) {
+        if ($endLine > $totalLines) {
             $fileFinished = true;
-            $endLine = count($geslibFile->lines());
+            $endLine = $totalLines;
         }
 
         $log = is_array($this->geslibInterFile->log) ? $this->geslibInterFile->log : [];
-
-        $batchCommands = collect();
+        $batchCommands = $this->geslibInterFile->batch_commands ?? collect();
 
         for ($i = $this->startLine; $i < $endLine; $i++) {
             $line = $geslibFile->lines()[$i];
@@ -214,6 +205,64 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
             }
         }
 
+        $log[] = [
+            'level' => CommandContract::LEVEL_INFO,
+            'message' => sprintf(
+                'Processed lines %s to %s',
+                $this->startLine + 1,
+                $endLine,
+            ),
+        ];
+
+        $this->geslibInterFile->update([
+            'processed_lines' => $endLine,
+            'log' => $log,
+            'batch_commands' => $batchCommands,
+        ]);
+
+        if (!$fileFinished) {
+            self::dispatch($this->geslibInterFile, $endLine, $this->chunkSize);
+            return;
+        }
+
+        $log[] = [
+            'level' => CommandContract::LEVEL_INFO,
+            'message' => sprintf(
+                'Processing %s batch commands',
+                $batchCommands->count(),
+            ),
+        ];
+
+        $log = $this->processBatchCommands($batchCommands, $log);
+
+        Cache::lock(self::CACHE_LOCK_NAME)->forceRelease();
+
+        $this->geslibInterFile->update([
+            'status' => $this->getStatusFromLog($this->geslibInterFile->log),
+            'finished_at' => Carbon::now(),
+            'log' => $log,
+        ]);
+
+        $storage->delete($extractedFilePath);
+    }
+
+    protected function extractZipFile(Filesystem $storage): void
+    {
+        $zip = new ZipArchive();
+
+        $zipFilePath = $storage->path(config('lunar.geslib.inter_files_path') . '/' . $this->geslibInterFile->name);
+
+        if ($zip->open($zipFilePath) === true) {
+            $zip->extractTo($storage->path(config('lunar.geslib.inter_files_path')));
+
+            $zip->close();
+        } else {
+            throw new RuntimeException('Unable to open zip file: ' . $zipFilePath);
+        }
+    }
+
+    protected function processBatchCommands(\Illuminate\Support\Collection $batchCommands, array $log): array
+    {
         foreach ($batchCommands->groupBy('type') as $lineType => $commands) {
             $batchCommand = null;
 
@@ -234,32 +283,7 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
             }
         }
 
-        $log[] = [
-            'level' => CommandContract::LEVEL_INFO,
-            'message' => sprintf(
-                'Processed lines %s to %s',
-                $this->startLine + 1,
-                $endLine,
-            ),
-        ];
-
-        $this->geslibInterFile->update([
-            'processed_lines' => $endLine,
-            'log' => $log,
-        ]);
-
-        if (!$fileFinished) {
-            self::dispatch($this->geslibInterFile, $endLine, $this->chunkSize);
-        } else {
-            Cache::lock(self::CACHE_LOCK_NAME)->forceRelease();
-
-            $this->geslibInterFile->update([
-                'status' => $this->getStatusFromLog($this->geslibInterFile->log),
-                'finished_at' => Carbon::now(),
-            ]);
-
-            $storage->delete($extractedFilePath);
-        }
+        return $log;
     }
 
     private function getStatusFromLog(array $log): string
@@ -268,6 +292,9 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
             if ($line['level'] === CommandContract::LEVEL_ERROR) {
                 return GeslibInterFile::STATUS_FAILED;
             }
+        }
+
+        foreach ($log as $line) {
             if ($line['level'] === CommandContract::LEVEL_WARNING) {
                 return GeslibInterFile::STATUS_WARNING;
             }

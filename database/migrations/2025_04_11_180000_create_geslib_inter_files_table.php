@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->integer('total_lines')->default(0);
             $table->integer('processed_lines')->default(0);
             $table->json('log')->nullable();
+            $table->json('batch_commands')->nullable();
             $table->timestamps();
         });
     }

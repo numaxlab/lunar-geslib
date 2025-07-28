@@ -2,18 +2,15 @@
 
 namespace NumaxLab\Lunar\Geslib\Admin\Filament\Resources;
 
+use Filament\Actions\StaticAction;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibFileInterResource\Pages\ListGeslibInterFiles;
-use NumaxLab\Lunar\Geslib\Jobs\ProcessGeslibInterFile;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibInterFileResource\Pages\ListGeslibInterFiles;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 
-// Alias to avoid conflict
-
-class GeslibFileInterResource extends Resource
+class GeslibInterFileResource extends Resource
 {
     protected static ?string $model = GeslibInterFile::class;
 
@@ -28,8 +25,7 @@ class GeslibFileInterResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([]);
+        return $form->schema([]);
     }
 
     public static function table(Table $table): Table
@@ -54,9 +50,6 @@ class GeslibFileInterResource extends Resource
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('progress'),
-                /*Tables\Columns\TextColumn::make('log')
-                    ->limit(50)
-                    ->tooltip(fn($record) => json_encode($record->log)),*/
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -76,29 +69,27 @@ class GeslibFileInterResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->label('Estado')
                     ->options([
-                        'pending' => 'Pending',
-                        'processing' => 'Processing',
-                        'processed' => 'Processed',
-                        'error' => 'Error',
-                        'archived' => 'Archived',
+                        GeslibInterFile::STATUS_PENDING => 'Pendiente',
+                        GeslibInterFile::STATUS_PROCESSING => 'Procesando',
+                        GeslibInterFile::STATUS_WARNING => 'Advertencia',
+                        GeslibInterFile::STATUS_FAILED => 'Fallo',
+                        GeslibInterFile::STATUS_SUCCESS => 'Exitoso',
                     ]),
             ])
             ->actions([
-                Tables\Actions\Action::make('reprocess')
-                    ->label('Reprocess')
-                    ->icon('heroicon-s-arrow-path')
-                    ->color('info')
-                    ->visible(fn(GeslibInterFile $record): bool => $record->status === 'error')
-                    ->requiresConfirmation()
-                    ->action(function (GeslibInterFile $record) {
-                        ProcessGeslibInterFile::dispatch($record);
-                        FilamentNotification::make()
-                            ->title('Reprocess Initiated')
-                            ->body('File ' . $record->name . ' has been queued for reprocessing.')
-                            ->success()
-                            ->send();
-                    }),
+                Tables\Actions\Action::make('view_log')
+                    ->label('Ver log')
+                    ->icon('heroicon-o-eye')
+                    ->modalContent(function ($record) {
+                        return view('lunar-geslib::filament.modals.geslib-inter-file-log', [
+                            'log' => $record->log,
+                        ]);
+                    })
+                    ->modalHeading('Registro de actividad')
+                    ->modalSubmitAction(false)
+                    ->modalCancelAction(fn(StaticAction $action) => $action->label('Cerrar')),
             ])
             ->defaultSort('created_at', 'desc');
     }

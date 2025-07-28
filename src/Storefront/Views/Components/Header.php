@@ -17,7 +17,7 @@ class Header extends Component
         $sectionCollections = Collection::whereHas('group', function ($query) {
             $query->where('handle', Handle::COLLECTION_GROUP_TAXONOMIES);
         })->whereNull('parent_id')
-            ->where('attribute_data->is-root->value', true)
+            ->where('attribute_data->is-section->value', true)
             ->channel(StorefrontSession::getChannel())
             ->customerGroup(StorefrontSession::getCustomerGroups())
             ->has('defaultUrl')

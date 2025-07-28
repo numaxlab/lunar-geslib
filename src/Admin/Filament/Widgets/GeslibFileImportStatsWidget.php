@@ -5,7 +5,7 @@ namespace NumaxLab\Lunar\Geslib\Admin\Filament\Widgets;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Str;
-use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibFileInterResource;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibInterFileResource;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 
 // For linking
@@ -24,7 +24,7 @@ class GeslibFileImportStatsWidget extends BaseWidget
             Stat::make('Total Files Imported', $totalFiles)
                 ->description('All files received from Geslib')
                 ->color('primary')
-                ->url(GeslibFileInterResource::getUrl('index')),
+                ->url(GeslibInterFileResource::getUrl('index')),
             Stat::make('Files Processed Successfully', $totalProcessed)
                 ->description($totalProcessed . ' files processed without errors')
                 ->color('success'),

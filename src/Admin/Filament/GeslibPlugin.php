@@ -5,7 +5,7 @@ namespace NumaxLab\Lunar\Geslib\Admin\Filament;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Pages\GeslibDashboardPage;
-use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibFileInterResource;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibInterFileResource;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibOrderSyncLogResource;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\GeslibFileImportStatsWidget;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\GeslibOrderSyncStatsWidget;
@@ -36,7 +36,7 @@ class GeslibPlugin implements Plugin
                 GeslibDashboardPage::class,
             ])
             ->resources([
-                GeslibFileInterResource::class,
+                GeslibInterFileResource::class,
                 GeslibOrderSyncLogResource::class,
             ])
             ->widgets([

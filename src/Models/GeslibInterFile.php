@@ -2,6 +2,7 @@
 
 namespace NumaxLab\Lunar\Geslib\Models;
 
+use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Lunar\Base\BaseModel;
 
 class GeslibInterFile extends BaseModel
@@ -21,6 +22,7 @@ class GeslibInterFile extends BaseModel
         'total_lines',
         'processed_lines',
         'log',
+        'batch_commands',
     ];
 
     protected $casts = [
@@ -28,6 +30,7 @@ class GeslibInterFile extends BaseModel
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
         'log' => 'array',
+        'batch_commands' => AsCollection::class,
     ];
 
     public function getProgressAttribute(): string

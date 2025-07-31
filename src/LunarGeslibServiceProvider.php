@@ -10,18 +10,23 @@ use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
 use Lunar\Admin\Filament\Resources\CollectionResource;
+use Lunar\Admin\Filament\Resources\ProductResource;
 use Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductCollections;
 use Lunar\Admin\Support\Facades\AttributeData;
 use Lunar\Admin\Support\Facades\LunarPanel;
+use Lunar\Facades\AttributeManifest;
 use Lunar\Facades\ModelManifest;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\CollectionResourceExtension;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\ManageProductCollectionsExtension;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\ProductResourceExtension;
 use NumaxLab\Lunar\Geslib\Admin\Support\FieldTypes\DateField;
+use NumaxLab\Lunar\Geslib\Console\Commands\Geslib\ForceProductEnrichment;
 use NumaxLab\Lunar\Geslib\Console\Commands\Geslib\Import;
 use NumaxLab\Lunar\Geslib\Console\Commands\ImportAddressData;
 use NumaxLab\Lunar\Geslib\Console\Commands\Install;
 use NumaxLab\Lunar\Geslib\FieldTypes\Date;
 use NumaxLab\Lunar\Geslib\Listeners\EnrichProductFromDilveSubscriber;
+use NumaxLab\Lunar\Geslib\Models\Author;
 use Spatie\ArrayToXml\ArrayToXml;
 use Symfony\Component\Finder\Finder;
 
@@ -38,6 +43,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'lunar-geslib');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'lunar-geslib');
 
         if (config('lunar.geslib.storefront_enabled', true)) {
             $this->bootStorefront();
@@ -53,6 +59,11 @@ class LunarGeslibServiceProvider extends ServiceProvider
             __DIR__ . '/../routes/storefront.php' => base_path('routes/storefront.php'),
         ], ['lunar']);
 
+        ModelManifest::add(
+            \NumaxLab\Lunar\Geslib\Models\Contracts\Author::class,
+            Author::class,
+        );
+
         ModelManifest::replace(
             \Lunar\Models\Contracts\Product::class,
             \NumaxLab\Lunar\Geslib\Models\Product::class,
@@ -63,9 +74,12 @@ class LunarGeslibServiceProvider extends ServiceProvider
             \NumaxLab\Lunar\Geslib\Models\ProductVariant::class,
         );
 
+        AttributeManifest::addType(Author::class);
+
         LunarPanel::extensions([
             CollectionResource::class => CollectionResourceExtension::class,
             ManageProductCollections::class => ManageProductCollectionsExtension::class,
+            ProductResource::class => ProductResourceExtension::class,
         ]);
 
         Event::subscribe(EnrichProductFromDilveSubscriber::class);
@@ -86,6 +100,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
                 Install::class,
                 Import::class,
                 ImportAddressData::class,
+                ForceProductEnrichment::class,
             ]);
         }
     }

@@ -1,7 +1,4 @@
-<div
-        x-data="{
-         linesVisible: @entangle('linesVisible').live
-     }">
+<div x-data="{linesVisible: @entangle('linesVisible').live}">
     <button x-on:click="linesVisible = !linesVisible" class="text-primary relative">
         <i class="fa-solid fa-shopping-bag" aria-hidden="true"></i>
         @if ($lines && count($lines) > 0)
@@ -13,7 +10,7 @@
     </button>
 
     <div
-            class="fixed top-0 end-0 z-50 w-3/4 px-5 py-9 bg-white border border-primary"
+            class="fixed top-0 end-0 z-50 w-3/4 px-5 py-9 bg-white border border-primary lg:absolute lg:w-100"
             x-show="linesVisible"
             x-on:click.away="linesVisible = false"
             x-transition
@@ -85,10 +82,6 @@
                         <li class="at-small py-2">
                             <i class="fa-solid fa-shopping-bag" aria-hidden="true"></i>
                             Subtotal pedido: {{ $this->cart->subTotal->formatted() }}
-                        </li>
-                        <li class="at-small py-2">
-                            <i class="fa-solid fa-info" aria-hidden="true"></i>
-                            Gastos de envío: {{ $this->cart->shippingTotal?->formatted() }}
                         </li>
                     </ul>
                 </div>

@@ -88,7 +88,7 @@ class Search extends Component
                     'defaultUrl',
                     'urls',
                     'authors',
-                ]))->get();
+                ]))->take(10)->get();
         }
     }
 

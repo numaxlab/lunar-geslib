@@ -13,26 +13,19 @@ use NumaxLab\Geslib\GeslibFile;
 use NumaxLab\Geslib\Lines\Article;
 use NumaxLab\Geslib\Lines\ArticleAuthor;
 use NumaxLab\Geslib\Lines\ArticleIndex;
-use NumaxLab\Geslib\Lines\ArticleIndexTranslation;
 use NumaxLab\Geslib\Lines\ArticleTopic;
 use NumaxLab\Geslib\Lines\Author;
 use NumaxLab\Geslib\Lines\AuthorBiography;
 use NumaxLab\Geslib\Lines\BindingType;
 use NumaxLab\Geslib\Lines\BookshopReference;
-use NumaxLab\Geslib\Lines\BookshopReferenceTranslation;
 use NumaxLab\Geslib\Lines\Classification;
 use NumaxLab\Geslib\Lines\Collection;
-use NumaxLab\Geslib\Lines\Country;
 use NumaxLab\Geslib\Lines\EBook;
-use NumaxLab\Geslib\Lines\EbookInfo;
 use NumaxLab\Geslib\Lines\Editorial;
 use NumaxLab\Geslib\Lines\EditorialReference;
-use NumaxLab\Geslib\Lines\EditorialReferenceTranslation;
 use NumaxLab\Geslib\Lines\Ibic;
 use NumaxLab\Geslib\Lines\Language;
-use NumaxLab\Geslib\Lines\Preposition;
 use NumaxLab\Geslib\Lines\PressPublication;
-use NumaxLab\Geslib\Lines\Province;
 use NumaxLab\Geslib\Lines\RecordLabel;
 use NumaxLab\Geslib\Lines\Status;
 use NumaxLab\Geslib\Lines\Stock;
@@ -132,60 +125,60 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
             match ($line->getCode()) {
                 Editorial::CODE => $command = new EditorialCommand($line),
                 RecordLabel::CODE => $command = new RecordLabelCommand($line),
-                '1P' => null,
+                // '1P' => null,
                 PressPublication::CODE => $command = new PressPublicationCommand($line),
                 Collection::CODE => $command = new CollectionCommand($line),
                 Topic::CODE => $command = new TopicCommand($line),
                 Article::CODE => $command = new ArticleCommand($line),
                 EBook::CODE => $command = new ArticleCommand($line, true),
-                EbookInfo::CODE => null,
+                // EbookInfo::CODE => null,
                 ArticleTopic::CODE => $command = new ArticleTopicCommand($line),
                 Ibic::CODE => $command = new IbicCommand($line),
                 BookshopReference::CODE => $command = new BookshopReferenceCommand($line),
                 EditorialReference::CODE => $command = new EditorialReferenceCommand($line),
                 ArticleIndex::CODE => $command = new ArticleIndexCommand($line),
-                BookshopReferenceTranslation::CODE => null,
-                EditorialReferenceTranslation::CODE => null,
-                ArticleIndexTranslation::CODE => null,
+                // BookshopReferenceTranslation::CODE => null,
+                // EditorialReferenceTranslation::CODE => null,
+                // ArticleIndexTranslation::CODE => null,
                 ArticleAuthor::CODE => $command = new ArticleAuthorCommand($line),
                 BindingType::CODE => $command = new BindingTypeCommand($line),
                 Language::CODE => $command = new LanguageCommand($line),
-                Preposition::CODE => null,
+                // Preposition::CODE => null,
                 Stock::CODE => $command = new StockCommand($line),
-                'B2' => null,
+                // 'B2' => null,
                 Status::CODE => $command = new StatusCommand($line),
-                'CLI' => null,
+                // 'CLI' => null,
                 Author::CODE => $command = new AuthorCommand($line),
-                'IPC' => null,
-                'P' => null,
-                'PROCEN' => null,
-                'PC' => null,
-                'VTA' => null,
-                Country::CODE => null,
-                'CLOTE' => null,
-                'LLOTE' => null,
+                // 'IPC' => null,
+                // 'P' => null,
+                // 'PROCEN' => null,
+                // 'PC' => null,
+                // 'VTA' => null,
+                // Country::CODE => null,
+                // 'CLOTE' => null,
+                // 'LLOTE' => null,
                 Type::CODE => $command = new TypeCommand($line),
                 Classification::CODE => $command = new ClassificationCommand($line),
-                'ATRA' => null,
-                'CA' => null,
-                'CLOTCLI' => null,
-                'LLOTCLI' => null,
-                'PROFES' => null,
-                Province::CODE => null,
-                'CAGRDTV' => null,
-                'LAGRDTV' => null,
-                'CLIDTO' => null,
-                'CDG' => null,
-                'LDG' => null,
+                // 'ATRA' => null,
+                // 'CA' => null,
+                // 'CLOTCLI' => null,
+                // 'LLOTCLI' => null,
+                // 'PROFES' => null,
+                // Province::CODE => null,
+                // 'CAGRDTV' => null,
+                // 'LAGRDTV' => null,
+                // 'CLIDTO' => null,
+                // 'CDG' => null,
+                // 'LDG' => null,
                 AuthorBiography::CODE => $command = new AuthorBiographyCommand($line),
-                'EMBALA' => null,
-                'PACK' => null,
-                'TRACKS' => null,
-                'ATRIBU' => null,
-                'ARTATR' => null,
-                'ARTREC' => null,
-                'CDP' => null,
-                'LDP' => null,
+                // 'EMBALA' => null,
+                // 'PACK' => null,
+                // 'TRACKS' => null,
+                // 'ATRIBU' => null,
+                // 'ARTATR' => null,
+                // 'ARTREC' => null,
+                // 'CDP' => null,
+                // 'LDP' => null,
                 default => $log[] = [
                     'level' => CommandContract::LEVEL_WARNING,
                     'message' => sprintf('Unknown line code: %s', $line->getCode()),

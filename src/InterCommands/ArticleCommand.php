@@ -24,18 +24,17 @@ class ArticleCommand extends AbstractCommand
 
     public function __invoke(): void
     {
-        if ($this->article->action()->isDelete()) {
-            $variant = ProductVariant::where('sku', $this->article->id())->first();
+        $variant = ProductVariant::where('sku', $this->article->id())->first();
 
+        if ($this->article->action()->isDelete()) {
             if ($variant) {
-                $variant->product->delete();
-                $variant->delete();
+                $variant->product->update([
+                    'status' => 'draft',
+                ]);
             }
 
             return;
         }
-
-        $variant = ProductVariant::where('sku', $this->article->id())->first();
 
         $languageCollectionGroup = CollectionGroup::where('handle', LanguageCommand::HANDLE)->firstOrFail();
 
@@ -139,10 +138,10 @@ class ArticleCommand extends AbstractCommand
 
         // Product type collection
         $group = CollectionGroup::where('handle', TypeCommand::HANDLE)->firstOrFail();
-        $statusCollection = Collection::where('geslib_code', $this->article->typeId())
+        $productTypeCollection = Collection::where('geslib_code', $this->article->typeId())
             ->where('collection_group_id', $group->id)->get();
 
-        (new CollectionGroupSync($product, $group->id, $statusCollection))->handle();
+        (new CollectionGroupSync($product, $group->id, $productTypeCollection))->handle();
 
         // Status collection
         $group = CollectionGroup::where('handle', TypeCommand::HANDLE)->firstOrFail();

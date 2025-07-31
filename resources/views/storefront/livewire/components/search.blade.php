@@ -15,7 +15,7 @@
             </button>
 
             @if ($results->isNotEmpty())
-                <ul class="divide-y py-2 px-4 bg-white absolute w-full border border-primary">
+                <ul class="divide-y py-2 px-4 bg-white absolute w-full border border-primary z-10">
                     @foreach ($results as $result)
                         <li>
                             <article class="ml-summary my-2">
@@ -76,7 +76,7 @@
                 />
 
                 @if ($taxonomies->isNotEmpty())
-                    <ul class="divide-y py-2 px-4 bg-white absolute w-full border border-primary">
+                    <ul class="divide-y py-2 px-4 bg-white absolute w-full border border-primary z-10">
                         @foreach ($taxonomies as $taxonomy)
                             <li>
                                 {{ $taxonomy->translateAttribute('name') }}

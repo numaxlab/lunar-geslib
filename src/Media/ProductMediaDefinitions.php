@@ -3,7 +3,6 @@
 namespace NumaxLab\Lunar\Geslib\Media;
 
 use Lunar\Base\MediaDefinitionsInterface;
-use Spatie\Image\Enums\BorderType;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\MediaCollection;
@@ -38,7 +37,7 @@ class ProductMediaDefinitions implements MediaDefinitionsInterface
     {
         $conversions = [
             'zoom' => [
-                'width' => 500,
+                'width' => 1000,
             ],
             'large' => [
                 'width' => 800,
@@ -53,11 +52,9 @@ class ProductMediaDefinitions implements MediaDefinitionsInterface
                 $model
                     ->addMediaConversion($key)
                     ->fit(
-                        Fit::Fill,
-                        $conversion['width'],
+                        fit: Fit::Contain,
+                        desiredWidth: $conversion['width'],
                     )
-                    ->border(0, BorderType::Overlay, color: '#FFF')
-                    ->background('#FFF')
                     ->keepOriginalImageFormat();
             }
         });
@@ -68,9 +65,10 @@ class ProductMediaDefinitions implements MediaDefinitionsInterface
         // Add a conversion for the admin panel to use
         $model
             ->addMediaConversion('small')
-            ->fit(Fit::Fill, 300)
-            ->border(0, BorderType::Overlay, color: '#FFF')
-            ->background('#FFF')
+            ->fit(
+                fit: Fit::Contain,
+                desiredWidth: 300,
+            )
             ->sharpen(10)
             ->keepOriginalImageFormat();
     }

@@ -18,7 +18,7 @@ class DateField extends BaseFieldType
     {
         return [
             Toggle::make('has_time')->label(
-                __('lunarpanel::fieldtypes.text.form.has_time.label'),
+                __('lunar-geslib::fieldtypes.text.form.has_time.label'),
             ),
         ];
     }

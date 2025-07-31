@@ -4,9 +4,8 @@ namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Illuminate\Support\Str;
 use Lunar\FieldTypes\Text;
-use Lunar\Models\Collection;
-use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\AuthorBiography;
+use NumaxLab\Lunar\Geslib\Models\Author;
 
 class AuthorBiographyCommand extends AbstractCommand
 {
@@ -14,10 +13,7 @@ class AuthorBiographyCommand extends AbstractCommand
 
     public function __invoke(): void
     {
-        $group = CollectionGroup::where('handle', AuthorCommand::HANDLE)->firstOrFail();
-
-        $author = Collection::where('geslib_code', $this->authorBiography->authorId())
-            ->where('collection_group_id', $group->id)->first();
+        $author = Author::where('geslib_code', $this->authorBiography->authorId())->first();
 
         if (!$author) {
             return;
@@ -25,7 +21,7 @@ class AuthorBiographyCommand extends AbstractCommand
 
         $author->update([
             'attribute_data' => array_merge($author->attribute_data->toArray(), [
-                'description' => new Text(Str::title($this->authorBiography->biography())),
+                'biography' => new Text(Str::title($this->authorBiography->biography())),
             ]),
         ]);
     }

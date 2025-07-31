@@ -4,17 +4,15 @@ namespace NumaxLab\Lunar\Geslib\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use NumaxLab\Lunar\Geslib\InterCommands\AuthorCommand;
 
 class Product extends \Lunar\Models\Product
 {
     public function authors(): BelongsToMany
     {
-        return $this
-            ->collections()
-            ->whereHas('group', function ($query) {
-                $query->where('handle', AuthorCommand::HANDLE);
-            });
+        return $this->belongsToMany(
+            Author::class,
+            config('lunar.database.table_prefix') . 'geslib_author_product',
+        )->withPivot(['author_type', 'position']);
     }
 
     protected function recordFullTitle(): Attribute

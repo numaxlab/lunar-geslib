@@ -53,7 +53,7 @@
                         </li>
                     </ul>
 
-                    <div class="hidden lg:block">
+                    <div class="hidden lg:block lg:relative">
                         <x-lunar-geslib::header.actions/>
                     </div>
                 </div>

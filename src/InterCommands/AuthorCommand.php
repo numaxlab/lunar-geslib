@@ -2,38 +2,27 @@
 
 namespace NumaxLab\Lunar\Geslib\InterCommands;
 
-use Illuminate\Support\Str;
-use Lunar\FieldTypes\Text;
-use Lunar\Models\Collection;
-use Lunar\Models\CollectionGroup;
-use NumaxLab\Geslib\Lines\Author;
+use NumaxLab\Geslib\Lines\Author as AuthorLine;
+use NumaxLab\Lunar\Geslib\Models\Author;
 
 class AuthorCommand extends AbstractCommand
 {
     public const HANDLE = 'authors';
 
-    public function __construct(private readonly Author $author) {}
+    public function __construct(private readonly AuthorLine $author) {}
 
     public function __invoke(): void
     {
-        $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
+        $author = Author::where('geslib_code', $this->author->id())->first();
 
-        $collection = Collection::where('geslib_code', $this->author->id())
-            ->where('collection_group_id', $group->id)->first();
-
-        $attributeData = [
-            'name' => new Text(Str::title($this->author->name())),
-        ];
-
-        if (!$collection) {
-            Collection::create([
+        if (!$author) {
+            Author::create([
                 'geslib_code' => $this->author->id(),
-                'attribute_data' => $attributeData,
-                'collection_group_id' => $group->id,
+                'name' => $this->author->name(),
             ]);
         } else {
-            $collection->update([
-                'attribute_data' => $attributeData,
+            $author->update([
+                'name' => $this->author->name(),
             ]);
         }
     }

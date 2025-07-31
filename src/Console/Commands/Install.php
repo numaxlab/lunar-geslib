@@ -38,6 +38,7 @@ use NumaxLab\Lunar\Geslib\InterCommands\IbicCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\LanguageCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\TypeCommand;
+use NumaxLab\Lunar\Geslib\Models\Author;
 
 use function Laravel\Prompts\confirm;
 
@@ -137,7 +138,8 @@ class Install extends Command
 
             $this->setupBrandAttributes();
             $this->setupCollectionAttributes();
-            $this->setupArticleAttributes();
+            $this->setupProductAttributes();
+            $this->setupAuthorAttributes();
         }
 
         if (!ProductType::count()) {
@@ -548,7 +550,7 @@ class Install extends Command
         ]);
     }
 
-    private function setupArticleAttributes(): void
+    private function setupProductAttributes(): void
     {
         $mainGroup = AttributeGroup::create([
             'attributable_type' => Product::morphName(),
@@ -838,94 +840,6 @@ class Install extends Command
             'attribute_type' => Product::morphName(),
             'attribute_group_id' => $bibliographicDataGroup->id,
             'position' => 9,
-            'handle' => 'translator',
-            'name' => [
-                'es' => 'Traducción',
-            ],
-            'description' => [
-                'es' => '',
-            ],
-            'section' => 'main',
-            'type' => Text::class,
-            'required' => false,
-            'default_value' => null,
-            'configuration' => [
-                'richtext' => false,
-            ],
-            'system' => false,
-            'searchable' => true,
-        ]);
-
-        Attribute::create([
-            'attribute_type' => Product::morphName(),
-            'attribute_group_id' => $bibliographicDataGroup->id,
-            'position' => 10,
-            'handle' => 'illustrator',
-            'name' => [
-                'es' => 'Ilustración',
-            ],
-            'description' => [
-                'es' => '',
-            ],
-            'section' => 'main',
-            'type' => Text::class,
-            'required' => false,
-            'default_value' => null,
-            'configuration' => [
-                'richtext' => false,
-            ],
-            'system' => false,
-            'searchable' => true,
-        ]);
-
-        Attribute::create([
-            'attribute_type' => Product::morphName(),
-            'attribute_group_id' => $bibliographicDataGroup->id,
-            'position' => 11,
-            'handle' => 'cover-illustrator',
-            'name' => [
-                'es' => 'Ilustración de portada',
-            ],
-            'description' => [
-                'es' => '',
-            ],
-            'section' => 'main',
-            'type' => Text::class,
-            'required' => false,
-            'default_value' => null,
-            'configuration' => [
-                'richtext' => false,
-            ],
-            'system' => false,
-            'searchable' => true,
-        ]);
-
-        Attribute::create([
-            'attribute_type' => Product::morphName(),
-            'attribute_group_id' => $bibliographicDataGroup->id,
-            'position' => 12,
-            'handle' => 'back-cover-illustrator',
-            'name' => [
-                'es' => 'Ilustración de contraportada',
-            ],
-            'description' => [
-                'es' => '',
-            ],
-            'section' => 'main',
-            'type' => Text::class,
-            'required' => false,
-            'default_value' => null,
-            'configuration' => [
-                'richtext' => false,
-            ],
-            'system' => false,
-            'searchable' => true,
-        ]);
-
-        Attribute::create([
-            'attribute_type' => Product::morphName(),
-            'attribute_group_id' => $bibliographicDataGroup->id,
-            'position' => 13,
             'handle' => 'pages',
             'name' => [
                 'es' => 'Páginas',
@@ -948,7 +862,7 @@ class Install extends Command
         Attribute::create([
             'attribute_type' => Product::morphName(),
             'attribute_group_id' => $bibliographicDataGroup->id,
-            'position' => 14,
+            'position' => 10,
             'handle' => 'illustrations-quantity',
             'name' => [
                 'es' => 'Número de ilustraciones',
@@ -1043,4 +957,39 @@ class Install extends Command
             'searchable' => false,
         ]);
     }
+
+    private function setupAuthorAttributes(): void
+    {
+        $group = AttributeGroup::create([
+            'attributable_type' => Author::morphName(),
+            'name' => collect([
+                'es' => 'Datos de autora',
+            ]),
+            'handle' => 'author-main',
+            'position' => 1,
+        ]);
+
+        Attribute::create([
+            'attribute_type' => Author::morphName(),
+            'attribute_group_id' => $group->id,
+            'position' => 1,
+            'handle' => 'biography',
+            'name' => [
+                'es' => 'Biografía',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Text::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => true,
+            ],
+            'system' => false,
+            'searchable' => false,
+        ]);
+    }
+
 }

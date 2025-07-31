@@ -13,11 +13,10 @@
 
             <section>
                 <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
-                    Envío de pedidos
+                    Sincronización de pedidos
                 </h2>
                 <div class="grid grid-cols-1 gap-4 py-8 lg:grid-cols-2">
                     @livewire(NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\GeslibOrderSyncStatsWidget::class)
-                    @livewire(NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\RecentOrderSyncErrorsWidget::class)
                 </div>
             </section>
         </div>

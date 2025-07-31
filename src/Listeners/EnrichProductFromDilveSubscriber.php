@@ -46,7 +46,10 @@ class EnrichProductFromDilveSubscriber implements ShouldQueue
             return;
         }
 
-        $currentPrimaryImage = $productVariant->product->getFirstMedia('images', ['primary' => true]);
+        $currentPrimaryImage = $productVariant->product->getFirstMedia(
+            config('lunar.media.collection'),
+            ['primary' => true],
+        );
 
         if ($currentPrimaryImage) {
             $currentPrimaryImage->delete();
@@ -64,7 +67,7 @@ class EnrichProductFromDilveSubscriber implements ShouldQueue
             ->withCustomProperties([
                 'primary' => true,
             ])
-            ->toMediaCollection('images');
+            ->toMediaCollection(config('lunar.media.collection'));
     }
 
     public function handleUpdatedProduct(GeslibArticleUpdated $event): void

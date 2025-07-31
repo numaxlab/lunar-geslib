@@ -15,7 +15,11 @@
         @if ($product->authors->isNotEmpty())
             <ul class="at-heading is-3 font-normal mt-3">
                 @foreach ($product->authors as $author)
-                    <li><a href="">{{ $author->translateAttribute('name') }}</a></li>
+                    <li>
+                        <a href="{{ route('lunar.geslib.storefront.search', ['q' => $author->translateAttribute('name')]) }}">
+                            {{ $author->translateAttribute('name') }}
+                        </a>
+                    </li>
                 @endforeach
             </ul>
         @endif

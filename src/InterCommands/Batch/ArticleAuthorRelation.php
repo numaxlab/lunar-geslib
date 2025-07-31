@@ -3,14 +3,9 @@
 namespace NumaxLab\Lunar\Geslib\InterCommands\Batch;
 
 use Illuminate\Support\Collection;
-use Lunar\FieldTypes\Text;
-use Lunar\Models\Collection as LunarCollection;
-use Lunar\Models\CollectionGroup;
 use Lunar\Models\ProductVariant;
-use NumaxLab\Geslib\Lines\AuthorType;
-use NumaxLab\Lunar\Geslib\InterCommands\AuthorCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\Contracts\CommandContract;
-use NumaxLab\Lunar\Geslib\Managers\CollectionGroupSync;
+use NumaxLab\Lunar\Geslib\Models\Author;
 
 class ArticleAuthorRelation extends AbstractBatchCommand
 {
@@ -41,58 +36,22 @@ class ArticleAuthorRelation extends AbstractBatchCommand
 
             $product = $variant->product;
 
-            $collectionGroup = CollectionGroup::where('handle', AuthorCommand::HANDLE)->firstOrFail();
-            $byAuthorTypeCommands = $articleCommands->groupBy('authorType');
-            $productAttributeData = [];
+            $authorsSync = [];
 
-            foreach ($byAuthorTypeCommands as $authorType => $authorTypeCommands) {
-                $authorTypeCommands = $authorTypeCommands->sortBy('position');
+            foreach ($articleCommands as $command) {
+                $author = Author::where('geslib_code', $command->authorId)->first();
 
-                $authorsCollection = LunarCollection::where('collection_group_id', $collectionGroup->id)
-                    ->where(function ($query) use ($authorTypeCommands) {
-                        foreach ($authorTypeCommands as $command) {
-                            $query->orWhere('attribute_data->geslib-code->value', $command->authorId);
-                        }
-                    })->get();
-
-                if ($authorType === AuthorType::AUTHOR) {
-                    (new CollectionGroupSync($product, $collectionGroup->id, $authorsCollection))->handle();
+                if (!$author) {
                     continue;
                 }
 
-                if ($authorsCollection->isEmpty()) {
-                    continue;
-                }
-
-                $authorsString = $authorsCollection
-                    ->map(fn($author) => $author->attribute_data->get('name')->getValue())
-                    ->implode('; ');
-
-                if ($authorType === AuthorType::TRANSLATOR) {
-                    $productAttributeData['translator'] = new Text($authorsString);
-                    continue;
-                }
-
-                if ($authorType === AuthorType::ILLUSTRATOR) {
-                    $productAttributeData['illustrator'] = new Text($authorsString);
-                    continue;
-                }
-
-                if ($authorType === AuthorType::COVER_ILLUSTRATOR) {
-                    $productAttributeData['cover-illustrator'] = new Text($authorsString);
-                    continue;
-                }
-
-                if ($authorType === AuthorType::BACK_COVER_ILLUSTRATOR) {
-                    $productAttributeData['back-cover-illustrator'] = new Text($authorsString);
-                }
+                $authorsSync[$author->id] = [
+                    'position' => $command->position,
+                    'author_type' => $command->authorType,
+                ];
             }
 
-            if (count($productAttributeData) > 0) {
-                $product->update([
-                    'attribute_data' => array_merge($product->attribute_data->toArray(), $productAttributeData),
-                ]);
-            }
+            $product->authors()->sync($authorsSync);
         }
     }
 }

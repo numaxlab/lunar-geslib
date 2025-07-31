@@ -15,7 +15,6 @@ use NumaxLab\Lunar\Geslib\InterCommands\ClassificationCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\IbicCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\LanguageCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
-use NumaxLab\Lunar\Geslib\InterCommands\TopicCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\TypeCommand;
 
 class CollectionResourceExtension extends ResourceExtension
@@ -28,12 +27,6 @@ class CollectionResourceExtension extends ResourceExtension
             'in-homepage',
         ],
         LanguageCommand::HANDLE => [
-            'subtitle',
-            'description',
-            'is-section',
-            'in-homepage',
-        ],
-        TopicCommand::HANDLE => [
             'subtitle',
             'description',
             'is-section',

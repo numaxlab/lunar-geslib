@@ -1,18 +1,21 @@
-<article>
+<article class="lg:mx-auto lg:max-w-300">
     <h1 class="at-heading is-1">
         ¿Cómo quieres recibir tu pedido?
-
-        {{ $cart->id }}
     </h1>
 
-    @include('lunar-geslib::storefront.partials.checkout.address', [
-        'type' => 'shipping',
-        'step' => $steps['shipping_address'],
-    ])
-
-    @include('lunar-geslib::storefront.partials.checkout.shipping-options', [
-        'step' => $steps['shipping_option'],
-    ])
+    <div class="lg:flex lg:gap-6">
+        <div class="lg:w-1/2">
+            @include('lunar-geslib::storefront.partials.checkout.address', [
+                'type' => 'shipping',
+                'step' => $steps['shipping_address'],
+            ])
+        </div>
+        <div class="lg:w-1/2">
+            @include('lunar-geslib::storefront.partials.checkout.shipping-options', [
+                'step' => $steps['shipping_option'],
+            ])
+        </div>
+    </div>
 
     @include('lunar-geslib::storefront.partials.checkout.address', [
         'type' => 'billing',

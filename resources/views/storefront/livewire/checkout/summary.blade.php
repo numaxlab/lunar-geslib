@@ -1,7 +1,7 @@
-<article>
+<article class="lg:mx-auto lg:max-w-300">
     <h1 class="at-heading is-1">Carrito</h1>
 
-    <ul class="divide-y divide-black">
+    <ul class="lg:grid lg:grid-cols-2 lg:gap-4">
         @foreach ($lines as $key => $line)
             <li>
                 <x-lunar-geslib::product.in-cart
@@ -50,10 +50,6 @@
             <li class="at-small py-2">
                 <i class="fa-solid fa-shopping-bag" aria-hidden="true"></i>
                 Subtotal pedido: {{ $this->cart->subTotal->formatted() }}
-            </li>
-            <li class="at-small py-2">
-                <i class="fa-solid fa-info" aria-hidden="true"></i>
-                Gastos de envío: {{ $this->cart->shippingTotal?->formatted() }}
             </li>
         </ul>
     </div>

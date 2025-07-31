@@ -5,12 +5,11 @@ namespace NumaxLab\Lunar\Geslib\Admin\Filament;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Pages\GeslibDashboardPage;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\AuthorResource;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibInterFileResource;
-use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibOrderSyncLogResource;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\GeslibFileImportStatsWidget;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\GeslibOrderSyncStatsWidget;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\RecentFileImportErrorsWidget;
-use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\RecentOrderSyncErrorsWidget;
 
 class GeslibPlugin implements Plugin
 {
@@ -36,14 +35,13 @@ class GeslibPlugin implements Plugin
                 GeslibDashboardPage::class,
             ])
             ->resources([
+                AuthorResource::class,
                 GeslibInterFileResource::class,
-                GeslibOrderSyncLogResource::class,
             ])
             ->widgets([
                 GeslibFileImportStatsWidget::class,
                 GeslibOrderSyncStatsWidget::class,
                 RecentFileImportErrorsWidget::class,
-                RecentOrderSyncErrorsWidget::class,
             ]);
     }
 

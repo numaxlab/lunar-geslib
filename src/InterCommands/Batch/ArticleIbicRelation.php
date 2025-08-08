@@ -2,7 +2,6 @@
 
 namespace NumaxLab\Lunar\Geslib\InterCommands\Batch;
 
-use Illuminate\Support\Collection;
 use Lunar\FieldTypes\Text;
 use Lunar\Models\Collection as LunarCollection;
 use Lunar\Models\CollectionGroup;
@@ -13,62 +12,48 @@ use NumaxLab\Lunar\Geslib\Managers\CollectionGroupSync;
 
 class ArticleIbicRelation extends AbstractBatchCommand
 {
-    private Collection $byArticleCommands;
-
-    public function __construct(Collection $commandsGroupedByArticle)
-    {
-        $this->byArticleCommands = $commandsGroupedByArticle;
-    }
-
-    public function linesCount(): int
-    {
-        return $this->byArticleCommands->count();
-    }
-
     public function __invoke(): void
     {
-        foreach ($this->byArticleCommands as $articleId => $articleCommands) {
-            $variant = ProductVariant::where('sku', $articleId)->first();
+        $variant = ProductVariant::where('sku', $this->articleId)->first();
 
-            if (!$variant) {
-                $this->addLog(
-                    CommandContract::LEVEL_WARNING,
-                    "Product with code [{$articleId}] not found in line type [{$articleCommands->first()->getType()}].",
-                );
-                continue;
-            }
-
-            $product = $variant->product;
-
-            $collectionGroup = CollectionGroup::where('handle', IbicCommand::HANDLE)->firstOrFail();
-
-            $ibicCollection = $this->getIbicCollection($collectionGroup, $articleCommands);
-
-            if ($ibicCollection->count() < $articleCommands->count()) {
-                $this->createMissingCollections($collectionGroup, $articleCommands);
-
-                $ibicCollection = $this->getIbicCollection($collectionGroup, $articleCommands);
-            }
-
-            (new CollectionGroupSync($product, $collectionGroup->id, $ibicCollection))->handle();
+        if (!$variant) {
+            $this->addLog(
+                CommandContract::LEVEL_WARNING,
+                "Product with code [{$this->articleId}] not found.",
+            );
+            return;
         }
+
+        $product = $variant->product;
+
+        $collectionGroup = CollectionGroup::where('handle', IbicCommand::HANDLE)->firstOrFail();
+
+        $ibicCollection = $this->getIbicCollection($collectionGroup);
+
+        if ($ibicCollection->count() < count($this->data)) {
+            $this->createMissingCollections($collectionGroup);
+
+            $ibicCollection = $this->getIbicCollection($collectionGroup);
+        }
+
+        (new CollectionGroupSync($product, $collectionGroup->id, $ibicCollection))->handle();
     }
 
-    private function getIbicCollection($collectionGroup, $articleCommands)
+    private function getIbicCollection($collectionGroup)
     {
         return LunarCollection::where('collection_group_id', $collectionGroup->id)
-            ->where(function ($query) use ($articleCommands) {
-                foreach ($articleCommands as $command) {
-                    $query->orWhere('attribute_data->geslib-code->value', $command->code);
+            ->where(function ($query) {
+                foreach ($this->data as $item) {
+                    $query->orWhere('geslib_code', $item['code']);
                 }
             })->get();
     }
 
-    private function createMissingCollections(CollectionGroup $collectionGroup, Collection $ibicCommands): void
+    private function createMissingCollections(CollectionGroup $collectionGroup): void
     {
-        foreach ($ibicCommands as $command) {
+        foreach ($this->data as $item) {
             $ibicCollection = LunarCollection::where('collection_group_id', $collectionGroup->id)
-                ->where('attribute_data->geslib-code->value', $command->code)->first();
+                ->where('geslib_code', $item['code'])->first();
 
             if ($ibicCollection) {
                 continue;
@@ -76,9 +61,9 @@ class ArticleIbicRelation extends AbstractBatchCommand
 
             LunarCollection::create([
                 'collection_group_id' => $collectionGroup->id,
+                'geslib_code' => $item['code'],
                 'attribute_data' => [
-                    'geslib-code' => new Text($command->code),
-                    'name' => new Text($command->description),
+                    'name' => new Text($item['description']),
                 ],
             ]);
         }

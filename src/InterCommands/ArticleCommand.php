@@ -51,7 +51,7 @@ class ArticleCommand extends AbstractCommand
             // bibliographic-data group
             'issue-date' => new Date($this->article->edition()?->date()?->format('Y-m-d')),
             'first-issue-year' => new Number($this->article->firstEditionYear()),
-            'edition-number' => new Number($this->article->edition()?->number()),
+            'edition-number' => new Text($this->article->edition()?->number()),
             'reissue-date' => new Date($this->article->edition()?->reEditionDate()?->format('Y-m-d')),
             'last-issue-year' => new Number($this->article->lastEditionYear()),
             'edition-origin' => new Text($this->article->edition()?->editorial()),

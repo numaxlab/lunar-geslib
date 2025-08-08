@@ -7,8 +7,6 @@ use NumaxLab\Lunar\Geslib\Models\Author;
 
 class AuthorCommand extends AbstractCommand
 {
-    public const HANDLE = 'authors';
-
     public function __construct(private readonly AuthorLine $author) {}
 
     public function __invoke(): void

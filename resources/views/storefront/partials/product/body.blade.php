@@ -15,7 +15,7 @@
         @if ($product->collections->isNotEmpty())
             <ul class="flex flex-wrap gap-2">
                 @foreach ($product->collections as $collection)
-                    @if (!in_array($collection->group->handle, ['product-types', 'authors', 'itineraries']))
+                    @if (!in_array($collection->group->handle, ['product-types', 'itineraries']))
                         <li>
                             <a href="{{ $collection->url }}" class="at-small at-tag is-primary">
                                 {{ $collection->translateAttribute('name') }}
@@ -27,6 +27,42 @@
         @endif
 
         <dl class="at-description-list is-grid text-sm mt-5">
+            @if ($product->translators->isNotEmpty())
+                <dt>{{ __('Traducción') }}</dt>
+                <dd>
+                    @foreach ($product->translators as $author)
+                        <a href="{{ route('trafikrak.storefront.bookshop.search', ['q' => $author->name]) }}">{{ $author->name }}</a>{{ $loop->last ? '' : ', ' }}
+                    @endforeach
+                </dd>
+            @endif
+
+            @if ($product->illustrators->isNotEmpty())
+                <dt>{{ __('Ilustración') }}</dt>
+                <dd>
+                    @foreach ($product->illustrators as $author)
+                        <a href="{{ route('trafikrak.storefront.bookshop.search', ['q' => $author->name]) }}">{{ $author->name }}</a>{{ $loop->last ? '' : ', ' }}
+                    @endforeach
+                </dd>
+            @endif
+
+            @if ($product->coverIllustrators->isNotEmpty())
+                <dt>{{ __('Ilustración de portada') }}</dt>
+                <dd>
+                    @foreach ($product->coverIllustrators as $author)
+                        <a href="{{ route('trafikrak.storefront.bookshop.search', ['q' => $author->name]) }}">{{ $author->name }}</a>{{ $loop->last ? '' : ', ' }}
+                    @endforeach
+                </dd>
+            @endif
+
+            @if ($product->backCoverIllustrators->isNotEmpty())
+                <dt>{{ __('Ilustración de contraportada') }}</dt>
+                <dd>
+                    @foreach ($product->backCoverIllustrators as $author)
+                        <a href="{{ route('trafikrak.storefront.bookshop.search', ['q' => $author->name]) }}">{{ $author->name }}</a>{{ $loop->last ? '' : ', ' }}
+                    @endforeach
+                </dd>
+            @endif
+
             @foreach ($product->mappedAttributes() as $attribute)
                 @if (! in_array($attribute->handle, ['name', 'subtitle', 'bookshop-reference', 'editorial-reference', 'index']))
                     @if ($product->translateAttribute($attribute->handle))

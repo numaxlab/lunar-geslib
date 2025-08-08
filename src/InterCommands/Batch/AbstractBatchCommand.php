@@ -8,6 +8,8 @@ abstract class AbstractBatchCommand implements CommandContract
 {
     protected array $log = [];
 
+    public function __construct(protected readonly string $articleId, protected readonly array $data) {}
+
     public function addLog(string $level, string $message): void
     {
         $this->log[] = [
@@ -21,5 +23,8 @@ abstract class AbstractBatchCommand implements CommandContract
         return $this->log;
     }
 
-    abstract public function linesCount(): int;
+    public function linesCount(): int
+    {
+        return count($this->data);
+    }
 }

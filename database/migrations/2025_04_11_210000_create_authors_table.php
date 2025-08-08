@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
 
             $table->string('name');
-            $table->json('attribute_data');
+            $table->json('attribute_data')->nullable();
             $table->string('geslib_code', 50)->nullable();
 
             $table->timestamps();

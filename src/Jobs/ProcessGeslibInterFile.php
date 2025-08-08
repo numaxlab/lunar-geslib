@@ -13,16 +13,19 @@ use NumaxLab\Geslib\GeslibFile;
 use NumaxLab\Geslib\Lines\Article;
 use NumaxLab\Geslib\Lines\ArticleAuthor;
 use NumaxLab\Geslib\Lines\ArticleIndex;
+use NumaxLab\Geslib\Lines\ArticleIndexTranslation;
 use NumaxLab\Geslib\Lines\ArticleTopic;
 use NumaxLab\Geslib\Lines\Author;
 use NumaxLab\Geslib\Lines\AuthorBiography;
 use NumaxLab\Geslib\Lines\BindingType;
 use NumaxLab\Geslib\Lines\BookshopReference;
+use NumaxLab\Geslib\Lines\BookshopReferenceTranslation;
 use NumaxLab\Geslib\Lines\Classification;
 use NumaxLab\Geslib\Lines\Collection;
 use NumaxLab\Geslib\Lines\EBook;
 use NumaxLab\Geslib\Lines\Editorial;
 use NumaxLab\Geslib\Lines\EditorialReference;
+use NumaxLab\Geslib\Lines\EditorialReferenceTranslation;
 use NumaxLab\Geslib\Lines\Ibic;
 use NumaxLab\Geslib\Lines\Language;
 use NumaxLab\Geslib\Lines\PressPublication;
@@ -56,6 +59,7 @@ use NumaxLab\Lunar\Geslib\InterCommands\StockCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\TopicCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\TypeCommand;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
+use NumaxLab\Lunar\Geslib\Models\GeslibInterFileBatchLine;
 use RuntimeException;
 use Throwable;
 use ZipArchive;
@@ -116,7 +120,12 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
         }
 
         $log = is_array($this->geslibInterFile->log) ? $this->geslibInterFile->log : [];
-        $batchCommands = $this->geslibInterFile->batch_commands ?? collect();
+        // Clear the log if it exceeds a certain size to prevent memory issues
+        if (count($log) > 2000) {
+            $log = [];
+        }
+
+        $batchCommands = collect();
 
         for ($i = $this->startLine; $i < $endLine; $i++) {
             $line = $geslibFile->lines()[$i];
@@ -137,9 +146,9 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
                 BookshopReference::CODE => $command = new BookshopReferenceCommand($line),
                 EditorialReference::CODE => $command = new EditorialReferenceCommand($line),
                 ArticleIndex::CODE => $command = new ArticleIndexCommand($line),
-                // BookshopReferenceTranslation::CODE => null,
-                // EditorialReferenceTranslation::CODE => null,
-                // ArticleIndexTranslation::CODE => null,
+                BookshopReferenceTranslation::CODE => null,
+                EditorialReferenceTranslation::CODE => null,
+                ArticleIndexTranslation::CODE => null,
                 ArticleAuthor::CODE => $command = new ArticleAuthorCommand($line),
                 BindingType::CODE => $command = new BindingTypeCommand($line),
                 Language::CODE => $command = new LanguageCommand($line),
@@ -208,25 +217,46 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
         ];
 
         $this->geslibInterFile->update([
+            GeslibInterFile::STATUS_PROCESSING,
             'processed_lines' => $endLine,
             'log' => $log,
-            'batch_commands' => $batchCommands,
+            'finished_at' => null,
         ]);
+
+        foreach ($batchCommands->groupBy('type') as $lineType => $lineTypCommands) {
+            foreach ($lineTypCommands->groupBy('articleId') as $articleId => $articleCommands) {
+                $fileBatchLine = $this->geslibInterFile->batchLines()->firstOrCreate([
+                    'article_id' => $articleId,
+                    'line_type' => $lineType,
+                ]);
+
+                if ($fileBatchLine->data === null) {
+                    $fileBatchLine->data = [];
+                }
+
+                $fileBatchLine->update([
+                    'data' => array_merge(
+                        $fileBatchLine->data,
+                        $articleCommands->map(function ($command) {
+                            $data = json_decode(json_encode($command), true);
+
+                            unset($data['type'], $data['articleId']);
+
+                            return $data;
+                        })->toArray(),
+                    ),
+                ]);
+            }
+        }
 
         if (!$fileFinished) {
             self::dispatch($this->geslibInterFile, $endLine, $this->chunkSize);
             return;
         }
 
-        $log[] = [
-            'level' => CommandContract::LEVEL_INFO,
-            'message' => sprintf(
-                'Processing %s batch commands',
-                $batchCommands->count(),
-            ),
-        ];
+        unset($geslibFile, $line, $command, $batchCommands);
 
-        $log = $this->processBatchCommands($batchCommands, $log);
+        $log = $this->processBatchLines($log);
 
         Cache::lock(self::CACHE_LOCK_NAME)->forceRelease();
 
@@ -235,6 +265,8 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
             'finished_at' => Carbon::now(),
             'log' => $log,
         ]);
+
+        $this->geslibInterFile->batchLines()->delete();
 
         $storage->delete($extractedFilePath);
     }
@@ -254,26 +286,34 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
         }
     }
 
-    protected function processBatchCommands(\Illuminate\Support\Collection $batchCommands, array $log): array
+    protected function processBatchLines(array $log): array
     {
-        foreach ($batchCommands->groupBy('type') as $lineType => $commands) {
-            $batchCommand = null;
+        $batchLines = GeslibInterFileBatchLine::whereHas('geslibInterFile', function ($query) {
+            $query->where('id', $this->geslibInterFile->id);
+        })->get();
 
-            match ((string)$lineType) {
-                ArticleAuthor::CODE => $batchCommand = new ArticleAuthorRelation($commands->groupBy('articleId')),
-                ArticleTopic::CODE => $batchCommand = new ArticleTopicRelation($commands->groupBy('articleId')),
-                Ibic::CODE => $batchCommand = new ArticleIbicRelation($commands->groupBy('articleId')),
+        $log[] = [
+            'level' => CommandContract::LEVEL_INFO,
+            'message' => sprintf(
+                'Processing %s batch lines',
+                $batchLines->count(),
+            ),
+        ];
+
+        foreach ($batchLines as $batchLine) {
+            $command = null;
+
+            match ($batchLine->line_type) {
+                ArticleAuthor::CODE => $command = new ArticleAuthorRelation($batchLine->article_id, $batchLine->data),
+                ArticleTopic::CODE => $command = new ArticleTopicRelation($batchLine->article_id, $batchLine->data),
+                Ibic::CODE => $command = new ArticleIbicRelation($batchLine->article_id, $batchLine->data),
                 default => $log[] = [
                     'level' => CommandContract::LEVEL_WARNING,
-                    'message' => sprintf('Unexpected batch command for line type: %s', $lineType),
+                    'message' => sprintf('Unexpected batch command for line type: %s', $batchLine->line_type),
                 ],
             };
 
-            $batchCommand();
-
-            if (count($batchCommand->getLog()) > 0) {
-                $log[] = $batchCommand->getLog();
-            }
+            $command();
         }
 
         return $log;

@@ -7,6 +7,7 @@
         @if ($currentStep > $step)
             <x-numaxlab-atomic::atoms.button
                     type="button"
+                    class="at-small"
                     wire:click.prevent="$set('currentStep', {{ $step }})">
                 Modificar
             </x-numaxlab-atomic::atoms.button>

@@ -2,16 +2,27 @@
 
 namespace NumaxLab\Lunar\Geslib\Admin\Filament\Resources\ProductResource\Pages;
 
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Tables;
+use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Lunar\Admin\Filament\Resources\ProductResource;
 use Lunar\Admin\Support\Pages\BaseManageRelatedRecords;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\AuthorResource\Pages\ManageAuthorProducts;
+use NumaxLab\Lunar\Geslib\Models\Author;
+use NumaxLab\Lunar\Geslib\Models\Contracts\Author as AuthorContract;
 
 class ManageProductAuthors extends BaseManageRelatedRecords
 {
     protected static string $resource = ProductResource::class;
 
-    protected static string $relationship = 'authors';
+    protected static string $relationship = 'contributors';
 
     public static function getNavigationIcon(): ?string
     {
@@ -30,6 +41,84 @@ class ManageProductAuthors extends BaseManageRelatedRecords
 
     public function table(Table $table): Table
     {
-        return $table;
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('author_type')
+                    ->label(
+                        __('lunar-geslib::author.pages.products.actions.attach.form.author_type.label'),
+                    )
+                    ->formatStateUsing(function (string $state): string {
+                        return ManageAuthorProducts::formatAuthorType($state);
+                    }),
+                Tables\Columns\TextColumn::make('position'),
+            ])
+            ->actions([
+                DetachAction::make()
+                    ->action(function (Model $record, Table $table) {
+                        $relationship = Relation::noConstraints(fn() => $table->getRelationship());
+
+                        $relationship->detach($record);
+
+                        Notification::make()
+                            ->success()
+                            ->body(__('lunar-geslib::author.pages.products.actions.detach.notification.success'))
+                            ->send();
+                    }),
+            ])
+            ->headerActions([
+                AttachAction::make()
+                    ->label(
+                        __('lunar-geslib::product.pages.authors.actions.attach.label'),
+                    )
+                    ->form([
+                        Forms\Components\Select::make('recordId')
+                            ->label(
+                                __('lunar-geslib::product.pages.authors.actions.attach.form.record_id.label'),
+                            )
+                            ->required()
+                            ->searchable()
+                            ->getSearchResultsUsing(
+                                static function (Forms\Components\Select $component, string $search): array {
+                                    return Author::search($search)
+                                        ->get()
+                                        ->mapWithKeys(
+                                            fn(AuthorContract $author): array
+                                                => [
+                                                $author->getKey() => $author->name,
+                                            ],
+                                        )
+                                        ->all();
+                                },
+                            ),
+                        Forms\Components\Select::make('authorType')
+                            ->label(
+                                __('lunar-geslib::author.pages.products.actions.attach.form.author_type.label'),
+                            )
+                            ->options(ManageAuthorProducts::authorTypeOptions())
+                            ->required(),
+                        Forms\Components\TextInput::make('position')
+                            ->label(
+                                __('lunar-geslib::product.pages.authors.actions.attach.form.position.label'),
+                            )
+                            ->numeric()
+                            ->required(),
+                    ])
+                    ->action(function (array $arguments, array $data, Form $form, Table $table) {
+                        $relationship = Relation::noConstraints(fn() => $table->getRelationship());
+
+                        $author = Author::find($data['recordId']);
+
+                        $relationship->attach($author, [
+                            'author_type' => $data['authorType'],
+                            'position' => $data['position'],
+                        ]);
+
+                        Notification::make()
+                            ->success()
+                            ->body(__('lunar-geslib::product.pages.authors.actions.attach.notification.success'))
+                            ->send();
+                    }),
+            ]);
     }
 }

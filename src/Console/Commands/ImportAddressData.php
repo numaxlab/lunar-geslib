@@ -62,10 +62,10 @@ class ImportAddressData extends Command
                         return $state->country_id === $country->id;
                     })->filter(function ($state) {
                         if ($state->country_code === 'ES') {
-                            return $state->type === 'province';
+                            return $state->type === 'province' || $state->type === 'autonomous city';
                         }
 
-                        if ($state->state_code === null) {
+                        if ($state->iso2 === null) {
                             return false;
                         }
 
@@ -74,7 +74,7 @@ class ImportAddressData extends Command
                     ->map(function ($state) {
                         return [
                             'name' => $state->name,
-                            'code' => $state->state_code,
+                            'code' => $state->iso2,
                         ];
                     });
 

@@ -1,27 +1,23 @@
-<article class="flex items-start py-4" {{ $attributes->except(['image', 'href', 'price']) }}>
-    @if($attributes->get('image'))
-        <img class="object-cover w-16 h-auto" src="{{ $attributes->get('image') }}" alt="">
+<article class="flex gap-3 items-center py-2" {{ $attributes->except(['image', 'href', 'price']) }}>
+    <i class="fa-solid fa-book-open text-3xl text-primary" aria-hidden="true"></i>
+
+    <h3 class="at-small">
+        <a href="{{ $attributes->get('href') }}" wire:navigate>
+            {{ $slot }}
+        </a>
+    </h3>
+
+    @if (isset($quantity))
+        <div class="w-16 min-w-16">
+            {{ $quantity }}
+        </div>
     @endif
 
-    <div class="flex-1 ml-4">
-        <h3 class="at-heading is-4">
-            <a href="{{ $attributes->get('href') }}" wire:navigate>
-                {{ $slot }}
-            </a>
-        </h3>
+    <p class="at-small">
+        {{ $attributes->get('price') }}
+    </p>
 
-        <div class="flex items-center mt-2">
-            @if (isset($quantity))
-                <div class="w-16">
-                    {{ $quantity }}
-                </div>
-            @endif
-
-            <p class="ml-2 text-xs">
-                {{ $attributes->get('price') }}
-            </p>
-        </div>
-
+    <div class="ml-4">
         @if (isset($actions))
             {{ $actions }}
         @endif

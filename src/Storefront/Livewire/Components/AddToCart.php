@@ -34,7 +34,7 @@ class AddToCart extends Component
     public function addToCart(): void
     {
         if ($this->purchasable->canBeFulfilledAtQuantity(1) === false) {
-            $this->addError('quantity', 'Este artículo no está disponible.');
+            $this->addError('quantity', __('Este artículo no está disponible.'));
 
             return;
         }

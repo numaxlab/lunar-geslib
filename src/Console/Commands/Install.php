@@ -10,6 +10,7 @@ use Lunar\FieldTypes\Dropdown;
 use Lunar\FieldTypes\Number;
 use Lunar\FieldTypes\Text;
 use Lunar\FieldTypes\Toggle;
+use Lunar\FieldTypes\TranslatedText;
 use Lunar\Models\Attribute;
 use Lunar\Models\AttributeGroup;
 use Lunar\Models\Brand;
@@ -29,7 +30,6 @@ use Lunar\Models\TaxRateAmount;
 use Lunar\Models\TaxZone;
 use NumaxLab\Lunar\Geslib\FieldTypes\Date;
 use NumaxLab\Lunar\Geslib\Handle;
-use NumaxLab\Lunar\Geslib\InterCommands\AuthorCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\BindingTypeCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\ClassificationCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\CollectionCommand;
@@ -451,7 +451,7 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Text::class,
+            'type' => TranslatedText::class,
             'required' => true,
             'default_value' => null,
             'configuration' => [
@@ -473,7 +473,7 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Text::class,
+            'type' => TranslatedText::class,
             'required' => false,
             'default_value' => null,
             'configuration' => [
@@ -495,7 +495,7 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Text::class,
+            'type' => TranslatedText::class,
             'required' => false,
             'default_value' => null,
             'configuration' => [
@@ -531,7 +531,7 @@ class Install extends Command
             'attribute_type' => Collection::morphName(),
             'attribute_group_id' => $group->id,
             'position' => 6,
-            'handle' => 'in-homepage',
+            'handle' => 'featured',
             'name' => [
                 'es' => 'Mostrar en portada',
             ],
@@ -903,7 +903,7 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Text::class,
+            'type' => TranslatedText::class,
             'required' => false,
             'default_value' => null,
             'configuration' => [
@@ -925,7 +925,7 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Text::class,
+            'type' => TranslatedText::class,
             'required' => false,
             'default_value' => null,
             'configuration' => [
@@ -947,7 +947,7 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Text::class,
+            'type' => TranslatedText::class,
             'required' => false,
             'default_value' => null,
             'configuration' => [
@@ -981,7 +981,7 @@ class Install extends Command
                 'es' => '',
             ],
             'section' => 'main',
-            'type' => Text::class,
+            'type' => TranslatedText::class,
             'required' => false,
             'default_value' => null,
             'configuration' => [

@@ -20,7 +20,7 @@ class AuthorBiographyCommand extends AbstractCommand
         }
 
         $author->update([
-            'attribute_data' => array_merge($author->attribute_data->toArray(), [
+            'attribute_data' => array_merge(optional($author->attribute_data)->toArray() ?? [], [
                 'biography' => new Text(Str::title($this->authorBiography->biography())),
             ]),
         ]);

@@ -9,9 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use Lunar\Admin\Support\Extending\ResourceExtension;
 use Lunar\Models\Collection as LunarCollection;
 use NumaxLab\Lunar\Geslib\Handle;
-use NumaxLab\Lunar\Geslib\InterCommands\AuthorCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\BindingTypeCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\ClassificationCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\CollectionCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\IbicCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\LanguageCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
@@ -38,11 +38,7 @@ class CollectionResourceExtension extends ResourceExtension
             'is-section',
             'in-homepage',
         ],
-        AuthorCommand::HANDLE => [
-            'subtitle',
-            'is-section',
-            'in-homepage',
-        ],
+        CollectionCommand::HANDLE => [],
         BindingTypeCommand::HANDLE => [
             'subtitle',
             'description',
@@ -61,15 +57,15 @@ class CollectionResourceExtension extends ResourceExtension
             'is-section',
             'in-homepage',
         ],
+        Handle::COLLECTION_GROUP_TAXONOMIES => [
+            'subtitle',
+            'description',
+        ],
         Handle::COLLECTION_GROUP_FEATURED => [
             'subtitle',
             'description',
             'is-section',
             'in-homepage',
-        ],
-        Handle::COLLECTION_GROUP_TAXONOMIES => [
-            'subtitle',
-            'description',
         ],
         Handle::COLLECTION_GROUP_ITINERARIES => [
             'is-section',
@@ -78,10 +74,10 @@ class CollectionResourceExtension extends ResourceExtension
 
     public function extendForm(Form $form): Form
     {
-        return $form->schema($this->checkFieldsToHide($form->getComponents()));
+        return $form->schema($this->checkAttributesToHide($form->getComponents()));
     }
 
-    private function checkFieldsToHide(array $components): array
+    private function checkAttributesToHide(array $components): array
     {
         foreach ($components as $component) {
             if ($component instanceof Field) {
@@ -106,7 +102,7 @@ class CollectionResourceExtension extends ResourceExtension
             }
 
             if (method_exists($component, 'getChildComponents')) {
-                $component->schema($this->checkFieldsToHide($component->getChildComponents()));
+                $component->schema($this->checkAttributesToHide($component->getChildComponents()));
             }
         }
 

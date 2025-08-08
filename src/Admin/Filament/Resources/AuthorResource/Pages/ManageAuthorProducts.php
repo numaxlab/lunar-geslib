@@ -55,26 +55,7 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
                     __('lunar-geslib::author.pages.products.actions.attach.form.author_type.label'),
                 )
                 ->formatStateUsing(function (string $state): string {
-                    match ($state) {
-                        AuthorType::AUTHOR => $humanString = __(
-                            'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.author',
-                        ),
-                        AuthorType::TRANSLATOR => $humanString = __(
-                            'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.translator',
-                        ),
-                        AuthorType::ILLUSTRATOR => $humanString = __(
-                            'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.illustrator',
-                        ),
-                        AuthorType::COVER_ILLUSTRATOR => $humanString = __(
-                            'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.cover_illustrator',
-                        ),
-                        AuthorType::BACK_COVER_ILLUSTRATOR => $humanString = __(
-                            'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.back_cover_illustrator',
-                        ),
-                        default => $humanString = '',
-                    };
-
-                    return $humanString;
+                    return static::formatAuthorType($state);
                 }),
         ])->actions([
             DetachAction::make()
@@ -117,23 +98,7 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
                         ->label(
                             __('lunar-geslib::author.pages.products.actions.attach.form.author_type.label'),
                         )
-                        ->options([
-                            AuthorType::AUTHOR => __(
-                                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.author',
-                            ),
-                            AuthorType::TRANSLATOR => __(
-                                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.translator',
-                            ),
-                            AuthorType::ILLUSTRATOR => __(
-                                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.illustrator',
-                            ),
-                            AuthorType::COVER_ILLUSTRATOR => __(
-                                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.cover_illustrator',
-                            ),
-                            AuthorType::BACK_COVER_ILLUSTRATOR => __(
-                                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.back_cover_illustrator',
-                            ),
-                        ])
+                        ->options(static::authorTypeOptions())
                         ->required(),
                 ])
                 ->action(function (array $arguments, array $data, Form $form, Table $table) {
@@ -152,5 +117,48 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
                         ->send();
                 }),
         ]);
+    }
+
+    public static function formatAuthorType(string $authorType): string
+    {
+        return match ($authorType) {
+            AuthorType::AUTHOR => __(
+                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.author',
+            ),
+            AuthorType::TRANSLATOR => __(
+                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.translator',
+            ),
+            AuthorType::ILLUSTRATOR => __(
+                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.illustrator',
+            ),
+            AuthorType::COVER_ILLUSTRATOR => __(
+                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.cover_illustrator',
+            ),
+            AuthorType::BACK_COVER_ILLUSTRATOR => __(
+                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.back_cover_illustrator',
+            ),
+            default => '',
+        };
+    }
+
+    public static function authorTypeOptions(): array
+    {
+        return [
+            AuthorType::AUTHOR => __(
+                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.author',
+            ),
+            AuthorType::TRANSLATOR => __(
+                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.translator',
+            ),
+            AuthorType::ILLUSTRATOR => __(
+                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.illustrator',
+            ),
+            AuthorType::COVER_ILLUSTRATOR => __(
+                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.cover_illustrator',
+            ),
+            AuthorType::BACK_COVER_ILLUSTRATOR => __(
+                'lunar-geslib::author.pages.products.actions.attach.form.author_type.options.back_cover_illustrator',
+            ),
+        ];
     }
 }

@@ -16,8 +16,8 @@
             <ul class="at-heading is-3 font-normal mt-3">
                 @foreach ($product->authors as $author)
                     <li>
-                        <a href="{{ route('lunar.geslib.storefront.search', ['q' => $author->translateAttribute('name')]) }}">
-                            {{ $author->translateAttribute('name') }}
+                        <a href="{{ route('lunar.geslib.storefront.search', ['q' => $author->name]) }}">
+                            {{ $author->name }}
                         </a>
                     </li>
                 @endforeach
@@ -45,36 +45,12 @@
         <livewire:numax-lab.lunar.geslib.storefront.livewire.components.add-to-cart
                 :key="'add-to-cart-' . $product->id"
                 :purchasable="$product->variant"/>
-
-        <a href="#" class="at-button border-primary text-primary mt-3">
-            Descarga este libro
-        </a>
-
-        <a href="#" class="at-button border-primary text-primary mt-3">
-            Haz una donación
-        </a>
     </div>
 
     <div class="mt-10 lg:w-8/12 lg:ml-[25%] lg:pl-10">
         <div class="lg:hidden">
             @include('lunar-geslib::storefront.partials.product.body')
         </div>
-
-        <x-numaxlab-atomic::organisms.tier class="mt-10">
-            <x-numaxlab-atomic::organisms.tier.header>
-                <h2 class="at-heading is-2">
-                    {{ __('Reseñas') }}
-                </h2>
-            </x-numaxlab-atomic::organisms.tier.header>
-
-            <ul class="flex flex-col gap-4 md:flex-row md:gap-6">
-                @for($i=0; $i<2; $i++)
-                    <li class="pr-10">
-                        <x-lunar-geslib::review.summary/>
-                    </li>
-                @endfor
-            </ul>
-        </x-numaxlab-atomic::organisms.tier>
 
         @if ($product->associations->isNotEmpty())
             <x-numaxlab-atomic::organisms.tier class="mt-10">

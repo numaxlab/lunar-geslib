@@ -71,7 +71,7 @@ Route::middleware('guest')->group(function () {
     Route::get('login', LoginPage::class)->name('login');
     Route::get('registrate', RegisterPage::class)->name('register');
     Route::get('recuperar-contrasenha', ForgotPasswordPage::class)->name('password.request');
-    Route::get('recuperar-ctonrasenha/{token}', ResetPasswordPage::class)->name('password.reset');
+    Route::get('recuperar-contrasenha/{token}', ResetPasswordPage::class)->name('password.reset');
 });
 
 Route::middleware('auth')->group(function () {

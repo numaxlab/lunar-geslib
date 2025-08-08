@@ -19,7 +19,7 @@ class ProductResourceExtension extends ResourceExtension
     {
         return [
             ...$nav,
-            //Pages\ManageProductAuthors::class,
+            Pages\ManageProductAuthors::class,
         ];
     }
 }

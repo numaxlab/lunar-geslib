@@ -3,10 +3,10 @@
 namespace NumaxLab\Lunar\Geslib\Admin\Filament\Resources\AuthorResource\Pages;
 
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
+use Lunar\Admin\Support\Pages\BaseListRecords;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\AuthorResource;
 
-class ListAuthors extends ListRecords
+class ListAuthors extends BaseListRecords
 {
     protected static string $resource = AuthorResource::class;
 

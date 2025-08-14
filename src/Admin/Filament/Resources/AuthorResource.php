@@ -23,6 +23,8 @@ class AuthorResource extends BaseResource
 
     protected static ?string $model = AuthorContract::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static ?int $navigationSort = 3;
 
     protected static int $globalSearchResultsLimit = 5;

@@ -76,14 +76,14 @@ class ProductMediaDefinitions implements MediaDefinitionsInterface
     public function getMediaCollectionTitles(): array
     {
         return [
-            'images' => __('lunar::base.standard-media-definitions.collection-titles.images'),
+            config('lunar.media.collection') => __('lunar::base.standard-media-definitions.collection-titles.images'),
         ];
     }
 
     public function getMediaCollectionDescriptions(): array
     {
         return [
-            'images' => '',
+            config('lunar.media.collection') => '',
         ];
     }
 }

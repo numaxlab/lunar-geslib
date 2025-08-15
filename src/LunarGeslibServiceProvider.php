@@ -97,13 +97,18 @@ class LunarGeslibServiceProvider extends ServiceProvider
         );
 
         if ($this->app->runningInConsole()) {
-            $this->commands([
+            $commands = [
                 Install::class,
                 Import::class,
                 ImportAddressData::class,
                 ForceProductEnrichment::class,
-                EnsureIndexes::class,
-            ]);
+            ];
+
+            if (!$this->app->runningUnitTests()) {
+                $commands[] = EnsureIndexes::class;
+            }
+
+            $this->commands($commands);
         }
     }
 

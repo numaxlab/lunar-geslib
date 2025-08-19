@@ -54,7 +54,7 @@ class Install extends Command
 
         $this->components->info('Publishing configuration...');
 
-        if (!$this->configExists('lunar')) {
+        if (! $this->configExists('lunar')) {
             $this->publishConfiguration();
         } else {
             if ($this->shouldOverwriteConfig()) {
@@ -71,17 +71,17 @@ class Install extends Command
 
         DB::beginTransaction();
 
-        if (class_exists(Staff::class) && !Staff::whereAdmin(true)->exists()) {
+        if (class_exists(Staff::class) && ! Staff::whereAdmin(true)->exists()) {
             $this->components->info('First create a lunar admin user');
             $this->call('lunar:create-admin');
         }
 
-        if (!Country::count()) {
+        if (! Country::count()) {
             $this->components->info('Importing countries');
             $this->call('lunar:geslib:import:address-data');
         }
 
-        if (!Channel::whereDefault(true)->exists()) {
+        if (! Channel::whereDefault(true)->exists()) {
             $this->components->info('Setting up default channel');
 
             Channel::create([
@@ -92,7 +92,7 @@ class Install extends Command
             ]);
         }
 
-        if (!Language::count()) {
+        if (! Language::count()) {
             $this->components->info('Adding default language');
 
             Language::create([
@@ -102,7 +102,7 @@ class Install extends Command
             ]);
         }
 
-        if (!Currency::whereDefault(true)->exists()) {
+        if (! Currency::whereDefault(true)->exists()) {
             $this->components->info('Adding currency (EUR)');
 
             Currency::create([
@@ -115,7 +115,7 @@ class Install extends Command
             ]);
         }
 
-        if (!CustomerGroup::whereDefault(true)->exists()) {
+        if (! CustomerGroup::whereDefault(true)->exists()) {
             $this->components->info('Adding a default customer group.');
 
             CustomerGroup::create([
@@ -127,13 +127,13 @@ class Install extends Command
 
         $this->setupTaxation();
 
-        if (!CollectionGroup::count()) {
+        if (! CollectionGroup::count()) {
             $this->components->info('Adding an collection groups.');
 
             $this->setupCollectionGroups();
         }
 
-        if (!Attribute::count()) {
+        if (! Attribute::count()) {
             $this->components->info('Setting up attributes.');
 
             $this->setupBrandAttributes();
@@ -142,7 +142,7 @@ class Install extends Command
             $this->setupAuthorAttributes();
         }
 
-        if (!ProductType::count()) {
+        if (! ProductType::count()) {
             $this->components->info('Adding product types.');
 
             $type = ProductType::create([
@@ -164,11 +164,11 @@ class Install extends Command
 
     private function configExists(string $fileName): bool
     {
-        if (!File::isDirectory(config_path($fileName))) {
+        if (! File::isDirectory(config_path($fileName))) {
             return false;
         }
 
-        return !empty(File::allFiles(config_path($fileName)));
+        return ! empty(File::allFiles(config_path($fileName)));
     }
 
     /**
@@ -240,8 +240,7 @@ class Install extends Command
             State::where('country_id', $spain->id)
                 ->whereNotIn('code', ['CE', 'ML', 'CN'])
                 ->get()
-                ->map(fn($state)
-                    => [
+                ->map(fn ($state) => [
                     'state_id' => $state->id,
                 ]),
         );

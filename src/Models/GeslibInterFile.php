@@ -5,6 +5,18 @@ namespace NumaxLab\Lunar\Geslib\Models;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Lunar\Base\BaseModel;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $status
+ * @property ?\Illuminate\Support\Carbon $received_at
+ * @property ?\Illuminate\Support\Carbon $started_at
+ * @property ?\Illuminate\Support\Carbon $finished_at
+ * @property int $total_lines
+ * @property int $processed_lines
+ * @property ?array $log
+ * @property ?string $progress
+ */
 class GeslibInterFile extends BaseModel
 {
     public const STATUS_PENDING = 'pending';

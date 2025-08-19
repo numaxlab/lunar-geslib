@@ -8,6 +8,9 @@ use Lunar\Facades\CartSession;
 use Lunar\Models\Contracts\Cart;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\Page;
 
+/**
+ * @property Collection $cartLines
+ */
 class SummaryPage extends Page
 {
     public ?Cart $cart;
@@ -30,7 +33,7 @@ class SummaryPage extends Page
     {
         $this->cart = CartSession::current();
 
-        if (! $this->cart) {
+        if (!$this->cart) {
             $this->redirect('/');
 
             return;

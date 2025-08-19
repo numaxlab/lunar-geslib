@@ -18,6 +18,11 @@ use Lunar\Models\Order;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\Checkout\Forms\AddressForm;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\Page;
 
+/**
+ * @property Collection $countries
+ * @property Collection $shippingOptions
+ * @property ShippingOption $shippingOption
+ */
 class ShippingAndPaymentPage extends Page
 {
     public ?Cart $cart;
@@ -66,7 +71,7 @@ class ShippingAndPaymentPage extends Page
     {
         $this->cart = CartSession::current();
 
-        if (! $this->cart) {
+        if (!$this->cart) {
             $this->redirect('/');
 
             return;
@@ -152,7 +157,7 @@ class ShippingAndPaymentPage extends Page
     public function saveAddress(string $type): void
     {
         $rules = collect($this->shipping->getRules())
-            ->mapWithKeys(fn ($value, $key) => ["$type.$key" => $value])
+            ->mapWithKeys(fn($value, $key) => ["$type.$key" => $value])
             ->toArray();
 
         $this->validate($rules);
@@ -198,7 +203,7 @@ class ShippingAndPaymentPage extends Page
     {
         $shippingAddress = $this->cart->shippingAddress;
 
-        if (! $shippingAddress) {
+        if (!$shippingAddress) {
             return null;
         }
 
@@ -215,7 +220,7 @@ class ShippingAndPaymentPage extends Page
 
     public function saveShippingOption(): void
     {
-        $option = $this->shippingOptions->first(fn ($option) => $option->getIdentifier() == $this->chosenShipping);
+        $option = $this->shippingOptions->first(fn($option) => $option->getIdentifier() == $this->chosenShipping);
 
         CartSession::setShippingOption($option);
 

@@ -21,7 +21,8 @@
         "pestphp/pest-plugin-laravel": "^3.2",
         "orchestra/testbench": "^10.4",
         "laravel/pint": "dev-main",
-        "peckphp/peck": "dev-main"
+        "peckphp/peck": "dev-main",
+        "larastan/larastan": "^3.0"
     },
     "autoload": {
         "psr-4": {
@@ -32,6 +33,9 @@
         "psr-4": {
             "NumaxLab\\Lunar\\Geslib\\Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "phpstan": "./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=512M"
     },
     "extra": {
         "laravel": {

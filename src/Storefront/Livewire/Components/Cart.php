@@ -8,6 +8,9 @@ use Livewire\Component;
 use Lunar\Facades\CartSession;
 use Lunar\Models\Contracts\Cart as CartContract;
 
+/**
+ * @property Collection $cartLines
+ */
 class Cart extends Component
 {
     public array $lines;

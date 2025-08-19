@@ -2,6 +2,7 @@
 
 namespace NumaxLab\Lunar\Geslib\Console\Commands\Search;
 
+use Exception;
 use Illuminate\Console\Command;
 use Laravel\Scout\EngineManager;
 use Laravel\Scout\Engines\MeilisearchEngine;
@@ -35,7 +36,7 @@ class EnsureIndexes extends Command
             try {
                 $this->client->getIndex($indexName);
                 $this->line("The index '{$indexName}' already exists.");
-            } catch (ApiException $e) {
+            } catch (Exception $e) {
                 if ($e->getCode() === 404) {
                     $this->warn("The index '{$indexName}' does not exist. Creating...");
                     $this->client->createIndex($indexName, ['primaryKey' => $model->getScoutKeyName()]);

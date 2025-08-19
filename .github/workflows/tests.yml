@@ -26,6 +26,9 @@ jobs:
           tools: composer:v2
           coverage: xdebug
 
+      - name: Install GNU Aspell
+        run: sudo apt-get install aspell aspell-en
+
       - name: Install Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 

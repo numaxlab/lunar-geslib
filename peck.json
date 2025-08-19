@@ -1,0 +1,15 @@
+{
+    "preset": "laravel",
+    "ignore": {
+        "words": [
+            "php",
+            "fieldtypes",
+            "nav",
+            "geslib",
+            "ibic",
+            "dilve",
+            "ebook"
+        ],
+        "paths": []
+    }
+}

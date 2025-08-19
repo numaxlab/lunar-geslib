@@ -20,7 +20,8 @@
         "pestphp/pest": "^3.8",
         "pestphp/pest-plugin-laravel": "^3.2",
         "orchestra/testbench": "^10.4",
-        "laravel/pint": "dev-main"
+        "laravel/pint": "dev-main",
+        "peckphp/peck": "dev-main"
     },
     "autoload": {
         "psr-4": {

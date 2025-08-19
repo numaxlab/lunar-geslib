@@ -12,7 +12,9 @@ use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 class RecentFileImportErrorsWidget extends Widget
 {
     protected static string $view = 'lunar-geslib::filament.widgets.recent-file-import-errors-widget';
+
     public Collection $recentErrors; // Or 'full' if it should take full width in a grid
+
     protected int|string|array $columnSpan = '1';
 
     public function mount(): void

@@ -64,7 +64,7 @@ use RuntimeException;
 use Throwable;
 use ZipArchive;
 
-class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
+class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
 {
     use Queueable;
 
@@ -84,14 +84,14 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
 
     public function uniqueId(): string
     {
-        return $this->geslibInterFile->id . '-' . $this->startLine . '-' . $this->chunkSize;
+        return $this->geslibInterFile->id.'-'.$this->startLine.'-'.$this->chunkSize;
     }
 
     public function handle(): void
     {
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
-        $extractedFilePath = config('lunar.geslib.inter_files_path') . '/' . str_replace(
+        $extractedFilePath = config('lunar.geslib.inter_files_path').'/'.str_replace(
                 '.zip',
                 '',
                 $this->geslibInterFile->name,
@@ -251,6 +251,7 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
 
         if (!$fileFinished) {
             self::dispatch($this->geslibInterFile, $endLine, $this->chunkSize);
+
             return;
         }
 
@@ -273,16 +274,16 @@ class ProcessGeslibInterFile implements ShouldQueue, ShouldBeUnique
 
     protected function extractZipFile(Filesystem $storage): void
     {
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
 
-        $zipFilePath = $storage->path(config('lunar.geslib.inter_files_path') . '/' . $this->geslibInterFile->name);
+        $zipFilePath = $storage->path(config('lunar.geslib.inter_files_path').'/'.$this->geslibInterFile->name);
 
         if ($zip->open($zipFilePath) === true) {
             $zip->extractTo($storage->path(config('lunar.geslib.inter_files_path')));
 
             $zip->close();
         } else {
-            throw new RuntimeException('Unable to open zip file: ' . $zipFilePath);
+            throw new RuntimeException('Unable to open zip file: '.$zipFilePath);
         }
     }
 

@@ -22,7 +22,7 @@ class Product extends \Lunar\Models\Product
     {
         return $this->belongsToMany(
             Author::class,
-            config('lunar.database.table_prefix') . 'geslib_author_product',
+            config('lunar.database.table_prefix').'geslib_author_product',
         )->withPivot(['author_type', 'position']);
     }
 
@@ -53,7 +53,7 @@ class Product extends \Lunar\Models\Product
                 $fullTitle = $this->translateAttribute('name');
 
                 if ($this->translateAttribute('subtitle')) {
-                    $fullTitle .= ' - ' . $this->translateAttribute('subtitle');
+                    $fullTitle .= ' - '.$this->translateAttribute('subtitle');
                 }
 
                 return $fullTitle;

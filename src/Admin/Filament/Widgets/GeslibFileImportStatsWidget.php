@@ -26,13 +26,13 @@ class GeslibFileImportStatsWidget extends BaseWidget
                 ->color('primary')
                 ->url(GeslibInterFileResource::getUrl('index')),
             Stat::make('Files Processed Successfully', $totalProcessed)
-                ->description($totalProcessed . ' files processed without errors')
+                ->description($totalProcessed.' files processed without errors')
                 ->color('success'),
             Stat::make('Files with Errors', $totalErrors)
-                ->description($totalErrors . ' files encountered errors')
+                ->description($totalErrors.' files encountered errors')
                 ->color('danger'),
             Stat::make('Files Pending Processing', $totalPending)
-                ->description($totalPending . ' files awaiting processing')
+                ->description($totalPending.' files awaiting processing')
                 ->color('warning'),
         ];
 
@@ -40,7 +40,7 @@ class GeslibFileImportStatsWidget extends BaseWidget
             array_unshift(
                 $stats,
                 Stat::make('Last Import Run', $lastRun->created_at->diffForHumans())
-                    ->description('File: ' . $lastRun->name . ' | Status: ' . Str::ucfirst($lastRun->status))
+                    ->description('File: '.$lastRun->name.' | Status: '.Str::ucfirst($lastRun->status))
                     ->color('success'),
             );
         } else {

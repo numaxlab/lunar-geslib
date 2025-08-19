@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create($this->prefix . 'geslib_authors', function (Blueprint $table) {
+        Schema::create($this->prefix.'geslib_authors', function (Blueprint $table) {
             $table->id();
 
             $table->string('name');
@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create($this->prefix . 'geslib_author_product', function (Blueprint $table) {
+        Schema::create($this->prefix.'geslib_author_product', function (Blueprint $table) {
             $table->unsignedBigInteger('author_id');
             $table->unsignedBigInteger('product_id');
             $table->string('author_type')->default(\NumaxLab\Geslib\Lines\AuthorType::AUTHOR);
@@ -28,11 +28,11 @@ return new class extends Migration {
 
             $table
                 ->foreign('author_id')
-                ->references('id')->on($this->prefix . 'geslib_authors')
+                ->references('id')->on($this->prefix.'geslib_authors')
                 ->onDelete('cascade');
             $table
                 ->foreign('product_id')
-                ->references('id')->on($this->prefix . 'products')
+                ->references('id')->on($this->prefix.'products')
                 ->onDelete('cascade');
         });
     }
@@ -42,7 +42,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists($this->prefix . 'geslib_author_product');
-        Schema::dropIfExists($this->prefix . 'geslib_authors');
+        Schema::dropIfExists($this->prefix.'geslib_author_product');
+        Schema::dropIfExists($this->prefix.'geslib_authors');
     }
 };

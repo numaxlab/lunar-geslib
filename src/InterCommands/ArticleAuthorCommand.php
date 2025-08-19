@@ -7,8 +7,11 @@ use NumaxLab\Geslib\Lines\ArticleAuthor;
 class ArticleAuthorCommand extends AbstractCommand
 {
     public string $articleId;
+
     public string $authorId;
+
     public string $authorType;
+
     public int $position;
 
     public function __construct(private readonly ArticleAuthor $articleAuthor)

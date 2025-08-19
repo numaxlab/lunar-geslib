@@ -35,7 +35,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/geslib.php', 'lunar.geslib');
+        $this->mergeConfigFrom(__DIR__.'/../config/geslib.php', 'lunar.geslib');
 
         ModelManifest::add(
             \NumaxLab\Lunar\Geslib\Models\Contracts\Author::class,
@@ -65,22 +65,22 @@ class LunarGeslibServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'lunar-geslib');
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'lunar-geslib');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'lunar-geslib');
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'lunar-geslib');
 
         if (config('lunar.geslib.storefront_enabled', true)) {
             $this->bootStorefront();
         }
 
         if (config('lunar.geslib.api_routes_enabled', false)) {
-            $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+            $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
         }
 
         $this->publishes([
-            __DIR__ . '/../config/geslib.php' => config_path('lunar/geslib.php'),
-            __DIR__ . '/../resources/views' => resource_path('views/vendor/lunar/geslib'),
-            __DIR__ . '/../routes/storefront.php' => base_path('routes/storefront.php'),
+            __DIR__.'/../config/geslib.php' => config_path('lunar/geslib.php'),
+            __DIR__.'/../resources/views' => resource_path('views/vendor/lunar/geslib'),
+            __DIR__.'/../routes/storefront.php' => base_path('routes/storefront.php'),
         ], ['lunar']);
 
         Event::subscribe(EnrichProductFromDilveSubscriber::class);
@@ -115,14 +115,14 @@ class LunarGeslibServiceProvider extends ServiceProvider
     public function bootStorefront(): void
     {
         Blade::componentNamespace('NumaxLab\\Lunar\\Geslib\\Storefront\\Views\\Components', 'lunar-geslib');
-        Blade::anonymousComponentPath(__DIR__ . '/../resources/views/storefront/components', 'lunar-geslib');
+        Blade::anonymousComponentPath(__DIR__.'/../resources/views/storefront/components', 'lunar-geslib');
 
         $namespace = 'NumaxLab\Lunar\Geslib\Storefront\Livewire\\';
 
-        $path = __DIR__ . '/Storefront/Livewire';
+        $path = __DIR__.'/Storefront/Livewire';
 
-        foreach ((new Finder())->in($path)->files() as $file) {
-            $component = $namespace . str_replace(['/', '.php'], ['\\', ''], $file->getRelativePathname());
+        foreach ((new Finder)->in($path)->files() as $file) {
+            $component = $namespace.str_replace(['/', '.php'], ['\\', ''], $file->getRelativePathname());
 
             if (is_subclass_of($component, Component::class)) {
                 $alias = str_replace('.-', '.', Str::kebab(str_replace('\\', '.', $component)));

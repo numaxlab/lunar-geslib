@@ -16,7 +16,7 @@ class GeslibOrderSyncStatsWidget extends BaseWidget
                 ->description('All order synchronization attempts logged')
                 ->color('success'),
             Stat::make('Pending Syncs', 0)
-                ->description(0 . ' orders awaiting sync or first attempt')
+                ->description(0 .' orders awaiting sync or first attempt')
                 ->color('warning'),
         ];
 
@@ -25,7 +25,7 @@ class GeslibOrderSyncStatsWidget extends BaseWidget
                 $stats,
                 Stat::make('Last Synced', $lastSyncedOrder->synced_with_geslib_at->diffForHumans())
                     ->description(
-                        'Order ID: ' . $lastSyncedOrder->order_id,
+                        'Order ID: '.$lastSyncedOrder->order_id,
                     )
                     ->color('gray'),
             );

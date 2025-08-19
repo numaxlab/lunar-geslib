@@ -42,12 +42,16 @@ class ShippingAndPaymentPage extends Page
     ];
 
     public string $paymentType = 'cash-in-hand';
+
     public $payment_intent = null;
+
     public $payment_intent_client_secret = null;
+
     protected $listeners = [
         'cartUpdated' => 'refreshCart',
         'selectedShippingOption' => 'refreshCart',
     ];
+
     protected $queryString = [
         'payment_intent',
         'payment_intent_client_secret',
@@ -154,7 +158,7 @@ class ShippingAndPaymentPage extends Page
         $this->validate($rules);
 
         if ($type == 'billing') {
-            $billing = new CartAddress();
+            $billing = new CartAddress;
             $billing->fill($this->shipping->all());
             $this->cart->setBillingAddress($billing);
 
@@ -162,7 +166,7 @@ class ShippingAndPaymentPage extends Page
         }
 
         if ($type == 'shipping') {
-            $shipping = new CartAddress();
+            $shipping = new CartAddress;
             $shipping->fill($this->shipping->all());
             $this->cart->setShippingAddress($shipping);
 

@@ -35,6 +35,7 @@ class SearchPage extends Page
     {
         if (empty($this->q)) {
             $this->redirect(route('lunar.geslib.storefront.homepage'));
+
             return;
         }
 

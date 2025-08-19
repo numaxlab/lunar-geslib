@@ -43,7 +43,7 @@ class RegisterPage extends Component
                 'lowercase',
                 'email',
                 'max:255',
-                'unique:' . config('auth.providers.users.model'),
+                'unique:'.config('auth.providers.users.model'),
             ],
             'password' => ['required', 'string', 'confirmed', Password::defaults()],
             'privacy_policy' => ['accepted', 'required'],

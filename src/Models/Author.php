@@ -39,7 +39,7 @@ class Author extends BaseModel implements Contracts\Author, SpatieHasMedia
     {
         return $this->belongsToMany(
             Product::modelClass(),
-            config('lunar.database.table_prefix') . 'geslib_author_product',
+            config('lunar.database.table_prefix').'geslib_author_product',
         )->withPivot(['author_type', 'position']);
     }
 }

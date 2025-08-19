@@ -10,13 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table($this->prefix . 'collections', function (Blueprint $table) {
+        Schema::table($this->prefix.'collections', function (Blueprint $table) {
             $table->string('geslib_code', 50)->nullable()->after('attribute_data');
 
             $table->index('geslib_code');
         });
 
-        Schema::table($this->prefix . 'brands', function (Blueprint $table) {
+        Schema::table($this->prefix.'brands', function (Blueprint $table) {
             $table->string('geslib_code', 50)->nullable()->after('attribute_data');
 
             $table->index('geslib_code');
@@ -28,12 +28,12 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table($this->prefix . 'brands', function (Blueprint $table) {
+        Schema::table($this->prefix.'brands', function (Blueprint $table) {
             $table->dropIndex('geslib_code');
             $table->dropColumn('geslib_code');
         });
 
-        Schema::table($this->prefix . 'collections', function (Blueprint $table) {
+        Schema::table($this->prefix.'collections', function (Blueprint $table) {
             $table->dropIndex('geslib_code');
             $table->dropColumn('geslib_code');
         });

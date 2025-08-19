@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table($this->prefix . 'orders', function (Blueprint $table) {
+        Schema::table($this->prefix.'orders', function (Blueprint $table) {
             $table->string('geslib_code', 50)->nullable();
             $table->dateTime('synced_with_geslib_at')->nullable();
         });
@@ -21,7 +21,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table($this->prefix . 'geslib_orders', function (Blueprint $table) {
+        Schema::table($this->prefix.'geslib_orders', function (Blueprint $table) {
             $table->dropColumn('synced_with_geslib_at');
             $table->dropColumn('geslib_code');
         });

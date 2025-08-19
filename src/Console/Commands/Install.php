@@ -198,9 +198,6 @@ class Install extends Command
         );
     }
 
-    /**
-     * @return void
-     */
     protected function setupTaxation(): void
     {
         if (TaxClass::count() > 0 || TaxZone::count() > 0 || TaxRate::count() > 0) {
@@ -991,5 +988,4 @@ class Install extends Command
             'searchable' => false,
         ]);
     }
-
 }

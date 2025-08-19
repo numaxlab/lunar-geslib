@@ -7,7 +7,9 @@ use NumaxLab\Lunar\Geslib\InterCommands\Contracts\CommandContract;
 abstract class AbstractCommand implements CommandContract
 {
     public ?string $type;
+
     protected bool $isBatch = false;
+
     protected array $log = [];
 
     public function getType(): ?string

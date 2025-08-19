@@ -13,9 +13,13 @@ use Lunar\Models\Contracts\Customer;
 class DashboardPage extends Component
 {
     public ?Authenticatable $user;
+
     public ?Customer $customer;
+
     public ?Address $defaultAddress;
+
     public Collection $latestOrders;
+
     public Collection $addresses;
 
     public function mount(): void

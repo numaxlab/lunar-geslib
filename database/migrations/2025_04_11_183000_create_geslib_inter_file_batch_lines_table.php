@@ -7,13 +7,13 @@ use Lunar\Base\Migration;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create($this->prefix . 'geslib_inter_file_batch_lines', function (Blueprint $table) {
+        Schema::create($this->prefix.'geslib_inter_file_batch_lines', function (Blueprint $table) {
             $table->id();
 
             $table
                 ->foreignId('geslib_inter_file_id')
                 ->constrained(
-                    table: $this->prefix . 'geslib_inter_files',
+                    table: $this->prefix.'geslib_inter_files',
                     indexName: 'geslib_inter_file_id_foreign',
                 )
                 ->cascadeOnDelete();
@@ -27,6 +27,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists($this->prefix . 'geslib_inter_file_batch_lines');
+        Schema::dropIfExists($this->prefix.'geslib_inter_file_batch_lines');
     }
 };

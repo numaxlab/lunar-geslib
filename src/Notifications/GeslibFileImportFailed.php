@@ -16,13 +16,11 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
     use Queueable;
 
     protected GeslibInterFile $file;
+
     protected string $errorMessage;
 
     /**
      * Create a new notification instance.
-     *
-     * @param GeslibInterFile $file
-     * @param string $errorMessage
      */
     public function __construct(GeslibInterFile $file, string $errorMessage)
     {
@@ -33,7 +31,7 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
     /**
      * Get the notification's delivery channels.
      *
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array
      */
     public function via($notifiable)
@@ -44,7 +42,7 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      *
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
@@ -65,12 +63,12 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
         }
 
         $mailMessage = (new MailMessage)
-            ->subject('Geslib File Import Failed: ' . $this->file->name)
+            ->subject('Geslib File Import Failed: '.$this->file->name)
             ->greeting('Geslib File Import Failure')
             ->line('A file import from Geslib has failed.')
-            ->line('Filename: ' . $this->file->name)
-            ->line('Timestamp: ' . now()->toDateTimeString())
-            ->line('Error Message: ' . $this->errorMessage);
+            ->line('Filename: '.$this->file->name)
+            ->line('Timestamp: '.now()->toDateTimeString())
+            ->line('Error Message: '.$this->errorMessage);
 
         if ($fileImportLogUrl) {
             $mailMessage->action('View File Import Log', $fileImportLogUrl);
@@ -88,7 +86,7 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
     /**
      * Get the array representation of the notification.
      *
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array
      */
     public function toArray($notifiable)

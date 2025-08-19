@@ -26,10 +26,10 @@ class EnsureIndexes extends Command
     {
         $models = config('lunar.search.models', []);
 
-        $this->info('Ensuring indexes for the following models: ' . implode(', ', $models));
+        $this->info('Ensuring indexes for the following models: '.implode(', ', $models));
 
         foreach ($models as $modelClass) {
-            $model = new $modelClass();
+            $model = new $modelClass;
             $indexName = $model->searchableAs();
 
             try {
@@ -41,7 +41,7 @@ class EnsureIndexes extends Command
                     $this->client->createIndex($indexName, ['primaryKey' => $model->getScoutKeyName()]);
                     $this->info("Index '{$indexName}' created.");
                 } else {
-                    $this->error("Error verifying the index '{$indexName}': " . $e->getMessage());
+                    $this->error("Error verifying the index '{$indexName}': ".$e->getMessage());
                 }
             }
         }

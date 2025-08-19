@@ -21,12 +21,12 @@ class ProductIndexer extends \Lunar\Search\ProductIndexer
     public function toSearchableArray(Model $model): array
     {
         $data = array_merge([
-            'id' => (string)$model->id,
+            'id' => (string) $model->id,
             'status' => $model->status,
             'product_type' => $model->productType->name,
             'brand' => $model->brand?->name,
             'authors' => $model->authors->map(fn($author) => $author->toSearchableArray())->toArray(),
-            'created_at' => (int)$model->created_at->timestamp,
+            'created_at' => (int) $model->created_at->timestamp,
         ], $this->mapSearchableAttributes($model));
 
         if ($thumbnail = $model->thumbnail) {

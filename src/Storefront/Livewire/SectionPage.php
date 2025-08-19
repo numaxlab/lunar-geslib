@@ -65,14 +65,14 @@ class SectionPage extends Page
         if ($this->t) {
             $queryBuilder->whereHas('collections', function ($query) {
                 $query->where(
-                    (new Collection)->getTable() . '.id',
-                    (int)$this->t,
+                    (new Collection)->getTable().'.id',
+                    (int) $this->t,
                 );
             });
         } else {
             $queryBuilder->whereHas('collections', function ($query) {
                 $query->whereIn(
-                    (new Collection)->getTable() . '.id',
+                    (new Collection)->getTable().'.id',
                     $this->sectionCollection->descendants->pluck('id'),
                 );
             });

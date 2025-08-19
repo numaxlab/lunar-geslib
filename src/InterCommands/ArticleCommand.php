@@ -18,6 +18,7 @@ use NumaxLab\Lunar\Geslib\Managers\CollectionGroupSync;
 class ArticleCommand extends AbstractCommand
 {
     public const PRODUCT_TYPE_ID = 1;
+
     public const DEFAULT_STATUS = 'published';
 
     public function __construct(private readonly Article $article, private readonly bool $isEbook = false) {}
@@ -77,7 +78,7 @@ class ArticleCommand extends AbstractCommand
 
             $variant = ProductVariant::create([
                 'product_id' => $product->id,
-                'tax_class_id' => config('lunar.geslib.product_types_taxation.' . $this->article->typeId(), 1),
+                'tax_class_id' => config('lunar.geslib.product_types_taxation.'.$this->article->typeId(), 1),
                 'tax_ref' => $this->article->taxes(),
                 'sku' => $this->article->id(),
                 'gtin' => $this->article->isbn(),
@@ -118,7 +119,7 @@ class ArticleCommand extends AbstractCommand
             ]);
 
             $variant->update([
-                'tax_class_id' => config('lunar.geslib.product_types_taxation.' . $this->article->typeId(), 1),
+                'tax_class_id' => config('lunar.geslib.product_types_taxation.'.$this->article->typeId(), 1),
                 'tax_ref' => $this->article->taxes(),
                 'gtin' => $this->article->isbn(),
                 'ean' => $this->article->ean(),

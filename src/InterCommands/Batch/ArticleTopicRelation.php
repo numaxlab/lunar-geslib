@@ -20,6 +20,7 @@ class ArticleTopicRelation extends AbstractBatchCommand
                 CommandContract::LEVEL_WARNING,
                 "Product with code [{$this->articleId}] not found.",
             );
+
             return;
         }
 

@@ -12,7 +12,9 @@ use NumaxLab\Lunar\Geslib\Handle;
 class ProductPage extends Page
 {
     public Product $product;
+
     public ?Price $pricing;
+
     public Collection $itineraries;
 
     public function mount(string $slug): void
@@ -39,7 +41,7 @@ class ProductPage extends Page
             $query->where('handle', Handle::COLLECTION_GROUP_ITINERARIES);
         })->whereHas('products', function ($query) {
             $query->where(
-                $this->product->getTable() . '.id',
+                $this->product->getTable().'.id',
                 $this->product->id,
             );
         })->channel(StorefrontSession::getChannel())

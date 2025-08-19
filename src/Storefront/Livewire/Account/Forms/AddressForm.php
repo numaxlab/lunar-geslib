@@ -61,7 +61,7 @@ class AddressForm extends Form
         $this->last_name = $this->address->last_name;
         $this->company_name = $this->address->company_name;
         $this->country_id = $this->address->country_id;
-        $this->state = (int)$this->address->state;
+        $this->state = (int) $this->address->state;
         $this->postcode = $this->address->postcode;
         $this->city = $this->address->city;
         $this->line_one = $this->address->line_one;
@@ -73,7 +73,7 @@ class AddressForm extends Form
         }
     }
 
-    public function updateStates(int $countryId = null): void
+    public function updateStates(?int $countryId = null): void
     {
         $this->states = State::where('country_id', $countryId)
             ->orderBy('name')

@@ -9,7 +9,9 @@ class IbicCommand extends AbstractCommand
     public const HANDLE = 'ibic';
 
     public string $articleId;
+
     public string $code;
+
     public string $description;
 
     public function __construct(private readonly Ibic $ibic)

@@ -79,6 +79,7 @@ class Search extends Component
     {
         if (empty($this->query)) {
             $this->results = collect();
+
             return;
         }
 
@@ -130,6 +131,7 @@ class Search extends Component
     {
         if (empty($this->taxonQuery)) {
             $this->taxonomies = collect();
+
             return;
         }
 

@@ -12,7 +12,9 @@ use Lunar\Models\Price;
 class AddToCart extends Component
 {
     public ?Purchasable $purchasable = null;
+
     public bool $displayPrice = false;
+
     public ?Price $pricing;
 
     public function mount(): void

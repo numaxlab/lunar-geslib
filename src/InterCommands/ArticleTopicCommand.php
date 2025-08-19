@@ -7,6 +7,7 @@ use NumaxLab\Geslib\Lines\ArticleTopic;
 class ArticleTopicCommand extends AbstractCommand
 {
     public string $articleId;
+
     public string $topicId;
 
     public function __construct(private readonly ArticleTopic $articleTopic)

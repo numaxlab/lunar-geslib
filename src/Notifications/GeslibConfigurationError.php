@@ -15,13 +15,14 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
     use Queueable;
 
     protected string $configKey;
+
     protected string $details;
 
     /**
      * Create a new notification instance.
      *
-     * @param string $configKey The configuration key that has an issue.
-     * @param string $details A message detailing the configuration issue.
+     * @param  string  $configKey  The configuration key that has an issue.
+     * @param  string  $details  A message detailing the configuration issue.
      */
     public function __construct(string $configKey, string $details)
     {
@@ -32,7 +33,7 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
     /**
      * Get the notification's delivery channels.
      *
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array
      */
     public function via($notifiable)
@@ -43,7 +44,7 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      *
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
@@ -62,9 +63,9 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
             ->subject('Geslib Configuration Error Detected')
             ->greeting('Geslib Configuration Error')
             ->line('A configuration issue has been detected for the Lunar-Geslib integration.')
-            ->line('Configuration Key: ' . $this->configKey)
-            ->line('Details: ' . $this->details)
-            ->line('Timestamp: ' . now()->toDateTimeString());
+            ->line('Configuration Key: '.$this->configKey)
+            ->line('Details: '.$this->details)
+            ->line('Timestamp: '.now()->toDateTimeString());
 
         if ($dashboardUrl) {
             $mailMessage->action('Go to Geslib Dashboard', $dashboardUrl);
@@ -84,7 +85,7 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
     /**
      * Get the array representation of the notification.
      *
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array
      */
     public function toArray($notifiable)

@@ -59,7 +59,7 @@ class EnrichProductFromDilveSubscriber implements ShouldQueue
             ->addMediaFromUrl($onixProduct->coverUrl)
             ->usingName('Portada')
             ->usingFileName(
-                $productVariant->product->defaultUrl->slug . '-portada.' . pathinfo(
+                $productVariant->product->defaultUrl->slug.'-portada.'.pathinfo(
                     $onixProduct->coverUrl,
                     PATHINFO_EXTENSION,
                 ),

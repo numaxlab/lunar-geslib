@@ -14,7 +14,7 @@ class BookshopReferenceCommand extends AbstractCommand
     {
         $variant = ProductVariant::where('sku', $this->bookshopReference->articleId())->first();
 
-        if (!$variant) {
+        if (! $variant) {
             return;
         }
 

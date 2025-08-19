@@ -24,7 +24,7 @@ class BindingTypeCommand extends AbstractCommand
             'name' => new Text($this->bindingType->name()),
         ];
 
-        if (!$collection) {
+        if (! $collection) {
             Collection::create([
                 'geslib_code' => $this->bindingType->id(),
                 'attribute_data' => $attributeData,

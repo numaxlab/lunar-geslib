@@ -32,7 +32,7 @@ class DateField extends BaseFieldType
                 })
                 ->when(
                     filled($attribute->validation_rules),
-                    fn(DateTimePicker $component) => $component->rules($attribute->validation_rules),
+                    fn (DateTimePicker $component) => $component->rules($attribute->validation_rules),
                 )
                 ->required((bool) $attribute->required)
                 ->helperText($attribute->translate('description'));
@@ -44,7 +44,7 @@ class DateField extends BaseFieldType
             })
             ->when(
                 filled($attribute->validation_rules),
-                fn(DatePicker $component) => $component->rules($attribute->validation_rules),
+                fn (DatePicker $component) => $component->rules($attribute->validation_rules),
             )
             ->required((bool) $attribute->required)
             ->helperText($attribute->translate('description'));

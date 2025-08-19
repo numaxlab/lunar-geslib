@@ -25,7 +25,7 @@ class ProductIndexer extends \Lunar\Search\ProductIndexer
             'status' => $model->status,
             'product_type' => $model->productType->name,
             'brand' => $model->brand?->name,
-            'authors' => $model->authors->map(fn($author) => $author->toSearchableArray())->toArray(),
+            'authors' => $model->authors->map(fn ($author) => $author->toSearchableArray())->toArray(),
             'created_at' => (int) $model->created_at->timestamp,
         ], $this->mapSearchableAttributes($model));
 

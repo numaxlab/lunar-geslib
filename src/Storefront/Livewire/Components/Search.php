@@ -85,7 +85,7 @@ class Search extends Component
 
         if ($this->currentRouteName !== 'lunar.geslib.storefront.search') {
             $this->results = Product::search($this->query)
-                ->query(fn(Builder $query) => $query->with([
+                ->query(fn (Builder $query) => $query->with([
                     'defaultUrl',
                     'urls',
                     'authors',

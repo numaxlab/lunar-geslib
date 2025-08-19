@@ -24,7 +24,7 @@ class StatusCommand extends AbstractCommand
             'name' => new Text($this->status->name()),
         ];
 
-        if (!$collection) {
+        if (! $collection) {
             Collection::create([
                 'geslib_code' => $this->status->id(),
                 'attribute_data' => $attributeData,

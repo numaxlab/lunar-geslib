@@ -42,7 +42,7 @@ class GeslibInterFileResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         GeslibInterFile::STATUS_SUCCESS => 'success',
                         GeslibInterFile::STATUS_FAILED => 'danger',
                         GeslibInterFile::STATUS_WARNING => 'warning',
@@ -89,7 +89,7 @@ class GeslibInterFileResource extends Resource
                     })
                     ->modalHeading('Registro de actividad')
                     ->modalSubmitAction(false)
-                    ->modalCancelAction(fn(StaticAction $action) => $action->label('Cerrar')),
+                    ->modalCancelAction(fn (StaticAction $action) => $action->label('Cerrar')),
             ])
             ->defaultSort('created_at', 'desc');
     }

@@ -14,7 +14,7 @@ class ArticleIndexCommand extends AbstractCommand
     {
         $variant = ProductVariant::where('sku', $this->articleIndex->articleId())->first();
 
-        if (!$variant) {
+        if (! $variant) {
             return;
         }
 

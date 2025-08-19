@@ -37,7 +37,7 @@ class Date implements FieldType, JsonSerializable
                 'options' => [
                     'nullable',
                     function ($attribute, $value, $fail) {
-                        if (!json_decode($value, true)) {
+                        if (! json_decode($value, true)) {
                             $fail('Must be valid json');
                         }
                     },

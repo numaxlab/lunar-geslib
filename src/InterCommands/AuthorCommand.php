@@ -13,7 +13,7 @@ class AuthorCommand extends AbstractCommand
     {
         $author = Author::where('geslib_code', $this->author->id())->first();
 
-        if (!$author) {
+        if (! $author) {
             Author::create([
                 'geslib_code' => $this->author->id(),
                 'name' => $this->author->name(),

@@ -15,7 +15,7 @@ class AuthorBiographyCommand extends AbstractCommand
     {
         $author = Author::where('geslib_code', $this->authorBiography->authorId())->first();
 
-        if (!$author) {
+        if (! $author) {
             return;
         }
 

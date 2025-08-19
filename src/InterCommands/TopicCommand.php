@@ -26,7 +26,7 @@ class TopicCommand extends AbstractCommand
             'name' => new Text($this->topic->description()),
         ];
 
-        if (!$collection) {
+        if (! $collection) {
             Collection::create([
                 'geslib_code' => $this->topic->id(),
                 'attribute_data' => $attributeData,

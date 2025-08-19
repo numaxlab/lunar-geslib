@@ -13,7 +13,7 @@ class StockCommand extends AbstractCommand
     {
         $variant = ProductVariant::where('sku', $this->stock->articleId())->first();
 
-        if (!$variant) {
+        if (! $variant) {
             return;
         }
 

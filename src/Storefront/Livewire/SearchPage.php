@@ -45,7 +45,7 @@ class SearchPage extends Page
     public function search(): void
     {
         $this->results = Product::search($this->q)
-            ->query(fn(Builder $query) => $query->with([
+            ->query(fn (Builder $query) => $query->with([
                 'variant',
                 'variant.taxClass',
                 'defaultUrl',

@@ -12,7 +12,7 @@ class ArticleAuthorRelation extends AbstractBatchCommand
     {
         $variant = ProductVariant::where('sku', $this->articleId)->first();
 
-        if (!$variant) {
+        if (! $variant) {
             $this->addLog(
                 CommandContract::LEVEL_WARNING,
                 "Product with code [{$this->articleId}] not found.",
@@ -28,7 +28,7 @@ class ArticleAuthorRelation extends AbstractBatchCommand
         foreach ($this->data as $item) {
             $author = Author::where('geslib_code', $item['authorId'])->first();
 
-            if (!$author) {
+            if (! $author) {
                 continue;
             }
 

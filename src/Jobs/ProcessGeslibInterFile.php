@@ -92,12 +92,12 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
         $extractedFilePath = config('lunar.geslib.inter_files_path').'/'.str_replace(
-                '.zip',
-                '',
-                $this->geslibInterFile->name,
-            );
+            '.zip',
+            '',
+            $this->geslibInterFile->name,
+        );
 
-        if (!$storage->exists($extractedFilePath)) {
+        if (! $storage->exists($extractedFilePath)) {
             $this->extractZipFile($storage);
         }
 
@@ -249,7 +249,7 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
             }
         }
 
-        if (!$fileFinished) {
+        if (! $fileFinished) {
             self::dispatch($this->geslibInterFile, $endLine, $this->chunkSize);
 
             return;

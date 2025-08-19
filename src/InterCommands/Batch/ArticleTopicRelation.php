@@ -15,7 +15,7 @@ class ArticleTopicRelation extends AbstractBatchCommand
     {
         $variant = ProductVariant::where('sku', $this->articleId)->first();
 
-        if (!$variant) {
+        if (! $variant) {
             $this->addLog(
                 CommandContract::LEVEL_WARNING,
                 "Product with code [{$this->articleId}] not found.",

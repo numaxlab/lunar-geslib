@@ -23,8 +23,8 @@ class Import extends Command
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
         $files = collect($storage->files(config('lunar.geslib.inter_files_path')))
-            ->filter(fn($file) => strtolower(pathinfo($file, PATHINFO_EXTENSION)) === 'zip')
-            ->sortBy(fn($file) => File::lastModified($storage->path($file)))
+            ->filter(fn ($file) => strtolower(pathinfo($file, PATHINFO_EXTENSION)) === 'zip')
+            ->sortBy(fn ($file) => File::lastModified($storage->path($file)))
             ->values()
             ->all();
 
@@ -52,7 +52,7 @@ class Import extends Command
 
             $lock = Cache::lock(ProcessGeslibInterFile::CACHE_LOCK_NAME, 60 * 60 * 12); // 12 hours
 
-            if (!$lock->get()) {
+            if (! $lock->get()) {
                 $this->components->info(
                     'The Geslib INTER files import worker is busy. Waiting until next execution...',
                 );

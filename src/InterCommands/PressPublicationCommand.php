@@ -29,7 +29,7 @@ class PressPublicationCommand extends AbstractCommand
                 'country' => new Text($this->pressPublication->countryId()),
             ];
 
-            if (!$brand) {
+            if (! $brand) {
                 Brand::create([
                     'geslib_code' => $this->pressPublication->id(),
                     'name' => $this->pressPublication->name(),

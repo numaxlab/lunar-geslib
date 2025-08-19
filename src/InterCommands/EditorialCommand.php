@@ -30,7 +30,7 @@ class EditorialCommand extends AbstractCommand
                 'country' => new Text($this->editorial->countryId()),
             ];
 
-            if (!$brand) {
+            if (! $brand) {
                 Brand::create([
                     'geslib_code' => $this->editorial->id(),
                     'name' => $this->editorial->name(),

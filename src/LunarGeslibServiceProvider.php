@@ -104,7 +104,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
                 ForceProductEnrichment::class,
             ];
 
-            if (!$this->app->runningUnitTests()) {
+            if (! $this->app->runningUnitTests()) {
                 $commands[] = EnsureIndexes::class;
             }
 

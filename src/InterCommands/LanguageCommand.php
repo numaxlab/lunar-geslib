@@ -24,7 +24,7 @@ class LanguageCommand extends AbstractCommand
             'name' => new Text($this->language->name()),
         ];
 
-        if (!$collection) {
+        if (! $collection) {
             Collection::create([
                 'geslib_code' => $this->language->id(),
                 'attribute_data' => $attributeData,

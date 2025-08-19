@@ -56,7 +56,7 @@ class ManageProductAuthors extends BaseManageRelatedRecords
             ->actions([
                 DetachAction::make()
                     ->action(function (Model $record, Table $table) {
-                        $relationship = Relation::noConstraints(fn() => $table->getRelationship());
+                        $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
                         $relationship->detach($record);
 
@@ -83,8 +83,7 @@ class ManageProductAuthors extends BaseManageRelatedRecords
                                     return Author::search($search)
                                         ->get()
                                         ->mapWithKeys(
-                                            fn(AuthorContract $author): array
-                                                => [
+                                            fn (AuthorContract $author): array => [
                                                 $author->getKey() => $author->name,
                                             ],
                                         )
@@ -105,7 +104,7 @@ class ManageProductAuthors extends BaseManageRelatedRecords
                             ->required(),
                     ])
                     ->action(function (array $arguments, array $data, Form $form, Table $table) {
-                        $relationship = Relation::noConstraints(fn() => $table->getRelationship());
+                        $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
                         $author = Author::find($data['recordId']);
 

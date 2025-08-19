@@ -14,7 +14,7 @@ class EditorialReferenceCommand extends AbstractCommand
     {
         $variant = ProductVariant::where('sku', $this->editorialReference->articleId())->first();
 
-        if (!$variant) {
+        if (! $variant) {
             return;
         }
 

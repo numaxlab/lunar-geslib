@@ -26,7 +26,7 @@ class ClassificationCommand extends AbstractCommand
             'name' => new Text($this->classification->name()),
         ];
 
-        if (!$collection) {
+        if (! $collection) {
             Collection::create([
                 'geslib_code' => $this->classification->id(),
                 'attribute_data' => $attributeData,

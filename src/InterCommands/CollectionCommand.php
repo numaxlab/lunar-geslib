@@ -25,7 +25,7 @@ class CollectionCommand extends AbstractCommand
             'name' => new Text($this->editorialCollection->name()),
         ];
 
-        if (!$collection) {
+        if (! $collection) {
             Collection::create([
                 'geslib_code' => $this->editorialCollection->id(),
                 'attribute_data' => $attributeData,

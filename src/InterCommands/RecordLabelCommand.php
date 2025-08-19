@@ -31,7 +31,7 @@ class RecordLabelCommand extends AbstractCommand
 
             ];
 
-            if (!$brand) {
+            if (! $brand) {
                 Brand::create([
                     'geslib_code' => $this->recordLabel->id(),
                     'name' => $this->recordLabel->name(),

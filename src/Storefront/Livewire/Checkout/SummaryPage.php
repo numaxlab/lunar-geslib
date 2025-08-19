@@ -35,7 +35,7 @@ class SummaryPage extends Page
     {
         $this->cart = CartSession::current();
 
-        if (!$this->cart) {
+        if (! $this->cart) {
             $this->redirect('/');
 
             return;

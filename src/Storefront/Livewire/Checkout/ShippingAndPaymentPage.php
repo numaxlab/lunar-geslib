@@ -39,7 +39,7 @@ class ShippingAndPaymentPage extends Page
 
     public bool $shippingIsBilling = true;
 
-    public $chosenShipping;
+    public $chosenShipping = null;
 
     public array $steps = [
         'shipping_address' => 1,
@@ -50,9 +50,9 @@ class ShippingAndPaymentPage extends Page
 
     public string $paymentType = 'cash-in-hand';
 
-    public $payment_intent;
+    public $payment_intent = null;
 
-    public $payment_intent_client_secret;
+    public $payment_intent_client_secret = null;
 
     protected $listeners = [
         'cartUpdated' => 'refreshCart',
@@ -73,7 +73,7 @@ class ShippingAndPaymentPage extends Page
     {
         $this->cart = CartSession::current();
 
-        if (!$this->cart) {
+        if (! $this->cart) {
             $this->redirect('/');
 
             return;
@@ -159,7 +159,7 @@ class ShippingAndPaymentPage extends Page
     public function saveAddress(string $type): void
     {
         $rules = collect($this->shipping->getRules())
-            ->mapWithKeys(fn($value, $key) => ["$type.$key" => $value])
+            ->mapWithKeys(fn ($value, $key) => ["$type.$key" => $value])
             ->toArray();
 
         $this->validate($rules);
@@ -205,7 +205,7 @@ class ShippingAndPaymentPage extends Page
     {
         $shippingAddress = $this->cart->shippingAddress;
 
-        if (!$shippingAddress) {
+        if (! $shippingAddress) {
             return null;
         }
 

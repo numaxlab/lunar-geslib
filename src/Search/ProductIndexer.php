@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Search;
 
 use Illuminate\Database\Eloquent\Builder;

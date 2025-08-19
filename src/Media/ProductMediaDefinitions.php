@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Media;
 
 use Lunar\Base\MediaDefinitionsInterface;
@@ -47,7 +49,7 @@ class ProductMediaDefinitions implements MediaDefinitionsInterface
             ],
         ];
 
-        $collection->registerMediaConversions(function (Media $media) use ($model, $conversions) {
+        $collection->registerMediaConversions(function (Media $media) use ($model, $conversions): void {
             foreach ($conversions as $key => $conversion) {
                 $model
                     ->addMediaConversion($key)

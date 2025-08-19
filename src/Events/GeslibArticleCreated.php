@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;

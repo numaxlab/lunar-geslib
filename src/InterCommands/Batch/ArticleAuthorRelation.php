@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\InterCommands\Batch;
 
 use Lunar\Models\ProductVariant;

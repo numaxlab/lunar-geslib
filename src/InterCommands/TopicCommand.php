@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Lunar\FieldTypes\Text;
@@ -26,7 +28,7 @@ class TopicCommand extends AbstractCommand
             'name' => new Text($this->topic->description()),
         ];
 
-        if (! $collection) {
+        if (!$collection) {
             Collection::create([
                 'geslib_code' => $this->topic->id(),
                 'attribute_data' => $attributeData,

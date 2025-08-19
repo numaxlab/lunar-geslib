@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Admin\Support\Synthesizers;
 
 use Lunar\Admin\Support\Synthesizers\AbstractFieldSynth;

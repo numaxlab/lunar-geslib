@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Storefront\Livewire\Components;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -24,9 +26,9 @@ class Search extends Component
         '50-1000',
     ];
 
-    public ?string $query;
+    public ?string $query = null;
 
-    public ?string $taxonQuery;
+    public ?string $taxonQuery = null;
 
     public $taxonId;
 
@@ -52,12 +54,12 @@ class Search extends Component
     {
         $this->results = collect();
         $this->taxonomies = collect();
-        $this->languages = LunarCollection::whereHas('group', function ($query) {
+        $this->languages = LunarCollection::whereHas('group', function ($query): void {
             $query->where('handle', LanguageCommand::HANDLE);
         })->channel(StorefrontSession::getChannel())
             ->customerGroup(StorefrontSession::getCustomerGroups())
             ->get();
-        $this->statuses = LunarCollection::whereHas('group', function ($query) {
+        $this->statuses = LunarCollection::whereHas('group', function ($query): void {
             $query->where('handle', StatusCommand::HANDLE);
         })->channel(StorefrontSession::getChannel())
             ->customerGroup(StorefrontSession::getCustomerGroups())
@@ -77,7 +79,7 @@ class Search extends Component
 
     public function updatedQuery(): void
     {
-        if (empty($this->query)) {
+        if (!isset($this->query) || ($this->query === null || $this->query === '' || $this->query === '0')) {
             $this->results = collect();
 
             return;
@@ -85,7 +87,7 @@ class Search extends Component
 
         if ($this->currentRouteName !== 'lunar.geslib.storefront.search') {
             $this->results = Product::search($this->query)
-                ->query(fn (Builder $query) => $query->with([
+                ->query(fn(Builder $query) => $query->with([
                     'defaultUrl',
                     'urls',
                     'authors',
@@ -95,7 +97,7 @@ class Search extends Component
 
     public function search(): void
     {
-        if (empty($this->query)) {
+        if (!isset($this->query) || ($this->query === null || $this->query === '' || $this->query === '0')) {
             return;
         }
 
@@ -129,16 +131,16 @@ class Search extends Component
 
     public function updatedTaxonQuery(): void
     {
-        if (empty($this->taxonQuery)) {
+        if (!isset($this->taxonQuery) || ($this->taxonQuery === null || $this->taxonQuery === '' || $this->taxonQuery === '0')) {
             $this->taxonomies = collect();
 
             return;
         }
 
         $this->taxonomies = LunarCollection::search($this->taxonQuery)
-            ->query(function (Builder $query) {
+            ->query(function (Builder $query): void {
                 $query
-                    ->whereHas('group', function ($query) {
+                    ->whereHas('group', function ($query): void {
                         $query->where('handle', Handle::COLLECTION_GROUP_TAXONOMIES);
                     })->channel(StorefrontSession::getChannel())
                     ->customerGroup(StorefrontSession::getCustomerGroups());

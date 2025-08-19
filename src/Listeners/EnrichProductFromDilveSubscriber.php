@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -15,12 +17,12 @@ class EnrichProductFromDilveSubscriber implements ShouldQueue
     {
         $events->listen(
             GeslibArticleCreated::class,
-            [self::class, 'handleCreatedProduct'],
+            self::handleCreatedProduct(...),
         );
 
         $events->listen(
             GeslibArticleUpdated::class,
-            [self::class, 'handleUpdatedProduct'],
+            self::handleUpdatedProduct(...),
         );
     }
 
@@ -60,7 +62,7 @@ class EnrichProductFromDilveSubscriber implements ShouldQueue
             ->usingName('Portada')
             ->usingFileName(
                 $productVariant->product->defaultUrl->slug.'-portada.'.pathinfo(
-                    $onixProduct->coverUrl,
+                    (string) $onixProduct->coverUrl,
                     PATHINFO_EXTENSION,
                 ),
             )

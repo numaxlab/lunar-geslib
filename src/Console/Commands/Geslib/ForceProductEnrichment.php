@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Console\Commands\Geslib;
 
 use Illuminate\Console\Command;
@@ -14,7 +16,7 @@ class ForceProductEnrichment extends Command
 
     public function handle(): int
     {
-        $this->withProgressBar(ProductVariant::all(), function (ProductVariant $variant) {
+        $this->withProgressBar(ProductVariant::all(), function (ProductVariant $variant): void {
             GeslibArticleUpdated::dispatch($variant);
         });
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Lunar\FieldTypes\Text;
@@ -10,7 +12,7 @@ class ArticleIndexCommand extends AbstractCommand
 {
     public function __construct(private readonly ArticleIndex $articleIndex) {}
 
-    public function __invoke()
+    public function __invoke(): void
     {
         $variant = ProductVariant::where('sku', $this->articleIndex->articleId())->first();
 

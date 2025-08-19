@@ -3,6 +3,13 @@ includes:
     - vendor/nesbot/carbon/extension.neon
 
 parameters:
-    level: 1
+    level: 0
     paths:
         - src
+        - config
+        - database
+        - routes
+    ignoreErrors:
+        -
+            message: "#Called 'env' outside of the config directory which returns null when the config is cached, use 'config'.#"
+            path: config

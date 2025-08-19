@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -56,13 +58,11 @@ class Install extends Command
 
         if (!$this->configExists('lunar')) {
             $this->publishConfiguration();
+        } elseif ($this->shouldOverwriteConfig()) {
+            $this->components->info('Overwriting configuration file...');
+            $this->publishConfiguration(forcePublish: true);
         } else {
-            if ($this->shouldOverwriteConfig()) {
-                $this->components->info('Overwriting configuration file...');
-                $this->publishConfiguration(forcePublish: true);
-            } else {
-                $this->components->info('Existing configuration was not overwritten');
-            }
+            $this->components->info('Existing configuration was not overwritten');
         }
 
         if (confirm('Run database migrations?')) {
@@ -180,7 +180,7 @@ class Install extends Command
             '--tag' => 'lunar',
         ];
 
-        if ($forcePublish === true) {
+        if ($forcePublish) {
             $params['--force'] = true;
         }
 
@@ -240,7 +240,7 @@ class Install extends Command
             State::where('country_id', $spain->id)
                 ->whereNotIn('code', ['CE', 'ML', 'CN'])
                 ->get()
-                ->map(fn($state)
+                ->map(fn($state): array
                     => [
                     'state_id' => $state->id,
                 ]),

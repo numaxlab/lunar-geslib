@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Storefront\Livewire\Account;
 
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -12,11 +14,11 @@ use Lunar\Models\Contracts\Customer;
 
 class DashboardPage extends Component
 {
-    public ?Authenticatable $user;
+    public ?Authenticatable $user = null;
 
-    public ?Customer $customer;
+    public ?Customer $customer = null;
 
-    public ?Address $defaultAddress;
+    public ?Address $defaultAddress = null;
 
     public Collection $latestOrders;
 

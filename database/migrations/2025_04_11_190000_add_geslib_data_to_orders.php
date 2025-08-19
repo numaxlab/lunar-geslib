@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Lunar\Base\Migration;
@@ -11,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table($this->prefix.'orders', function (Blueprint $table) {
+        Schema::table($this->prefix.'orders', function (Blueprint $table): void {
             $table->string('geslib_code', 50)->nullable();
             $table->dateTime('synced_with_geslib_at')->nullable();
         });
@@ -22,7 +24,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table($this->prefix.'geslib_orders', function (Blueprint $table) {
+        Schema::table($this->prefix.'geslib_orders', function (Blueprint $table): void {
             $table->dropColumn('synced_with_geslib_at');
             $table->dropColumn('geslib_code');
         });

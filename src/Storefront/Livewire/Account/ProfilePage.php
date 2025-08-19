@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Storefront\Livewire\Account;
 
 use Illuminate\Support\Facades\Auth;
@@ -18,9 +20,9 @@ class ProfilePage extends Component
 
     public string $email = '';
 
-    public ?string $vat_no;
+    public ?string $vat_no = null;
 
-    public ?string $company_name;
+    public ?string $company_name = null;
 
     public string $password = '';
 

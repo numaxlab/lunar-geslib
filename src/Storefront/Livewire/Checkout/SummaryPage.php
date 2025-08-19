@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Storefront\Livewire\Checkout;
 
 use Illuminate\Support\Collection;
@@ -13,7 +15,7 @@ use NumaxLab\Lunar\Geslib\Storefront\Livewire\Page;
  */
 class SummaryPage extends Page
 {
-    public ?Cart $cart;
+    public ?Cart $cart = null;
 
     public array $lines;
 
@@ -44,17 +46,16 @@ class SummaryPage extends Page
 
     private function mapLines(): void
     {
-        $this->lines = $this->cartLines->map(function ($line) {
-            return [
-                'id' => $line->id,
-                'slug' => $line->purchasable->product->defaultUrl->slug,
-                'quantity' => $line->quantity,
-                'description' => $line->purchasable->getDescription(),
-                'thumbnail' => $line->purchasable->getThumbnailUrl(),
-                'sub_total' => $line->subTotal->formatted(),
-                'unit_price' => $line->unitPriceInclTax->formatted(),
-            ];
-        })->toArray();
+        $this->lines = $this->cartLines->map(fn($line): array
+            => [
+            'id' => $line->id,
+            'slug' => $line->purchasable->product->defaultUrl->slug,
+            'quantity' => $line->quantity,
+            'description' => $line->purchasable->getDescription(),
+            'thumbnail' => $line->purchasable->getThumbnailUrl(),
+            'sub_total' => $line->subTotal->formatted(),
+            'unit_price' => $line->unitPriceInclTax->formatted(),
+        ])->toArray();
     }
 
     public function updateLines(): void

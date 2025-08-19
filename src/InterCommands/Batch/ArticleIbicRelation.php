@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\InterCommands\Batch;
 
 use Lunar\FieldTypes\Text;
@@ -43,7 +45,7 @@ class ArticleIbicRelation extends AbstractBatchCommand
     private function getIbicCollection($collectionGroup)
     {
         return LunarCollection::where('collection_group_id', $collectionGroup->id)
-            ->where(function ($query) {
+            ->where(function ($query): void {
                 foreach ($this->data as $item) {
                     $query->orWhere('geslib_code', $item['code']);
                 }

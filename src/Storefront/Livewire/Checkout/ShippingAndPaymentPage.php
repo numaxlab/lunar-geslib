@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Storefront\Livewire\Checkout;
 
 use Illuminate\Support\Collection;
@@ -25,7 +27,7 @@ use NumaxLab\Lunar\Geslib\Storefront\Livewire\Page;
  */
 class ShippingAndPaymentPage extends Page
 {
-    public ?Cart $cart;
+    public ?Cart $cart = null;
 
     public AddressForm $shipping;
 
@@ -37,7 +39,7 @@ class ShippingAndPaymentPage extends Page
 
     public bool $shippingIsBilling = true;
 
-    public $chosenShipping = null;
+    public $chosenShipping;
 
     public array $steps = [
         'shipping_address' => 1,
@@ -48,9 +50,9 @@ class ShippingAndPaymentPage extends Page
 
     public string $paymentType = 'cash-in-hand';
 
-    public $payment_intent = null;
+    public $payment_intent;
 
-    public $payment_intent_client_secret = null;
+    public $payment_intent_client_secret;
 
     protected $listeners = [
         'cartUpdated' => 'refreshCart',
@@ -162,7 +164,7 @@ class ShippingAndPaymentPage extends Page
 
         $this->validate($rules);
 
-        if ($type == 'billing') {
+        if ($type === 'billing') {
             $billing = new CartAddress;
             $billing->fill($this->shipping->all());
             $this->cart->setBillingAddress($billing);
@@ -170,7 +172,7 @@ class ShippingAndPaymentPage extends Page
             $this->billing->fill($this->cart->billingAddress->toArray());
         }
 
-        if ($type == 'shipping') {
+        if ($type === 'shipping') {
             $shipping = new CartAddress;
             $shipping->fill($this->shipping->all());
             $this->cart->setShippingAddress($shipping);
@@ -210,9 +212,7 @@ class ShippingAndPaymentPage extends Page
         $option = $shippingAddress->shipping_option;
 
         if ($option) {
-            return ShippingManifest::getOptions($this->cart)->first(function ($opt) use ($option) {
-                return $opt->getIdentifier() == $option;
-            });
+            return ShippingManifest::getOptions($this->cart)->first(fn($opt): bool => $opt->getIdentifier() == $option);
         }
 
         return null;
@@ -220,7 +220,7 @@ class ShippingAndPaymentPage extends Page
 
     public function saveShippingOption(): void
     {
-        $option = $this->shippingOptions->first(fn($option) => $option->getIdentifier() == $this->chosenShipping);
+        $option = $this->shippingOptions->first(fn($option): bool => $option->getIdentifier() == $this->chosenShipping);
 
         CartSession::setShippingOption($option);
 

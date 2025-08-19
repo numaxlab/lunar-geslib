@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Storefront\Livewire;
 
 use Illuminate\Support\Collection;
@@ -13,7 +15,7 @@ class ProductPage extends Page
 {
     public Product $product;
 
-    public ?Price $pricing;
+    public ?Price $pricing = null;
 
     public Collection $itineraries;
 
@@ -22,10 +24,10 @@ class ProductPage extends Page
         $this->product = Product::channel(StorefrontSession::getChannel())
             ->customerGroup(StorefrontSession::getCustomerGroups())
             ->status('published')
-            ->whereHas('productType', function ($query) {
+            ->whereHas('productType', function ($query): void {
                 $query->where('id', config('lunar.geslib.product_type_id'));
             })
-            ->whereHas('urls', function ($query) use ($slug) {
+            ->whereHas('urls', function ($query) use ($slug): void {
                 $query->where('slug', $slug);
             })
             ->with(['variant', 'variant.taxClass', 'authors', 'images', 'prices', 'collections', 'collections.group'])
@@ -37,9 +39,9 @@ class ProductPage extends Page
             ->customerGroups(StorefrontSession::getCustomerGroups())
             ->get()->matched;
 
-        $this->itineraries = \Lunar\Models\Collection::whereHas('group', function ($query) {
+        $this->itineraries = \Lunar\Models\Collection::whereHas('group', function ($query): void {
             $query->where('handle', Handle::COLLECTION_GROUP_ITINERARIES);
-        })->whereHas('products', function ($query) {
+        })->whereHas('products', function ($query): void {
             $query->where(
                 $this->product->getTable().'.id',
                 $this->product->id,

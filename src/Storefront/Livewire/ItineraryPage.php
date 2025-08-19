@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Storefront\Livewire;
 
 use Illuminate\View\View;
@@ -9,7 +11,7 @@ class ItineraryPage extends Page
 {
     public Collection $itineraryCollection;
 
-    public function mount($slug): void
+    public function mount(string $slug): void
     {
         $this->fetchUrl(
             slug: $slug,

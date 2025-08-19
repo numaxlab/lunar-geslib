@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use NumaxLab\Lunar\Geslib\InterCommands\Contracts\CommandContract;
 
 abstract class AbstractCommand implements CommandContract
 {
-    public ?string $type;
+    public ?string $type = null;
 
     protected bool $isBatch = false;
 

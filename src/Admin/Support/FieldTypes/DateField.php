@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Admin\Support\FieldTypes;
 
 use Filament\Forms\Components\Component;
@@ -27,24 +29,24 @@ class DateField extends BaseFieldType
     {
         if ($attribute->configuration && $attribute->configuration->get('has_time')) {
             return DateTimePicker::make($attribute->handle)
-                ->dehydrateStateUsing(function ($state) {
-                    return $state;
-                })
+                ->dehydrateStateUsing(fn($state) => $state)
                 ->when(
                     filled($attribute->validation_rules),
-                    fn (DateTimePicker $component) => $component->rules($attribute->validation_rules),
+                    fn(DateTimePicker $component,
+                    ): \Filament\Forms\Components\DateTimePicker
+                        => $component->rules($attribute->validation_rules),
                 )
                 ->required((bool) $attribute->required)
                 ->helperText($attribute->translate('description'));
         }
 
         return DatePicker::make($attribute->handle)
-            ->dehydrateStateUsing(function ($state) {
-                return $state;
-            })
+            ->dehydrateStateUsing(fn($state) => $state)
             ->when(
                 filled($attribute->validation_rules),
-                fn (DatePicker $component) => $component->rules($attribute->validation_rules),
+                fn(DatePicker $component,
+                ): \Filament\Forms\Components\DatePicker
+                    => $component->rules($attribute->validation_rules),
             )
             ->required((bool) $attribute->required)
             ->helperText($attribute->translate('description'));

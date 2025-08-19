@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Http\Controllers\Api;
 
 use Lunar\Models\Order;

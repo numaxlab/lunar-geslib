@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Storefront\Livewire\Account\Forms;
 
 use Illuminate\Support\Collection;
@@ -11,7 +13,7 @@ use Lunar\Models\State;
 
 class AddressForm extends Form
 {
-    public ?Address $address;
+    public ?Address $address = null;
 
     public Collection $countries;
 
@@ -24,13 +26,13 @@ class AddressForm extends Form
     public string $last_name = '';
 
     #[Validate('nullable|string|max:255')]
-    public ?string $company_name;
+    public ?string $company_name = null;
 
     #[Validate('required')]
-    public ?int $country_id;
+    public ?int $country_id = null;
 
     #[Validate('required')]
-    public ?int $state;
+    public ?int $state = null;
 
     #[Validate('required|string|max:20')]
     public string $postcode = '';
@@ -42,7 +44,7 @@ class AddressForm extends Form
     public string $line_one = '';
 
     #[Validate('nullable|string|max:255')]
-    public ?string $line_two;
+    public ?string $line_two = null;
 
     #[Validate('boolean')]
     public bool $shipping_default = false;
@@ -86,7 +88,7 @@ class AddressForm extends Form
     {
         $validated = $this->validate();
 
-        if ($this->address) {
+        if ($this->address instanceof \Lunar\Models\Address) {
             $this->address->update($validated);
         } else {
             $validated['customer_id'] = $customerId;

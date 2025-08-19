@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\InterCommands\Batch;
 
 use Lunar\Models\Collection as LunarCollection;
@@ -29,7 +31,7 @@ class ArticleTopicRelation extends AbstractBatchCommand
         $collectionGroup = CollectionGroup::where('handle', TopicCommand::HANDLE)->firstOrFail();
 
         $topicsCollection = LunarCollection::where('collection_group_id', $collectionGroup->id)
-            ->where(function ($query) {
+            ->where(function ($query): void {
                 foreach ($this->data as $item) {
                     $query->orWhere('geslib_code', $item['topicId']);
                 }

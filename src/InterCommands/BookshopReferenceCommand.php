@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Lunar\FieldTypes\Text;
@@ -10,7 +12,7 @@ class BookshopReferenceCommand extends AbstractCommand
 {
     public function __construct(private readonly BookshopReference $bookshopReference) {}
 
-    public function __invoke()
+    public function __invoke(): void
     {
         $variant = ProductVariant::where('sku', $this->bookshopReference->articleId())->first();
 

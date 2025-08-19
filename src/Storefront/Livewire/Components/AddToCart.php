@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Storefront\Livewire\Components;
 
 use Illuminate\View\View;
@@ -15,7 +17,7 @@ class AddToCart extends Component
 
     public bool $displayPrice = false;
 
-    public ?Price $pricing;
+    public ?Price $pricing = null;
 
     public function mount(): void
     {

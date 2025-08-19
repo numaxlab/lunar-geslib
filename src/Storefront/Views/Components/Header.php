@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Storefront\Views\Components;
 
 use Illuminate\Contracts\View\View;
@@ -14,7 +16,7 @@ class Header extends Component
 
     public function render(): View
     {
-        $sectionCollections = Collection::whereHas('group', function ($query) {
+        $sectionCollections = Collection::whereHas('group', function ($query): void {
             $query->where('handle', Handle::COLLECTION_GROUP_TAXONOMIES);
         })->whereNull('parent_id')
             ->where('attribute_data->is-section->value', true)
@@ -24,6 +26,6 @@ class Header extends Component
             ->orderBy('_lft', 'ASC')
             ->with(['defaultUrl'])->get();
 
-        return view('lunar-geslib::storefront.components.header', compact('sectionCollections'));
+        return view('lunar-geslib::storefront.components.header', ['sectionCollections' => $sectionCollections]);
     }
 }

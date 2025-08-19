@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Storefront\Livewire;
 
 use Illuminate\View\View;
@@ -11,18 +13,18 @@ class HomePage extends Page
 {
     public function render(): View
     {
-        $featuredCollections = Collection::whereHas('group', function ($query) {
+        $featuredCollections = Collection::whereHas('group', function ($query): void {
             $query->where('handle', Handle::COLLECTION_GROUP_FEATURED);
         })->channel(StorefrontSession::getChannel())
             ->customerGroup(StorefrontSession::getCustomerGroups())
             ->orderBy('_lft', 'ASC')
             ->with([
-                'products' => function ($query) {
+                'products' => function ($query): void {
                     $query
                         ->channel(StorefrontSession::getChannel())
                         ->customerGroup(StorefrontSession::getCustomerGroups())
                         ->status('published')
-                        ->whereHas('productType', function ($query) {
+                        ->whereHas('productType', function ($query): void {
                             $query->where('id', config('lunar.geslib.product_type_id'));
                         });
                 },
@@ -35,19 +37,19 @@ class HomePage extends Page
                 'products.prices',
             ])->get();
 
-        $sectionsCollections = Collection::whereHas('group', function ($query) {
+        $sectionsCollections = Collection::whereHas('group', function ($query): void {
             $query->where('handle', Handle::COLLECTION_GROUP_TAXONOMIES);
         })->channel(StorefrontSession::getChannel())
             ->customerGroup(StorefrontSession::getCustomerGroups())
             ->where('attribute_data->in-homepage->value', true)
             ->orderBy('_lft', 'ASC')
             ->with([
-                'products' => function ($query) {
+                'products' => function ($query): void {
                     $query
                         ->channel(StorefrontSession::getChannel())
                         ->customerGroup(StorefrontSession::getCustomerGroups())
                         ->status('published')
-                        ->whereHas('productType', function ($query) {
+                        ->whereHas('productType', function ($query): void {
                             $query->where('id', config('lunar.geslib.product_type_id'));
                         });
                 },
@@ -60,19 +62,19 @@ class HomePage extends Page
                 'products.prices',
             ])->get();
 
-        $itinerariesCollections = Collection::whereHas('group', function ($query) {
+        $itinerariesCollections = Collection::whereHas('group', function ($query): void {
             $query->where('handle', Handle::COLLECTION_GROUP_ITINERARIES);
         })->channel(StorefrontSession::getChannel())
             ->customerGroup(StorefrontSession::getCustomerGroups())
             ->where('attribute_data->in-homepage->value', true)
             ->orderBy('_lft', 'ASC')
             ->with([
-                'products' => function ($query) {
+                'products' => function ($query): void {
                     $query
                         ->channel(StorefrontSession::getChannel())
                         ->customerGroup(StorefrontSession::getCustomerGroups())
                         ->status('published')
-                        ->whereHas('productType', function ($query) {
+                        ->whereHas('productType', function ($query): void {
                             $query->where('id', config('lunar.geslib.product_type_id'));
                         });
                 },
@@ -87,7 +89,10 @@ class HomePage extends Page
 
         return view(
             'lunar-geslib::storefront.livewire.homepage',
-            compact('featuredCollections', 'sectionsCollections', 'itinerariesCollections'),
+            [
+                'featuredCollections' => $featuredCollections, 'sectionsCollections' => $sectionsCollections,
+                'itinerariesCollections' => $itinerariesCollections,
+            ],
         );
     }
 }

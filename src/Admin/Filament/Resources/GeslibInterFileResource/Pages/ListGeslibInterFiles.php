@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibInterFileResource\Pages;
 
 use Filament\Resources\Pages\ListRecords;

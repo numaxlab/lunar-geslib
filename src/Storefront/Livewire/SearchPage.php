@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Storefront\Livewire;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -12,28 +14,28 @@ use Lunar\Models\Product;
 class SearchPage extends Page
 {
     #[Url]
-    public ?string $q;
+    public ?string $q = null;
 
     #[Url]
-    public ?int $ti;
+    public ?int $ti = null;
 
     #[Url]
-    public ?string $tt;
+    public ?string $tt = null;
 
     #[Url]
-    public ?int $l;
+    public ?int $l = null;
 
     #[Url]
-    public ?string $p;
+    public ?string $p = null;
 
     #[Url]
-    public ?int $a;
+    public ?int $a = null;
 
     public Collection $results;
 
     public function mount(): void
     {
-        if (empty($this->q)) {
+        if (!isset($this->q) || ($this->q === null || $this->q === '' || $this->q === '0')) {
             $this->redirect(route('lunar.geslib.storefront.homepage'));
 
             return;
@@ -45,7 +47,7 @@ class SearchPage extends Page
     public function search(): void
     {
         $this->results = Product::search($this->q)
-            ->query(fn (Builder $query) => $query->with([
+            ->query(fn(Builder $query) => $query->with([
                 'variant',
                 'variant.taxClass',
                 'defaultUrl',
@@ -63,7 +65,7 @@ class SearchPage extends Page
     }
 
     #[On('search-updated')]
-    public function searchUpdated($q, $ti, $tt, $l, $p, $a): void
+    public function searchUpdated(?string $q, ?int $ti, ?string $tt, ?int $l, ?string $p, ?int $a): void
     {
         $this->q = $q;
         $this->ti = $ti;

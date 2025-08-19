@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Admin\Filament\Extension;
 
 use Filament\Forms\Components\Field;
@@ -83,13 +85,13 @@ class CollectionResourceExtension extends ResourceExtension
             if ($component instanceof Field) {
                 $component->hidden(
                     static function (?Model $record, Get $get) use ($component): bool {
-                        if (! $record || ! $record instanceof LunarCollection) {
+                        if (!$record instanceof \Illuminate\Database\Eloquent\Model || !$record instanceof LunarCollection) {
                             return false;
                         }
 
                         $collectionGroup = $record->group;
 
-                        if (! $collectionGroup || ! array_key_exists($collectionGroup->handle, self::HIDDEN_FIELDS)) {
+                        if (!$collectionGroup || !array_key_exists($collectionGroup->handle, self::HIDDEN_FIELDS)) {
                             return false;
                         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -15,26 +17,17 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected GeslibInterFile $file;
-
-    protected string $errorMessage;
-
     /**
      * Create a new notification instance.
      */
-    public function __construct(GeslibInterFile $file, string $errorMessage)
-    {
-        $this->file = $file;
-        $this->errorMessage = $errorMessage;
-    }
+    public function __construct(protected GeslibInterFile $file, protected string $errorMessage) {}
 
     /**
      * Get the notification's delivery channels.
      *
      * @param  mixed  $notifiable
-     * @return array
      */
-    public function via($notifiable)
+    public function via($notifiable): array
     {
         return ['mail'];
     }
@@ -56,7 +49,7 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
                     'index',
                     ['tableFilters[status][value]' => 'error', 'tableSearchQuery' => $this->file->name],
                 );
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 // In case URL generation fails for any reason (e.g., panel not registered yet during certain operations)
                 $fileImportLogUrl = null;
             }
@@ -70,7 +63,7 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
             ->line('Timestamp: '.now()->toDateTimeString())
             ->line('Error Message: '.$this->errorMessage);
 
-        if ($fileImportLogUrl) {
+        if ($fileImportLogUrl !== null && $fileImportLogUrl !== '' && $fileImportLogUrl !== '0') {
             $mailMessage->action('View File Import Log', $fileImportLogUrl);
         } else {
             $mailMessage->line(
@@ -87,9 +80,8 @@ class GeslibFileImportFailed extends Notification implements ShouldQueue
      * Get the array representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return array
      */
-    public function toArray($notifiable)
+    public function toArray($notifiable): array
     {
         return [
             'file_id' => $this->file->id,

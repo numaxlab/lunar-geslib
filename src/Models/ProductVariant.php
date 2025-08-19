@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Models;
 
 use Spatie\MediaLibrary\MediaCollections\Models\Media;

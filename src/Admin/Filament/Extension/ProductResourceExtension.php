@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Admin\Filament\Extension;
 
 use Lunar\Admin\Support\Extending\ResourceExtension;

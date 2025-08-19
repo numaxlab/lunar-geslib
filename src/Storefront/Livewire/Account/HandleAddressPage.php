@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Storefront\Livewire\Account;
 
 use Illuminate\Support\Facades\Auth;
@@ -41,7 +43,7 @@ class HandleAddressPage extends Page
         $this->redirect(route('dashboard', absolute: false), navigate: true);
     }
 
-    public function updated($field, $value): void
+    public function updated($field, ?int $value): void
     {
         if ($field === 'form.country_id') {
             $this->form->updateStates($value);

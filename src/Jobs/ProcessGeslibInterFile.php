@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Jobs;
 
 use Carbon\Carbon;
@@ -289,7 +291,7 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
 
     protected function processBatchLines(array $log): array
     {
-        $batchLines = GeslibInterFileBatchLine::whereHas('geslibInterFile', function ($query) {
+        $batchLines = GeslibInterFileBatchLine::whereHas('geslibInterFile', function ($query): void {
             $query->where('id', $this->geslibInterFile->id);
         })->get();
 

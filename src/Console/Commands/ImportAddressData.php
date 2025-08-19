@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -25,11 +27,9 @@ class ImportAddressData extends Command
             'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/refs/heads/master/json/countries.json',
         )->object();
 
-        $newCountries = collect($countries)->filter(function ($country) use ($existing) {
-            return ! $existing->contains($country->iso3);
-        });
+        $newCountries = collect($countries)->filter(fn($country): bool => !$existing->contains($country->iso3));
 
-        if (! $newCountries->count()) {
+        if (!$newCountries->count()) {
             $this->components->info('There are no new countries to import');
 
             return self::SUCCESS;
@@ -44,7 +44,7 @@ class ImportAddressData extends Command
         progress(
             'Importing Countries and States',
             $newCountries,
-            function ($country, Progress $progress) use ($states) {
+            function ($country, Progress $progress) use ($states): void {
                 $model = Country::create([
                     'name' => $country->name,
                     'iso3' => $country->iso3,
@@ -58,25 +58,18 @@ class ImportAddressData extends Command
                 ]);
 
                 $countryStates = $states
-                    ->filter(function ($state) use ($country) {
-                        return $state->country_id === $country->id;
-                    })->filter(function ($state) {
+                    ->filter(fn($state): bool => $state->country_id === $country->id)->filter(function ($state): bool {
                         if ($state->country_code === 'ES') {
                             return $state->type === 'province' || $state->type === 'autonomous city';
                         }
 
-                        if ($state->iso2 === null) {
-                            return false;
-                        }
-
-                        return true;
+                        return $state->iso2 !== null;
                     })
-                    ->map(function ($state) {
-                        return [
-                            'name' => $state->name,
-                            'code' => $state->iso2,
-                        ];
-                    });
+                    ->map(fn($state): array
+                        => [
+                        'name' => $state->name,
+                        'code' => $state->iso2,
+                    ]);
 
                 $model->states()->createMany($countryStates->toArray());
 

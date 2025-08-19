@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Admin\Filament\Resources\AuthorResource\Pages;
 
 use Filament\Forms;
@@ -44,23 +46,21 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
     {
         return $table->columns([
             ProductResource::getNameTableColumn()->searchable()
-                ->url(function (Model $record) {
-                    return ProductResource::getUrl('edit', [
-                        'record' => $record->getKey(),
-                    ]);
-                }),
+                ->url(fn(Model $record): string => ProductResource::getUrl('edit', [
+                    'record' => $record->getKey(),
+                ])),
             ProductResource::getSkuTableColumn(),
             Tables\Columns\TextColumn::make('author_type')
                 ->label(
                     __('lunar-geslib::author.pages.products.actions.attach.form.author_type.label'),
                 )
-                ->formatStateUsing(function (string $state): string {
-                    return static::formatAuthorType($state);
-                }),
+                ->formatStateUsing(fn(string $state): string => static::formatAuthorType($state)),
         ])->actions([
             DetachAction::make()
-                ->action(function (Model $record, Table $table) {
-                    $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+                ->action(function (Model $record, Table $table): void {
+                    $relationship = Relation::noConstraints(fn(
+                    ): \Illuminate\Database\Eloquent\Relations\Relation|\Illuminate\Database\Eloquent\Builder|null
+                        => $table->getRelationship());
 
                     $relationship->detach($record);
 
@@ -82,16 +82,16 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
                         ->required()
                         ->searchable()
                         ->getSearchResultsUsing(
-                            static function (Forms\Components\Select $component, string $search): array {
-                                return Product::search($search)
-                                    ->get()
-                                    ->mapWithKeys(
-                                        fn (ProductContract $record): array => [
-                                            $record->getKey() => $record->translateAttribute('name'),
-                                        ],
-                                    )
-                                    ->all();
-                            },
+                            static fn(Forms\Components\Select $component, string $search): array
+                                => Product::search($search)
+                                ->get()
+                                ->mapWithKeys(
+                                    fn(ProductContract $record): array
+                                        => [
+                                        $record->getKey() => $record->translateAttribute('name'),
+                                    ],
+                                )
+                                ->all(),
                         ),
                     Forms\Components\Select::make('authorType')
                         ->label(
@@ -100,8 +100,10 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
                         ->options(static::authorTypeOptions())
                         ->required(),
                 ])
-                ->action(function (array $arguments, array $data, Form $form, Table $table) {
-                    $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+                ->action(function (array $arguments, array $data, Form $form, Table $table): void {
+                    $relationship = Relation::noConstraints(fn(
+                    ): \Illuminate\Database\Eloquent\Relations\Relation|\Illuminate\Database\Eloquent\Builder|null
+                        => $table->getRelationship());
 
                     $product = Product::find($data['recordId']);
 

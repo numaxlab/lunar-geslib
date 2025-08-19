@@ -22,7 +22,8 @@
         "orchestra/testbench": "^10.4",
         "laravel/pint": "dev-main",
         "peckphp/peck": "dev-main",
-        "larastan/larastan": "^3.0"
+        "larastan/larastan": "^3.0",
+        "rector/rector": "dev-main"
     },
     "autoload": {
         "psr-4": {
@@ -31,11 +32,28 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "NumaxLab\\Lunar\\Geslib\\Tests\\": "tests/"
+            "Tests\\": "tests/"
         }
     },
     "scripts": {
-        "phpstan": "./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=512M"
+        "phpstan": "./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=512M",
+        "test:typos": "./vendor/bin/peck",
+        "test:lint": "./vendor/bin/pint --test",
+        "test:types": "@phpstan",
+        "test:refactor": "./vendor/bin/rector process --dry-run",
+        "test:unit": "./vendor/bin/pest",
+        "test": [
+            "@test:typos",
+            "@test:types",
+            "@test:lint",
+            "@test:refactor",
+            "@test:unit"
+        ],
+        "refactor": "./vendor/bin/rector process",
+        "fix": [
+            "@refactor",
+            "./vendor/bin/pint"
+        ]
     },
     "extra": {
         "laravel": {

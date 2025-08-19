@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Storefront\Livewire;
 
 use Illuminate\View\View;
@@ -21,7 +23,7 @@ class SectionPage extends Page
     #[Url]
     public string $t = '';
 
-    public function mount($slug): void
+    public function mount(string $slug): void
     {
         $this->fetchUrl(
             slug: $slug,
@@ -43,7 +45,7 @@ class SectionPage extends Page
         $queryBuilder = Product::channel(StorefrontSession::getChannel())
             ->customerGroup(StorefrontSession::getCustomerGroups())
             ->status('published')
-            ->whereHas('productType', function ($query) {
+            ->whereHas('productType', function ($query): void {
                 $query->where('id', config('lunar.geslib.product_type_id'));
             })
             ->with([
@@ -56,21 +58,21 @@ class SectionPage extends Page
                 'collections.group',
             ]);
 
-        if ($this->q) {
+        if ($this->q !== '' && $this->q !== '0') {
             $productsByQuery = Product::search($this->q)->get();
 
             $queryBuilder->whereIn('id', $productsByQuery->pluck('id'));
         }
 
-        if ($this->t) {
-            $queryBuilder->whereHas('collections', function ($query) {
+        if ($this->t !== '' && $this->t !== '0') {
+            $queryBuilder->whereHas('collections', function ($query): void {
                 $query->where(
                     (new Collection)->getTable().'.id',
                     (int) $this->t,
                 );
             });
         } else {
-            $queryBuilder->whereHas('collections', function ($query) {
+            $queryBuilder->whereHas('collections', function ($query): void {
                 $query->whereIn(
                     (new Collection)->getTable().'.id',
                     $this->sectionCollection->descendants->pluck('id'),
@@ -80,7 +82,7 @@ class SectionPage extends Page
 
         $products = $queryBuilder->paginate(18);
 
-        return view('lunar-geslib::storefront.livewire.section.show', compact('products'))
+        return view('lunar-geslib::storefront.livewire.section.show', ['products' => $products])
             ->title($this->sectionCollection->translateAttribute('name'));
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Admin\Filament\Resources\ProductResource\Pages;
 
 use Filament\Forms;
@@ -48,15 +50,15 @@ class ManageProductAuthors extends BaseManageRelatedRecords
                     ->label(
                         __('lunar-geslib::author.pages.products.actions.attach.form.author_type.label'),
                     )
-                    ->formatStateUsing(function (string $state): string {
-                        return ManageAuthorProducts::formatAuthorType($state);
-                    }),
+                    ->formatStateUsing(fn(string $state): string => ManageAuthorProducts::formatAuthorType($state)),
                 Tables\Columns\TextColumn::make('position'),
             ])
             ->actions([
                 DetachAction::make()
-                    ->action(function (Model $record, Table $table) {
-                        $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+                    ->action(function (Model $record, Table $table): void {
+                        $relationship = Relation::noConstraints(fn(
+                        ): \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\Relation|null
+                            => $table->getRelationship());
 
                         $relationship->detach($record);
 
@@ -79,16 +81,16 @@ class ManageProductAuthors extends BaseManageRelatedRecords
                             ->required()
                             ->searchable()
                             ->getSearchResultsUsing(
-                                static function (Forms\Components\Select $component, string $search): array {
-                                    return Author::search($search)
-                                        ->get()
-                                        ->mapWithKeys(
-                                            fn (AuthorContract $author): array => [
-                                                $author->getKey() => $author->name,
-                                            ],
-                                        )
-                                        ->all();
-                                },
+                                static fn(Forms\Components\Select $component, string $search): array
+                                    => Author::search($search)
+                                    ->get()
+                                    ->mapWithKeys(
+                                        fn(AuthorContract $author): array
+                                            => [
+                                            $author->getKey() => $author->name,
+                                        ],
+                                    )
+                                    ->all(),
                             ),
                         Forms\Components\Select::make('authorType')
                             ->label(
@@ -103,8 +105,10 @@ class ManageProductAuthors extends BaseManageRelatedRecords
                             ->numeric()
                             ->required(),
                     ])
-                    ->action(function (array $arguments, array $data, Form $form, Table $table) {
-                        $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+                    ->action(function (array $arguments, array $data, Form $form, Table $table): void {
+                        $relationship = Relation::noConstraints(fn(
+                        ): \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\Relation|null
+                            => $table->getRelationship());
 
                         $author = Author::find($data['recordId']);
 

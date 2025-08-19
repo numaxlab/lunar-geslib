@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Admin\Filament\Resources\AuthorResource\Pages;
 
 use Filament\Actions;
@@ -25,7 +27,7 @@ class EditAuthor extends BaseEditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->before(function ($record, Actions\DeleteAction $action) {
+                ->before(function ($record, Actions\DeleteAction $action): void {
                     if ($record->products->count() > 0) {
                         Notification::make()
                             ->warning()

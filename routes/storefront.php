@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Route;
 use NumaxLab\Lunar\Geslib\Storefront\Http\Controllers\Auth\VerifyEmailController;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\Account\DashboardPage;
@@ -23,7 +25,7 @@ use NumaxLab\Lunar\Geslib\Storefront\Livewire\ProductPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\SearchPage;
 use NumaxLab\Lunar\Geslib\Storefront\Livewire\SectionPage;
 
-Route::prefix('/libreria')->group(function () {
+Route::prefix('/libreria')->group(function (): void {
     Route::get('/', HomePage::class)
         ->name('lunar.geslib.storefront.homepage');
 
@@ -43,11 +45,11 @@ Route::prefix('/libreria')->group(function () {
         ->name('lunar.geslib.storefront.search');
 });
 
-Route::prefix('/checkout')->group(function () {
+Route::prefix('/checkout')->group(function (): void {
     Route::get('/', SummaryPage::class)
         ->name('lunar.geslib.storefront.checkout.summary');
 
-    Route::middleware(['auth', 'verified'])->group(function () {
+    Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/envio-y-pago', ShippingAndPaymentPage::class)
             ->name('lunar.geslib.storefront.checkout.shipping-and-payment');
 
@@ -56,7 +58,7 @@ Route::prefix('/checkout')->group(function () {
     });
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('dashboard', DashboardPage::class)->name('dashboard');
 
     Route::redirect('preferencias', 'preferencias/perfil');
@@ -67,14 +69,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('preferencias/direcciones/{id}/editar', HandleAddressPage::class)->name('settings.edit-address');
 });
 
-Route::middleware('guest')->group(function () {
+Route::middleware('guest')->group(function (): void {
     Route::get('login', LoginPage::class)->name('login');
     Route::get('registrate', RegisterPage::class)->name('register');
     Route::get('recuperar-contrasenha', ForgotPasswordPage::class)->name('password.request');
     Route::get('recuperar-contrasenha/{token}', ResetPasswordPage::class)->name('password.reset');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function (): void {
     Route::get('verify-email', VerifyEmailPage::class)->name('verification.notice');
 
     Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)

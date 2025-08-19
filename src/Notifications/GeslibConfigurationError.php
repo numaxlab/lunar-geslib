@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -14,29 +16,20 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected string $configKey;
-
-    protected string $details;
-
     /**
      * Create a new notification instance.
      *
      * @param  string  $configKey  The configuration key that has an issue.
      * @param  string  $details  A message detailing the configuration issue.
      */
-    public function __construct(string $configKey, string $details)
-    {
-        $this->configKey = $configKey;
-        $this->details = $details;
-    }
+    public function __construct(protected string $configKey, protected string $details) {}
 
     /**
      * Get the notification's delivery channels.
      *
      * @param  mixed  $notifiable
-     * @return array
      */
-    public function via($notifiable)
+    public function via($notifiable): array
     {
         return ['mail'];
     }
@@ -53,7 +46,7 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
         if (class_exists(GeslibDashboardPage::class) && method_exists(GeslibDashboardPage::class, 'getUrl')) {
             try {
                 $dashboardUrl = GeslibDashboardPage::getUrl();
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 // In case URL generation fails
                 $dashboardUrl = null;
             }
@@ -67,7 +60,7 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
             ->line('Details: '.$this->details)
             ->line('Timestamp: '.now()->toDateTimeString());
 
-        if ($dashboardUrl) {
+        if ($dashboardUrl !== null && $dashboardUrl !== '' && $dashboardUrl !== '0') {
             $mailMessage->action('Go to Geslib Dashboard', $dashboardUrl);
         } else {
             $mailMessage->line(
@@ -86,9 +79,8 @@ class GeslibConfigurationError extends Notification implements ShouldQueue
      * Get the array representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return array
      */
-    public function toArray($notifiable)
+    public function toArray($notifiable): array
     {
         return [
             'config_key' => $this->configKey,

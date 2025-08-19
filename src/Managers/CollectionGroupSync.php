@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Managers;
 
 use Illuminate\Support\Collection;
@@ -19,9 +21,9 @@ readonly class CollectionGroupSync
 
         $newCollections = $this->collectionsOfGroup->pluck('id')->unique()->values();
 
-        $collectionsToKeep = $currentCollections->filter(function ($collection) {
-            return $collection->group_id !== $this->groupId;
-        })->pluck('id');
+        $collectionsToKeep = $currentCollections->filter(fn($collection,
+        ): bool
+            => $collection->group_id !== $this->groupId)->pluck('id');
 
         $this->product->collections()->sync(
             $collectionsToKeep->merge($newCollections)->unique()->toArray(),

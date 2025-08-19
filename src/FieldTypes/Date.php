@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\FieldTypes;
 
 use JsonSerializable;
 use Lunar\Base\FieldType;
 
-class Date implements FieldType, JsonSerializable
+class Date implements \Stringable, FieldType, JsonSerializable
 {
     protected ?string $value;
 
@@ -14,9 +16,9 @@ class Date implements FieldType, JsonSerializable
         $this->setValue($value);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->getValue() ?? '';
+        return (string) ($this->getValue() ?? '');
     }
 
     public function getValue()
@@ -24,7 +26,7 @@ class Date implements FieldType, JsonSerializable
         return $this->value;
     }
 
-    public function setValue($value)
+    public function setValue($value): void
     {
         $this->value = $value;
     }
@@ -36,7 +38,7 @@ class Date implements FieldType, JsonSerializable
                 'has_time' => 'nullable',
                 'options' => [
                     'nullable',
-                    function ($attribute, $value, $fail) {
+                    function ($attribute, $value, $fail): void {
                         if (! json_decode($value, true)) {
                             $fail('Must be valid json');
                         }

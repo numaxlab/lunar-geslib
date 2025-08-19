@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Lunar\Base\Migration;
@@ -11,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create($this->prefix.'geslib_authors', function (Blueprint $table) {
+        Schema::create($this->prefix.'geslib_authors', function (Blueprint $table): void {
             $table->id();
 
             $table->string('name');
@@ -21,7 +23,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create($this->prefix.'geslib_author_product', function (Blueprint $table) {
+        Schema::create($this->prefix.'geslib_author_product', function (Blueprint $table): void {
             $table->unsignedBigInteger('author_id');
             $table->unsignedBigInteger('product_id');
             $table->string('author_type')->default(\NumaxLab\Geslib\Lines\AuthorType::AUTHOR);

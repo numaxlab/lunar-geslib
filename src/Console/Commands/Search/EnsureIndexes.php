@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Console\Commands\Search;
 
 use Exception;
 use Illuminate\Console\Command;
 use Laravel\Scout\EngineManager;
 use Laravel\Scout\Engines\MeilisearchEngine;
-use MeiliSearch\Exceptions\ApiException;
 
 class EnsureIndexes extends Command
 {

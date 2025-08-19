@@ -46,7 +46,7 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
     {
         return $table->columns([
             ProductResource::getNameTableColumn()->searchable()
-                ->url(fn(Model $record): string => ProductResource::getUrl('edit', [
+                ->url(fn (Model $record): string => ProductResource::getUrl('edit', [
                     'record' => $record->getKey(),
                 ])),
             ProductResource::getSkuTableColumn(),
@@ -54,13 +54,12 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
                 ->label(
                     __('lunar-geslib::author.pages.products.actions.attach.form.author_type.label'),
                 )
-                ->formatStateUsing(fn(string $state): string => static::formatAuthorType($state)),
+                ->formatStateUsing(fn (string $state): string => static::formatAuthorType($state)),
         ])->actions([
             DetachAction::make()
                 ->action(function (Model $record, Table $table): void {
-                    $relationship = Relation::noConstraints(fn(
-                    ): \Illuminate\Database\Eloquent\Relations\Relation|\Illuminate\Database\Eloquent\Builder|null
-                        => $table->getRelationship());
+                    $relationship = Relation::noConstraints(fn (
+                    ): \Illuminate\Database\Eloquent\Relations\Relation|\Illuminate\Database\Eloquent\Builder|null => $table->getRelationship());
 
                     $relationship->detach($record);
 
@@ -82,12 +81,10 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
                         ->required()
                         ->searchable()
                         ->getSearchResultsUsing(
-                            static fn(Forms\Components\Select $component, string $search): array
-                                => Product::search($search)
+                            static fn (Forms\Components\Select $component, string $search): array => Product::search($search)
                                 ->get()
                                 ->mapWithKeys(
-                                    fn(ProductContract $record): array
-                                        => [
+                                    fn (ProductContract $record): array => [
                                         $record->getKey() => $record->translateAttribute('name'),
                                     ],
                                 )
@@ -101,9 +98,8 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
                         ->required(),
                 ])
                 ->action(function (array $arguments, array $data, Form $form, Table $table): void {
-                    $relationship = Relation::noConstraints(fn(
-                    ): \Illuminate\Database\Eloquent\Relations\Relation|\Illuminate\Database\Eloquent\Builder|null
-                        => $table->getRelationship());
+                    $relationship = Relation::noConstraints(fn (
+                    ): \Illuminate\Database\Eloquent\Relations\Relation|\Illuminate\Database\Eloquent\Builder|null => $table->getRelationship());
 
                     $product = Product::find($data['recordId']);
 

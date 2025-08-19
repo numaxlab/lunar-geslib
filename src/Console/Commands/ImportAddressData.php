@@ -27,9 +27,9 @@ class ImportAddressData extends Command
             'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/refs/heads/master/json/countries.json',
         )->object();
 
-        $newCountries = collect($countries)->filter(fn($country): bool => !$existing->contains($country->iso3));
+        $newCountries = collect($countries)->filter(fn ($country): bool => ! $existing->contains($country->iso3));
 
-        if (!$newCountries->count()) {
+        if (! $newCountries->count()) {
             $this->components->info('There are no new countries to import');
 
             return self::SUCCESS;
@@ -58,15 +58,14 @@ class ImportAddressData extends Command
                 ]);
 
                 $countryStates = $states
-                    ->filter(fn($state): bool => $state->country_id === $country->id)->filter(function ($state): bool {
+                    ->filter(fn ($state): bool => $state->country_id === $country->id)->filter(function ($state): bool {
                         if ($state->country_code === 'ES') {
                             return $state->type === 'province' || $state->type === 'autonomous city';
                         }
 
                         return $state->iso2 !== null;
                     })
-                    ->map(fn($state): array
-                        => [
+                    ->map(fn ($state): array => [
                         'name' => $state->name,
                         'code' => $state->iso2,
                     ]);

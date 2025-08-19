@@ -35,7 +35,7 @@ class SearchPage extends Page
 
     public function mount(): void
     {
-        if (!isset($this->q) || ($this->q === null || $this->q === '' || $this->q === '0')) {
+        if (! isset($this->q) || ($this->q === null || $this->q === '' || $this->q === '0')) {
             $this->redirect(route('lunar.geslib.storefront.homepage'));
 
             return;
@@ -47,7 +47,7 @@ class SearchPage extends Page
     public function search(): void
     {
         $this->results = Product::search($this->q)
-            ->query(fn(Builder $query) => $query->with([
+            ->query(fn (Builder $query) => $query->with([
                 'variant',
                 'variant.taxClass',
                 'defaultUrl',

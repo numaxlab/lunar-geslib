@@ -79,7 +79,7 @@ class Search extends Component
 
     public function updatedQuery(): void
     {
-        if (!isset($this->query) || ($this->query === null || $this->query === '' || $this->query === '0')) {
+        if (! isset($this->query) || ($this->query === null || $this->query === '' || $this->query === '0')) {
             $this->results = collect();
 
             return;
@@ -87,7 +87,7 @@ class Search extends Component
 
         if ($this->currentRouteName !== 'lunar.geslib.storefront.search') {
             $this->results = Product::search($this->query)
-                ->query(fn(Builder $query) => $query->with([
+                ->query(fn (Builder $query) => $query->with([
                     'defaultUrl',
                     'urls',
                     'authors',
@@ -97,7 +97,7 @@ class Search extends Component
 
     public function search(): void
     {
-        if (!isset($this->query) || ($this->query === null || $this->query === '' || $this->query === '0')) {
+        if (! isset($this->query) || ($this->query === null || $this->query === '' || $this->query === '0')) {
             return;
         }
 
@@ -131,7 +131,7 @@ class Search extends Component
 
     public function updatedTaxonQuery(): void
     {
-        if (!isset($this->taxonQuery) || ($this->taxonQuery === null || $this->taxonQuery === '' || $this->taxonQuery === '0')) {
+        if (! isset($this->taxonQuery) || ($this->taxonQuery === null || $this->taxonQuery === '' || $this->taxonQuery === '0')) {
             $this->taxonomies = collect();
 
             return;

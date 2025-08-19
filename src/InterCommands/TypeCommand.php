@@ -26,7 +26,7 @@ class TypeCommand extends AbstractCommand
             'name' => new Text($this->geslibType->name()),
         ];
 
-        if (!$collection) {
+        if (! $collection) {
             Collection::create([
                 'geslib_code' => $this->geslibType->id(),
                 'attribute_data' => $attributeData,

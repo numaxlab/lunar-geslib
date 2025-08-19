@@ -85,13 +85,13 @@ class CollectionResourceExtension extends ResourceExtension
             if ($component instanceof Field) {
                 $component->hidden(
                     static function (?Model $record, Get $get) use ($component): bool {
-                        if (!$record instanceof \Illuminate\Database\Eloquent\Model || !$record instanceof LunarCollection) {
+                        if (! $record instanceof \Illuminate\Database\Eloquent\Model || ! $record instanceof LunarCollection) {
                             return false;
                         }
 
                         $collectionGroup = $record->group;
 
-                        if (!$collectionGroup || !array_key_exists($collectionGroup->handle, self::HIDDEN_FIELDS)) {
+                        if (! $collectionGroup || ! array_key_exists($collectionGroup->handle, self::HIDDEN_FIELDS)) {
                             return false;
                         }
 

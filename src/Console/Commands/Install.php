@@ -242,7 +242,7 @@ class Install extends Command
             State::where('country_id', $spain->id)
                 ->whereNotIn('code', ['CE', 'ML', 'CN'])
                 ->get()
-                ->map(fn($state): array => [
+                ->map(fn ($state): array => [
                     'state_id' => $state->id,
                 ]),
         );

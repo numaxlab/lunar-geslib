@@ -212,7 +212,7 @@ class ShippingAndPaymentPage extends Page
         $option = $shippingAddress->shipping_option;
 
         if ($option) {
-            return ShippingManifest::getOptions($this->cart)->first(fn($opt): bool => $opt->getIdentifier() == $option);
+            return ShippingManifest::getOptions($this->cart)->first(fn ($opt): bool => $opt->getIdentifier() == $option);
         }
 
         return null;
@@ -220,7 +220,7 @@ class ShippingAndPaymentPage extends Page
 
     public function saveShippingOption(): void
     {
-        $option = $this->shippingOptions->first(fn($option): bool => $option->getIdentifier() == $this->chosenShipping);
+        $option = $this->shippingOptions->first(fn ($option): bool => $option->getIdentifier() == $this->chosenShipping);
 
         CartSession::setShippingOption($option);
 

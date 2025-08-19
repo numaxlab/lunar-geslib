@@ -29,24 +29,22 @@ class DateField extends BaseFieldType
     {
         if ($attribute->configuration && $attribute->configuration->get('has_time')) {
             return DateTimePicker::make($attribute->handle)
-                ->dehydrateStateUsing(fn($state) => $state)
+                ->dehydrateStateUsing(fn ($state) => $state)
                 ->when(
                     filled($attribute->validation_rules),
-                    fn(DateTimePicker $component,
-                    ): \Filament\Forms\Components\DateTimePicker
-                        => $component->rules($attribute->validation_rules),
+                    fn (DateTimePicker $component,
+                    ): \Filament\Forms\Components\DateTimePicker => $component->rules($attribute->validation_rules),
                 )
                 ->required((bool) $attribute->required)
                 ->helperText($attribute->translate('description'));
         }
 
         return DatePicker::make($attribute->handle)
-            ->dehydrateStateUsing(fn($state) => $state)
+            ->dehydrateStateUsing(fn ($state) => $state)
             ->when(
                 filled($attribute->validation_rules),
-                fn(DatePicker $component,
-                ): \Filament\Forms\Components\DatePicker
-                    => $component->rules($attribute->validation_rules),
+                fn (DatePicker $component,
+                ): \Filament\Forms\Components\DatePicker => $component->rules($attribute->validation_rules),
             )
             ->required((bool) $attribute->required)
             ->helperText($attribute->translate('description'));

@@ -37,8 +37,7 @@ class Cart extends Component
 
     private function mapLines(): void
     {
-        $this->lines = $this->cartLines->map(fn($line): array
-            => [
+        $this->lines = $this->cartLines->map(fn ($line): array => [
             'id' => $line->id,
             'slug' => $line->purchasable->product->defaultUrl->slug,
             'quantity' => $line->quantity,

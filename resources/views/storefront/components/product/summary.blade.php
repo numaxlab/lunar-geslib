@@ -8,11 +8,6 @@
         <h3 class="at-heading is-4 mt-3">
             {{ $product->recordTitle }}
         </h3>
-        @if ($product->translateAttribute('subtitle'))
-            <h4 class="font-normal">
-                {{ $product->translateAttribute('subtitle') }}
-            </h4>
-        @endif
     </a>
 
     @if ($product->authors->isNotEmpty())

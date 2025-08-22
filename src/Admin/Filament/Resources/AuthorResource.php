@@ -125,7 +125,7 @@ class AuthorResource extends BaseResource
             Tables\Columns\TextColumn::make('products_count')
                 ->counts('products')
                 ->formatStateUsing(
-                    fn($state): string => number_format($state, 0),
+                    fn ($state): string => number_format($state, 0),
                 )
                 ->label(__('lunar-geslib::author.table.products_count.label')),
         ];

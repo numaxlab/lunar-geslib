@@ -7,6 +7,7 @@ namespace NumaxLab\Lunar\Geslib\Console\Commands\Geslib;
 use Illuminate\Console\Command;
 use Lunar\Models\ProductVariant;
 use NumaxLab\Lunar\Geslib\Events\GeslibArticleUpdated;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
 
 class ForceProductEnrichment extends Command
 {
@@ -17,7 +18,11 @@ class ForceProductEnrichment extends Command
     public function handle(): int
     {
         $this->withProgressBar(ProductVariant::all(), function (ProductVariant $variant): void {
-            GeslibArticleUpdated::dispatch($variant);
+            try {
+                GeslibArticleUpdated::dispatch($variant);
+            } catch (FileCannotBeAdded $e) {
+                $this->error($e->getMessage());
+            }
         });
 
         $this->info('Done!');

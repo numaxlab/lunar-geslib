@@ -24,20 +24,23 @@ class ProductIndexer extends \Lunar\Search\ProductIndexer
     {
         $data = array_merge([
             'id' => (string) $model->id,
+        ], $this->mapSearchableAttributes($model));
+
+        $data = array_merge($data, [
+            'authors' => $model->authors->map(fn($author) => $author->toSearchableArray())->toArray(),
+            'isbns' => $model->variants->pluck('gtin')->toArray(),
+            'brand' => $model->brand?->name,
             'status' => $model->status,
             'product_type' => $model->productType->name,
-            'brand' => $model->brand?->name,
-            'authors' => $model->authors->map(fn ($author) => $author->toSearchableArray())->toArray(),
             'created_at' => (int) $model->created_at->timestamp,
-        ], $this->mapSearchableAttributes($model));
+        ]);
+
+        $data['skus'] = $model->variants->pluck('sku')->toArray();
+        $data['eans'] = $model->variants->pluck('ean')->toArray();
 
         if ($thumbnail = $model->thumbnail) {
             $data['thumbnail'] = $thumbnail->getUrl('small');
         }
-
-        $data['skus'] = $model->variants->pluck('sku')->toArray();
-        $data['isbns'] = $model->variants->pluck('gtin')->toArray();
-        $data['eans'] = $model->variants->pluck('ean')->toArray();
 
         return $data;
     }

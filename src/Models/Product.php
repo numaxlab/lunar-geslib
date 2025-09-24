@@ -48,6 +48,14 @@ class Product extends \Lunar\Models\Product
         return $this->contributorsByType(AuthorType::BACK_COVER_ILLUSTRATOR);
     }
 
+    public function favouriteOf(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            config('auth.providers.users.model'),
+            config('lunar.database.table_prefix').'geslib_product_user_favourites',
+        )->withTimestamps();
+    }
+
     protected function recordFullTitle(): Attribute
     {
         return Attribute::make(

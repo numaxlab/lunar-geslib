@@ -21,6 +21,7 @@ class ForceProductEnrichment extends Command
             try {
                 GeslibArticleUpdated::dispatch($variant);
             } catch (FileCannotBeAdded $e) {
+                $this->newLine();
                 $this->error($e->getMessage());
             }
         });

@@ -27,7 +27,7 @@ class ProductIndexer extends \Lunar\Search\ProductIndexer
         ], $this->mapSearchableAttributes($model));
 
         $data = array_merge($data, [
-            'authors' => $model->authors->map(fn($author) => $author->toSearchableArray())->toArray(),
+            'authors' => $model->authors->map(fn ($author) => $author->toSearchableArray())->toArray(),
             'isbns' => $model->variants->pluck('gtin')->toArray(),
             'brand' => $model->brand?->name,
             'status' => $model->status,

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace NumaxLab\Lunar\Geslib;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Response;
@@ -31,6 +33,7 @@ use NumaxLab\Lunar\Geslib\FieldTypes\Date;
 use NumaxLab\Lunar\Geslib\Listeners\EnrichProductFromDilveSubscriber;
 use NumaxLab\Lunar\Geslib\Models\Author;
 use Spatie\ArrayToXml\ArrayToXml;
+use Spatie\StructureDiscoverer\Discover;
 use Symfony\Component\Finder\Finder;
 
 class LunarGeslibServiceProvider extends ServiceProvider
@@ -87,6 +90,20 @@ class LunarGeslibServiceProvider extends ServiceProvider
 
         Event::subscribe(EnrichProductFromDilveSubscriber::class);
 
+        $modelClasses = collect(
+            Discover::in(__DIR__.'/Models')
+                ->classes()
+                ->extending(Model::class)
+                ->get(),
+        )->mapWithKeys(
+            fn($class)
+                => [
+                Str::snake(str_replace('\\', '_', Str::after($class, 'NumaxLab\\Lunar\\Geslib\\Models\\'))) => $class,
+            ],
+        );
+
+        Relation::morphMap($modelClasses->toArray());
+
         Response::macro(
             'xml',
             function (array $data, int $status = 200, array $headers = [], string $rootElement = 'response') {
@@ -106,7 +123,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
                 ForceProductEnrichment::class,
             ];
 
-            if (! $this->app->runningUnitTests()) {
+            if (!$this->app->runningUnitTests()) {
                 $commands[] = EnsureIndexes::class;
             }
 

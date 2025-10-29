@@ -67,9 +67,9 @@ class ProductIndexer extends \Lunar\Search\ProductIndexer
         $pricing = $model->variant->pricing()->get()->matched;
 
         $data = array_merge($data, [
-            'authors' => $model->authors->map(fn($author) => $author->toSearchableArray())->toArray(),
-            'taxonomies' => $taxonomies->map(fn($taxon) => $taxon->toSearchableArray())->toArray(),
-            'languages' => $languages?->map(fn($language) => $language->toSearchableArray())->toArray(),
+            'authors' => $model->authors->map(fn ($author) => $author->toSearchableArray())->toArray(),
+            'taxonomies' => $taxonomies->map(fn ($taxon) => $taxon->toSearchableArray())->toArray(),
+            'languages' => $languages?->map(fn ($language) => $language->toSearchableArray())->toArray(),
             'isbns' => $model->variants->pluck('gtin')->toArray(),
             'price' => $pricing->priceIncTax()->unitDecimal(),
             'geslib_status' => $geslibStatus?->first()->toSearchableArray(),

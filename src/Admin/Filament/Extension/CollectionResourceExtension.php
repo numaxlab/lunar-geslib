@@ -26,38 +26,32 @@ class CollectionResourceExtension extends ResourceExtension
             'subtitle',
             'description',
             'is-section',
-            'in-homepage',
         ],
         LanguageCommand::HANDLE => [
             'subtitle',
             'description',
             'is-section',
-            'in-homepage',
         ],
         IbicCommand::HANDLE => [
             'subtitle',
             'description',
             'is-section',
-            'in-homepage',
         ],
         CollectionCommand::HANDLE => [],
         BindingTypeCommand::HANDLE => [
             'subtitle',
             'description',
             'is-section',
-            'in-homepage',
         ],
         StatusCommand::HANDLE => [
             'subtitle',
             'description',
             'is-section',
-            'in-homepage',
         ],
         ClassificationCommand::HANDLE => [
             'subtitle',
             'description',
             'is-section',
-            'in-homepage',
         ],
         Handle::COLLECTION_GROUP_TAXONOMIES => [
             'subtitle',
@@ -67,7 +61,6 @@ class CollectionResourceExtension extends ResourceExtension
             'subtitle',
             'description',
             'is-section',
-            'in-homepage',
         ],
         Handle::COLLECTION_GROUP_ITINERARIES => [
             'is-section',
@@ -85,13 +78,13 @@ class CollectionResourceExtension extends ResourceExtension
             if ($component instanceof Field) {
                 $component->hidden(
                     static function (?Model $record, Get $get) use ($component): bool {
-                        if (! $record instanceof \Illuminate\Database\Eloquent\Model || ! $record instanceof LunarCollection) {
+                        if (!$record instanceof \Illuminate\Database\Eloquent\Model || !$record instanceof LunarCollection) {
                             return false;
                         }
 
                         $collectionGroup = $record->group;
 
-                        if (! $collectionGroup || ! array_key_exists($collectionGroup->handle, self::HIDDEN_FIELDS)) {
+                        if (!$collectionGroup || !array_key_exists($collectionGroup->handle, self::HIDDEN_FIELDS)) {
                             return false;
                         }
 

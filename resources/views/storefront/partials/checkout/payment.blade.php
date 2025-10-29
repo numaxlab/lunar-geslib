@@ -10,7 +10,7 @@
             <x-numaxlab-atomic::atoms.forms.radio
                     wire:model.live="paymentType"
                     name="paymentType"
-                    value="cash-in-hand">
+                    value="cash-on-delivery">
                 Recogida en tienda
             </x-numaxlab-atomic::atoms.forms.radio>
         </div>

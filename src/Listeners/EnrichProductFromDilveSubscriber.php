@@ -13,16 +13,18 @@ use NumaxLab\Lunar\Geslib\Events\GeslibArticleUpdated;
 
 class EnrichProductFromDilveSubscriber implements ShouldQueue
 {
+    public $queue = 'default';
+
     public function subscribe(Dispatcher $events): void
     {
         $events->listen(
             GeslibArticleCreated::class,
-            self::handleCreatedProduct(...),
+            [static::class, 'handleCreatedProduct'],
         );
 
         $events->listen(
             GeslibArticleUpdated::class,
-            self::handleUpdatedProduct(...),
+            [static::class, 'handleUpdatedProduct'],
         );
     }
 
@@ -33,7 +35,7 @@ class EnrichProductFromDilveSubscriber implements ShouldQueue
 
     private function handle(ProductVariant $productVariant): void
     {
-        if (! $productVariant->gtin) {
+        if (!$productVariant->gtin) {
             return;
         }
 
@@ -44,7 +46,7 @@ class EnrichProductFromDilveSubscriber implements ShouldQueue
 
         $onixProduct = $client->getProductByIsbn($productVariant->gtin);
 
-        if (! $onixProduct || ! $onixProduct->coverUrl) {
+        if (!$onixProduct || !$onixProduct->coverUrl) {
             return;
         }
 

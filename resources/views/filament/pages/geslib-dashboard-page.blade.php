@@ -7,7 +7,6 @@
                 </h2>
                 <div class="grid grid-cols-1 gap-4 py-8 lg:grid-cols-2">
                     @livewire(NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\GeslibFileImportStatsWidget::class)
-                    @livewire(NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\RecentFileImportErrorsWidget::class)
                 </div>
             </section>
 

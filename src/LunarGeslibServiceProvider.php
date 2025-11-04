@@ -6,13 +6,10 @@ namespace NumaxLab\Lunar\Geslib;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Livewire\Component;
-use Livewire\Livewire;
 use Lunar\Admin\Filament\Resources\CollectionResource;
 use Lunar\Admin\Filament\Resources\ProductResource;
 use Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductCollections;
@@ -34,7 +31,6 @@ use NumaxLab\Lunar\Geslib\Listeners\EnrichProductFromDilveSubscriber;
 use NumaxLab\Lunar\Geslib\Models\Author;
 use Spatie\ArrayToXml\ArrayToXml;
 use Spatie\StructureDiscoverer\Discover;
-use Symfony\Component\Finder\Finder;
 
 class LunarGeslibServiceProvider extends ServiceProvider
 {
@@ -74,10 +70,6 @@ class LunarGeslibServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'lunar-geslib');
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'lunar-geslib');
 
-        if (config('lunar.geslib.storefront_enabled', true)) {
-            $this->bootStorefront();
-        }
-
         if (config('lunar.geslib.api_routes_enabled', false)) {
             $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
         }
@@ -96,7 +88,8 @@ class LunarGeslibServiceProvider extends ServiceProvider
                 ->extending(Model::class)
                 ->get(),
         )->mapWithKeys(
-            fn ($class) => [
+            fn($class)
+                => [
                 Str::snake(str_replace('\\', '_', Str::after($class, 'NumaxLab\\Lunar\\Geslib\\Models\\'))) => $class,
             ],
         );
@@ -122,30 +115,11 @@ class LunarGeslibServiceProvider extends ServiceProvider
                 ForceProductEnrichment::class,
             ];
 
-            if (! $this->app->runningUnitTests()) {
+            if (!$this->app->runningUnitTests()) {
                 $commands[] = EnsureIndexes::class;
             }
 
             $this->commands($commands);
-        }
-    }
-
-    public function bootStorefront(): void
-    {
-        Blade::componentNamespace('NumaxLab\\Lunar\\Geslib\\Storefront\\Views\\Components', 'lunar-geslib');
-        Blade::anonymousComponentPath(__DIR__.'/../resources/views/storefront/components', 'lunar-geslib');
-
-        $namespace = 'NumaxLab\Lunar\Geslib\Storefront\Livewire\\';
-
-        $path = __DIR__.'/Storefront/Livewire';
-
-        foreach ((new Finder)->in($path)->files() as $file) {
-            $component = $namespace.str_replace(['/', '.php'], ['\\', ''], $file->getRelativePathname());
-
-            if (is_subclass_of($component, Component::class)) {
-                $alias = str_replace('.-', '.', Str::kebab(str_replace('\\', '.', $component)));
-                Livewire::component($alias, $component);
-            }
         }
     }
 }

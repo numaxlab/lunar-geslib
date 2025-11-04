@@ -26,44 +26,53 @@ class CollectionResourceExtension extends ResourceExtension
             'subtitle',
             'description',
             'is-section',
+            'is-special',
         ],
         LanguageCommand::HANDLE => [
             'subtitle',
             'description',
             'is-section',
+            'is-special',
         ],
         IbicCommand::HANDLE => [
             'subtitle',
             'description',
             'is-section',
+            'is-special',
         ],
         CollectionCommand::HANDLE => [],
         BindingTypeCommand::HANDLE => [
             'subtitle',
             'description',
             'is-section',
+            'is-special',
         ],
         StatusCommand::HANDLE => [
             'subtitle',
             'description',
             'is-section',
+            'is-special',
         ],
         ClassificationCommand::HANDLE => [
             'subtitle',
             'description',
             'is-section',
+            'is-special',
         ],
         Handle::COLLECTION_GROUP_TAXONOMIES => [
             'subtitle',
             'description',
+            'is-special',
         ],
         Handle::COLLECTION_GROUP_FEATURED => [
             'subtitle',
             'description',
             'is-section',
+            'is-special',
         ],
         Handle::COLLECTION_GROUP_ITINERARIES => [
             'is-section',
+            'is-special',
         ],
     ];
 

@@ -434,7 +434,7 @@ class Install extends Command
         Attribute::create([
             'attribute_type' => Collection::morphName(),
             'attribute_group_id' => $group->id,
-            'position' => 2,
+            'position' => 1,
             'handle' => 'name',
             'name' => [
                 'es' => 'Nombre',
@@ -456,7 +456,7 @@ class Install extends Command
         Attribute::create([
             'attribute_type' => Collection::morphName(),
             'attribute_group_id' => $group->id,
-            'position' => 3,
+            'position' => 2,
             'handle' => 'subtitle',
             'name' => [
                 'es' => 'Subtítulo',
@@ -478,7 +478,7 @@ class Install extends Command
         Attribute::create([
             'attribute_type' => Collection::morphName(),
             'attribute_group_id' => $group->id,
-            'position' => 4,
+            'position' => 3,
             'handle' => 'description',
             'name' => [
                 'es' => 'Descripción',
@@ -500,7 +500,7 @@ class Install extends Command
         Attribute::create([
             'attribute_type' => Collection::morphName(),
             'attribute_group_id' => $group->id,
-            'position' => 5,
+            'position' => 4,
             'handle' => 'is-section',
             'name' => [
                 'es' => 'Es sección',

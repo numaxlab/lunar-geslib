@@ -11,7 +11,6 @@ use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\AuthorResource;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibInterFileResource;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\GeslibFileImportStatsWidget;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\GeslibOrderSyncStatsWidget;
-use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\RecentFileImportErrorsWidget;
 
 class GeslibPlugin implements Plugin
 {
@@ -43,7 +42,6 @@ class GeslibPlugin implements Plugin
             ->widgets([
                 GeslibFileImportStatsWidget::class,
                 GeslibOrderSyncStatsWidget::class,
-                RecentFileImportErrorsWidget::class,
             ]);
     }
 

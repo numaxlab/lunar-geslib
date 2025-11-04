@@ -7,6 +7,10 @@ namespace NumaxLab\Lunar\Geslib\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use NumaxLab\Geslib\Lines\AuthorType;
+use NumaxLab\Lunar\Geslib\Handle;
+use NumaxLab\Lunar\Geslib\InterCommands\CollectionCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\LanguageCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
 
 class Product extends \Lunar\Models\Product
 {
@@ -54,6 +58,34 @@ class Product extends \Lunar\Models\Product
             config('auth.providers.users.model'),
             config('lunar.database.table_prefix').'geslib_product_user_favourites',
         )->withTimestamps();
+    }
+
+    public function taxonomies(): BelongsToMany
+    {
+        return $this->collections()->whereHas('group', function ($query) {
+            $query->where('handle', Handle::COLLECTION_GROUP_TAXONOMIES);
+        });
+    }
+
+    public function editorialCollections(): BelongsToMany
+    {
+        return $this->collections()->whereHas('group', function ($query) {
+            $query->where('handle', CollectionCommand::HANDLE);
+        });
+    }
+
+    public function languages(): BelongsToMany
+    {
+        return $this->collections()->whereHas('group', function ($query) {
+            $query->where('handle', LanguageCommand::HANDLE);
+        });
+    }
+
+    public function statuses(): BelongsToMany
+    {
+        return $this->collections()->whereHas('group', function ($query) {
+            $query->where('handle', StatusCommand::HANDLE);
+        });
     }
 
     protected function recordFullTitle(): Attribute

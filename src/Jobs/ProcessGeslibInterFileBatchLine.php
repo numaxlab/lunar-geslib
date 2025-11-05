@@ -91,11 +91,12 @@ class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
         $this->batchLine->delete();
 
         if ($batchLines->count() > 1) {
-            $nextBatchLine = $batchLines->first(fn($line) => $line->id !== $this->batchLine->id);
+            $nextBatchLine = $batchLines->first(fn ($line) => $line->id !== $this->batchLine->id);
 
             if ($nextBatchLine) {
                 self::dispatch($this->geslibInterFile, $nextBatchLine);
                 Log::debug('next batch line dispatched: '.$nextBatchLine->id);
+
                 return;
             }
         }
@@ -108,11 +109,11 @@ class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
 
     private function getStatusFromLog(array $log): string
     {
-        if (array_any($log, fn($line) => $line['level'] === CommandContract::LEVEL_ERROR)) {
+        if (array_any($log, fn ($line) => $line['level'] === CommandContract::LEVEL_ERROR)) {
             return GeslibInterFile::STATUS_FAILED;
         }
 
-        if (array_any($log, fn($line) => $line['level'] === CommandContract::LEVEL_WARNING)) {
+        if (array_any($log, fn ($line) => $line['level'] === CommandContract::LEVEL_WARNING)) {
             return GeslibInterFile::STATUS_WARNING;
         }
 

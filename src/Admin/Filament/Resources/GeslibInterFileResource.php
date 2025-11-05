@@ -44,7 +44,7 @@ class GeslibInterFileResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         GeslibInterFile::STATUS_SUCCESS => 'success',
                         GeslibInterFile::STATUS_FAILED => 'danger',
                         GeslibInterFile::STATUS_WARNING => 'warning',
@@ -88,17 +88,15 @@ class GeslibInterFileResource extends Resource
                 Tables\Actions\Action::make('view_log')
                     ->label('Ver log')
                     ->icon('heroicon-o-eye')
-                    ->modalContent(fn($record,
-                    ): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
-                        => view('lunar-geslib::filament.modals.geslib-inter-file-log',
+                    ->modalContent(fn ($record,
+                    ): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory => view('lunar-geslib::filament.modals.geslib-inter-file-log',
                         [
                             'log' => $record->log,
                         ]))
                     ->modalHeading('Registro de actividad')
                     ->modalSubmitAction(false)
-                    ->modalCancelAction(fn(StaticAction $action,
-                    ): \Filament\Actions\StaticAction
-                        => $action->label('Cerrar')),
+                    ->modalCancelAction(fn (StaticAction $action,
+                    ): \Filament\Actions\StaticAction => $action->label('Cerrar')),
             ])
             ->defaultSort('created_at', 'desc');
     }

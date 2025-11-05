@@ -23,6 +23,7 @@ use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\ProductResourceExtension;
 use NumaxLab\Lunar\Geslib\Admin\Support\FieldTypes\DateField;
 use NumaxLab\Lunar\Geslib\Console\Commands\Geslib\ForceProductEnrichment;
 use NumaxLab\Lunar\Geslib\Console\Commands\Geslib\Import;
+use NumaxLab\Lunar\Geslib\Console\Commands\Geslib\ImportBatchLines;
 use NumaxLab\Lunar\Geslib\Console\Commands\ImportAddressData;
 use NumaxLab\Lunar\Geslib\Console\Commands\Install;
 use NumaxLab\Lunar\Geslib\Console\Commands\Search\EnsureIndexes;
@@ -88,7 +89,8 @@ class LunarGeslibServiceProvider extends ServiceProvider
                 ->extending(Model::class)
                 ->get(),
         )->mapWithKeys(
-            fn ($class) => [
+            fn($class)
+                => [
                 Str::snake(str_replace('\\', '_', Str::after($class, 'NumaxLab\\Lunar\\Geslib\\Models\\'))) => $class,
             ],
         );
@@ -110,11 +112,12 @@ class LunarGeslibServiceProvider extends ServiceProvider
             $commands = [
                 Install::class,
                 Import::class,
+                ImportBatchLines::class,
                 ImportAddressData::class,
                 ForceProductEnrichment::class,
             ];
 
-            if (! $this->app->runningUnitTests()) {
+            if (!$this->app->runningUnitTests()) {
                 $commands[] = EnsureIndexes::class;
             }
 

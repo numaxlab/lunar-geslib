@@ -42,9 +42,6 @@ use NumaxLab\Lunar\Geslib\InterCommands\ArticleIndexCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\ArticleTopicCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\AuthorBiographyCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\AuthorCommand;
-use NumaxLab\Lunar\Geslib\InterCommands\Batch\ArticleAuthorRelation;
-use NumaxLab\Lunar\Geslib\InterCommands\Batch\ArticleIbicRelation;
-use NumaxLab\Lunar\Geslib\InterCommands\Batch\ArticleTopicRelation;
 use NumaxLab\Lunar\Geslib\InterCommands\BindingTypeCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\BookshopReferenceCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\ClassificationCommand;
@@ -94,12 +91,12 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
         $extractedFilePath = config('lunar.geslib.inter_files_path').'/'.str_replace(
-            '.zip',
-            '',
-            $this->geslibInterFile->name,
-        );
+                '.zip',
+                '',
+                $this->geslibInterFile->name,
+            );
 
-        if (! $storage->exists($extractedFilePath)) {
+        if (!$storage->exists($extractedFilePath)) {
             $this->extractZipFile($storage);
         }
 
@@ -251,25 +248,21 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
             }
         }
 
-        if (! $fileFinished) {
+        if (!$fileFinished) {
             self::dispatch($this->geslibInterFile, $endLine, $this->chunkSize);
 
             return;
         }
 
-        unset($geslibFile, $line, $command, $batchCommands);
-
-        $log = $this->processBatchLines($log);
-
         Cache::lock(self::CACHE_LOCK_NAME)->forceRelease();
 
-        $this->geslibInterFile->update([
-            'status' => $this->getStatusFromLog($this->geslibInterFile->log),
-            'finished_at' => Carbon::now(),
-            'log' => $log,
-        ]);
+        $batchLine = GeslibInterFileBatchLine::whereHas('geslibInterFile', function ($query): void {
+            $query->where('id', $this->geslibInterFile->id);
+        })->orderBy('created_at')->first();
 
-        $this->geslibInterFile->batchLines()->delete();
+        if ($batchLine) {
+            ProcessGeslibInterFileBatchLine::dispatch($this->geslibInterFile, $batchLine);
+        }
 
         $storage->delete($extractedFilePath);
     }
@@ -287,56 +280,6 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
         } else {
             throw new RuntimeException('Unable to open zip file: '.$zipFilePath);
         }
-    }
-
-    protected function processBatchLines(array $log): array
-    {
-        $batchLines = GeslibInterFileBatchLine::whereHas('geslibInterFile', function ($query): void {
-            $query->where('id', $this->geslibInterFile->id);
-        })->get();
-
-        $log[] = [
-            'level' => CommandContract::LEVEL_INFO,
-            'message' => sprintf(
-                'Processing %s batch lines',
-                $batchLines->count(),
-            ),
-        ];
-
-        foreach ($batchLines as $batchLine) {
-            $command = null;
-
-            match ($batchLine->line_type) {
-                ArticleAuthor::CODE => $command = new ArticleAuthorRelation($batchLine->article_id, $batchLine->data),
-                ArticleTopic::CODE => $command = new ArticleTopicRelation($batchLine->article_id, $batchLine->data),
-                Ibic::CODE => $command = new ArticleIbicRelation($batchLine->article_id, $batchLine->data),
-                default => $log[] = [
-                    'level' => CommandContract::LEVEL_WARNING,
-                    'message' => sprintf('Unexpected batch command for line type: %s', $batchLine->line_type),
-                ],
-            };
-
-            $command();
-        }
-
-        return $log;
-    }
-
-    private function getStatusFromLog(array $log): string
-    {
-        foreach ($log as $line) {
-            if ($line['level'] === CommandContract::LEVEL_ERROR) {
-                return GeslibInterFile::STATUS_FAILED;
-            }
-        }
-
-        foreach ($log as $line) {
-            if ($line['level'] === CommandContract::LEVEL_WARNING) {
-                return GeslibInterFile::STATUS_WARNING;
-            }
-        }
-
-        return GeslibInterFile::STATUS_SUCCESS;
     }
 
     public function failed(Throwable $exception): void

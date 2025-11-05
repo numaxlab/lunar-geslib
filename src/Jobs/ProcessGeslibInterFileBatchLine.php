@@ -40,7 +40,7 @@ class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
     {
         $batchLines = GeslibInterFileBatchLine::whereHas('geslibInterFile', function ($query): void {
             $query->where('id', $this->geslibInterFile->id);
-        })->orderBy('created_at')->get();
+        })->orderBy('created_at')->take(5)->get();
 
         $log = is_array($this->geslibInterFile->log) ? $this->geslibInterFile->log : [];
         // Clear the log if it exceeds a certain size to prevent memory issues
@@ -83,7 +83,6 @@ class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
 
         $this->geslibInterFile->update([
             'status' => GeslibInterFile::STATUS_PROCESSING,
-            'finished_at' => null,
             'log' => $log,
         ]);
 

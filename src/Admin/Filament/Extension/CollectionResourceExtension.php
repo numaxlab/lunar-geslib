@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NumaxLab\Lunar\Geslib\Admin\Filament\Extension;
 
+use Filament\Forms;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -78,7 +79,17 @@ class CollectionResourceExtension extends ResourceExtension
 
     public function extendForm(Form $form): Form
     {
-        return $form->schema($this->checkAttributesToHide($form->getComponents()));
+        return $form->schema(
+            array_merge(
+                $this->checkAttributesToHide($form->getComponents()),
+                [
+                    Forms\Components\Section::make('Geslib')->schema([
+                        Forms\Components\ViewField::make('geslib_code')
+                            ->view('lunar-geslib::filament.forms.components.geslib-code'),
+                    ]),
+                ],
+            ),
+        );
     }
 
     private function checkAttributesToHide(array $components): array
@@ -87,13 +98,13 @@ class CollectionResourceExtension extends ResourceExtension
             if ($component instanceof Field) {
                 $component->hidden(
                     static function (?Model $record, Get $get) use ($component): bool {
-                        if (! $record instanceof \Illuminate\Database\Eloquent\Model || ! $record instanceof LunarCollection) {
+                        if (!$record instanceof \Illuminate\Database\Eloquent\Model || !$record instanceof LunarCollection) {
                             return false;
                         }
 
                         $collectionGroup = $record->group;
 
-                        if (! $collectionGroup || ! array_key_exists($collectionGroup->handle, self::HIDDEN_FIELDS)) {
+                        if (!$collectionGroup || !array_key_exists($collectionGroup->handle, self::HIDDEN_FIELDS)) {
                             return false;
                         }
 

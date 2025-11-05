@@ -35,7 +35,7 @@ class EnrichProductFromDilveSubscriber implements ShouldQueue
 
     private function handle(ProductVariant $productVariant): void
     {
-        if (!$productVariant->gtin) {
+        if (! $productVariant->gtin) {
             return;
         }
 
@@ -46,7 +46,7 @@ class EnrichProductFromDilveSubscriber implements ShouldQueue
 
         $onixProduct = $client->getProductByIsbn($productVariant->gtin);
 
-        if (!$onixProduct || !$onixProduct->coverUrl) {
+        if (! $onixProduct || ! $onixProduct->coverUrl) {
             return;
         }
 

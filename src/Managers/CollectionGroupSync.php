@@ -22,7 +22,7 @@ readonly class CollectionGroupSync
         $newCollections = $this->collectionsOfGroup->pluck('id')->unique()->values();
 
         $collectionsToKeep = $currentCollections
-            ->filter(fn($collection): bool => $collection->group_id !== $this->groupId)
+            ->filter(fn ($collection): bool => $collection->group_id !== $this->groupId)
             ->pluck('id');
 
         $this->product->collections()->sync(

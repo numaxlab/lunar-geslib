@@ -6,7 +6,7 @@ class Collection extends \Lunar\Models\Collection
 {
     public function getAncestorSection(): ?self
     {
-        if (!$this->isInSectionTree()) {
+        if (! $this->isInSectionTree()) {
             return null;
         }
 

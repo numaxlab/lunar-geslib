@@ -12,7 +12,7 @@ use NumaxLab\Lunar\Geslib\Handle;
 
 class TopicCommand extends AbstractCommand
 {
-    public const HANDLE = Handle::COLLECTION_GROUP_TAXONOMIES;
+    public const string HANDLE = Handle::COLLECTION_GROUP_TAXONOMIES;
 
     public function __construct(private readonly Topic $topic) {}
 
@@ -28,7 +28,7 @@ class TopicCommand extends AbstractCommand
             'name' => new Text($this->topic->description()),
         ];
 
-        if (! $collection) {
+        if (!$collection) {
             Collection::create([
                 'geslib_code' => $this->topic->id(),
                 'attribute_data' => $attributeData,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NumaxLab\Lunar\Geslib\InterCommands\Batch;
 
+use Illuminate\Support\Collection;
 use Lunar\FieldTypes\Text;
 use Lunar\Models\Collection as LunarCollection;
 use Lunar\Models\CollectionGroup;
@@ -18,7 +19,7 @@ class ArticleIbicRelation extends AbstractBatchCommand
     {
         $variant = ProductVariant::where('sku', $this->articleId)->first();
 
-        if (! $variant) {
+        if (!$variant) {
             $this->addLog(
                 CommandContract::LEVEL_WARNING,
                 "Product with code [{$this->articleId}] not found.",
@@ -39,10 +40,10 @@ class ArticleIbicRelation extends AbstractBatchCommand
             $ibicCollection = $this->getIbicCollection($collectionGroup);
         }
 
-        (new CollectionGroupSync($product, $collectionGroup->id, $ibicCollection))->handle();
+        new CollectionGroupSync($product, $collectionGroup->id, $ibicCollection)->handle();
     }
 
-    private function getIbicCollection($collectionGroup)
+    private function getIbicCollection($collectionGroup): Collection
     {
         return LunarCollection::where('collection_group_id', $collectionGroup->id)
             ->where(function ($query): void {

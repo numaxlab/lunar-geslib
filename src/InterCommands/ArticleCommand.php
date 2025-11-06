@@ -70,7 +70,7 @@ class ArticleCommand extends AbstractCommand
 
         $brand = Brand::where('geslib_code', $this->article->editorialId())->first();
 
-        if (! $variant) {
+        if (!$variant) {
             $product = Product::create([
                 'product_type_id' => self::PRODUCT_TYPE_ID,
                 'brand_id' => $brand?->id,
@@ -91,7 +91,7 @@ class ArticleCommand extends AbstractCommand
                 'height_unit' => config('lunar.geslib.measurements.height_unit', 'mm'),
                 'weight_value' => $this->article->weight(),
                 'weight_unit' => config('lunar.geslib.measurements.weight_unit', 'g'),
-                'shippable' => ! $this->isEbook,
+                'shippable' => !$this->isEbook,
                 'stock' => $this->article->stock() ?? 0,
                 'unit_quantity' => 1,
                 'min_quantity' => 1,
@@ -147,7 +147,7 @@ class ArticleCommand extends AbstractCommand
         (new CollectionGroupSync($product, $group->id, $productTypeCollection))->handle();
 
         // Status collection
-        $group = CollectionGroup::where('handle', TypeCommand::HANDLE)->firstOrFail();
+        $group = CollectionGroup::where('handle', StatusCommand::HANDLE)->firstOrFail();
         $statusCollection = Collection::where('geslib_code', $this->article->statusId())
             ->where('collection_group_id', $group->id)->get();
 

@@ -54,6 +54,11 @@ class LunarGeslibServiceProvider extends ServiceProvider
             \NumaxLab\Lunar\Geslib\Models\ProductVariant::class,
         );
 
+        ModelManifest::replace(
+            \Lunar\Models\Contracts\Collection::class,
+            \NumaxLab\Lunar\Geslib\Models\Collection::class,
+        );
+
         AttributeData::registerFieldType(Date::class, DateField::class);
 
         AttributeManifest::addType(Author::class);
@@ -89,7 +94,8 @@ class LunarGeslibServiceProvider extends ServiceProvider
                 ->extending(Model::class)
                 ->get(),
         )->mapWithKeys(
-            fn ($class) => [
+            fn($class)
+                => [
                 Str::snake(str_replace('\\', '_', Str::after($class, 'NumaxLab\\Lunar\\Geslib\\Models\\'))) => $class,
             ],
         );
@@ -116,7 +122,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
                 ForceProductEnrichment::class,
             ];
 
-            if (! $this->app->runningUnitTests()) {
+            if (!$this->app->runningUnitTests()) {
                 $commands[] = EnsureIndexes::class;
             }
 

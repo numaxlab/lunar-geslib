@@ -67,6 +67,23 @@ class Product extends \Lunar\Models\Product
         });
     }
 
+    public function getSectionTaxonomy(): ?\Lunar\Models\Collection
+    {
+        foreach ($this->taxonomies as $taxonomy) {
+            if ($taxonomy->translateAttribute('is-section') === true) {
+                return $taxonomy;
+            }
+
+            foreach ($taxonomy->ancestors as $ancestor) {
+                if ($ancestor->translateAttribute('is-section') === true) {
+                    return $ancestor;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function editorialCollections(): BelongsToMany
     {
         return $this->collections()->whereHas('group', function ($query) {

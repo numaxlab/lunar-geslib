@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use NumaxLab\Geslib\Lines\AuthorType;
 use NumaxLab\Lunar\Geslib\Handle;
+use NumaxLab\Lunar\Geslib\InterCommands\BindingTypeCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\CollectionCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\LanguageCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
@@ -102,6 +103,13 @@ class Product extends \Lunar\Models\Product
     {
         return $this->collections()->whereHas('group', function ($query) {
             $query->where('handle', StatusCommand::HANDLE);
+        });
+    }
+
+    public function bindingTypes(): BelongsToMany
+    {
+        return $this->collections()->whereHas('group', function ($query) {
+            $query->where('handle', BindingTypeCommand::HANDLE);
         });
     }
 

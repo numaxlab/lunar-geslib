@@ -60,9 +60,7 @@ class ArticleCommand extends AbstractCommand
             'edition-origin' => new Text($this->article->edition()?->editorial()),
             'original-title' => new Text($this->article->originalTitle()),
             'original-language' => new Text(
-                $originalLanguageCollection ?
-                    $originalLanguageCollection->attribute_data->get('name')->getValue() :
-                    null,
+                $originalLanguageCollection?->attribute_data->get('name')->getValue(),
             ),
             'pages' => new Number($this->article->pagesQty()),
             'illustrations-quantity' => new Number($this->article->illustrationsQty()),

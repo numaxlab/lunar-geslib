@@ -28,5 +28,7 @@ readonly class CollectionGroupSync
         $this->product->collections()->sync(
             $collectionsToKeep->merge($newCollections)->unique()->toArray(),
         );
+
+        $this->product->searchable();
     }
 }

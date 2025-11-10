@@ -41,5 +41,6 @@ class ArticleAuthorRelation extends AbstractBatchCommand
         }
 
         $product->authors()->sync($authorsSync);
+        $product->searchable();
     }
 }

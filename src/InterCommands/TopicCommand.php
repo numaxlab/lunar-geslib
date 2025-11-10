@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Lunar\FieldTypes\Text;
+use Lunar\FieldTypes\TranslatedText;
 use Lunar\Models\Collection;
 use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\Topic;
@@ -25,7 +26,9 @@ class TopicCommand extends AbstractCommand
             ->first();
 
         $attributeData = [
-            'name' => new Text($this->topic->description()),
+            'name' => new TranslatedText(collect([
+                'es' => new Text($this->topic->description()),
+            ])),
         ];
 
         if (! $collection) {

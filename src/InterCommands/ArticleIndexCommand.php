@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Lunar\FieldTypes\Text;
+use Lunar\FieldTypes\TranslatedText;
 use Lunar\Models\ProductVariant;
 use NumaxLab\Geslib\Lines\ArticleIndex;
 
@@ -24,7 +25,9 @@ class ArticleIndexCommand extends AbstractCommand
 
         $product->update([
             'attribute_data' => array_merge($product->attribute_data->toArray(), [
-                'index' => new Text($this->articleIndex->value()),
+                'index' => new TranslatedText(collect([
+                    'es' => new Text($this->articleIndex->value()),
+                ])),
             ]),
         ]);
     }

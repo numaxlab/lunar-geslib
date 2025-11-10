@@ -14,16 +14,23 @@ use Illuminate\Support\Facades\Storage;
 use NumaxLab\Geslib\GeslibFile;
 use NumaxLab\Geslib\Lines\Article;
 use NumaxLab\Geslib\Lines\ArticleAuthor;
+use NumaxLab\Geslib\Lines\ArticleBatchHeader;
+use NumaxLab\Geslib\Lines\ArticleBatchLine;
+use NumaxLab\Geslib\Lines\ArticleGpsr;
 use NumaxLab\Geslib\Lines\ArticleIndex;
 use NumaxLab\Geslib\Lines\ArticleIndexTranslation;
 use NumaxLab\Geslib\Lines\ArticleTopic;
+use NumaxLab\Geslib\Lines\ArticleTranslation;
 use NumaxLab\Geslib\Lines\Author;
 use NumaxLab\Geslib\Lines\AuthorBiography;
 use NumaxLab\Geslib\Lines\BindingType;
 use NumaxLab\Geslib\Lines\BookshopReference;
 use NumaxLab\Geslib\Lines\BookshopReferenceTranslation;
+use NumaxLab\Geslib\Lines\CenterStock;
 use NumaxLab\Geslib\Lines\Classification;
+use NumaxLab\Geslib\Lines\Coedition;
 use NumaxLab\Geslib\Lines\Collection;
+use NumaxLab\Geslib\Lines\Country;
 use NumaxLab\Geslib\Lines\EBook;
 use NumaxLab\Geslib\Lines\Editorial;
 use NumaxLab\Geslib\Lines\EditorialReference;
@@ -31,11 +38,14 @@ use NumaxLab\Geslib\Lines\EditorialReferenceTranslation;
 use NumaxLab\Geslib\Lines\Ibic;
 use NumaxLab\Geslib\Lines\Language;
 use NumaxLab\Geslib\Lines\PressPublication;
+use NumaxLab\Geslib\Lines\Province;
 use NumaxLab\Geslib\Lines\RecordLabel;
+use NumaxLab\Geslib\Lines\StationeryCategory;
 use NumaxLab\Geslib\Lines\Status;
 use NumaxLab\Geslib\Lines\Stock;
 use NumaxLab\Geslib\Lines\Topic;
 use NumaxLab\Geslib\Lines\Type;
+use NumaxLab\Geslib\Lines\Warning;
 use NumaxLab\Lunar\Geslib\InterCommands\ArticleAuthorCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\ArticleCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\ArticleIndexCommand;
@@ -91,10 +101,10 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
         $extractedFilePath = config('lunar.geslib.inter_files_path').'/'.str_replace(
-            '.zip',
-            '',
-            $this->geslibInterFile->name,
-        );
+                '.zip',
+                '',
+                $this->geslibInterFile->name,
+            );
 
         if (! $storage->exists($extractedFilePath)) {
             $this->extractZipFile($storage);
@@ -133,7 +143,7 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
             match ($line->getCode()) {
                 Editorial::CODE => $command = new EditorialCommand($line),
                 RecordLabel::CODE => $command = new RecordLabelCommand($line),
-                // '1P' => null,
+                StationeryCategory::CODE => null,
                 PressPublication::CODE => $command = new PressPublicationCommand($line),
                 Collection::CODE => $command = new CollectionCommand($line),
                 Topic::CODE => $command = new TopicCommand($line),
@@ -153,7 +163,7 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
                 Language::CODE => $command = new LanguageCommand($line),
                 // Preposition::CODE => null,
                 Stock::CODE => $command = new StockCommand($line),
-                // 'B2' => null,
+                CenterStock::CODE => null,
                 Status::CODE => $command = new StatusCommand($line),
                 // 'CLI' => null,
                 Author::CODE => $command = new AuthorCommand($line),
@@ -162,17 +172,18 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
                 // 'PROCEN' => null,
                 // 'PC' => null,
                 // 'VTA' => null,
-                // Country::CODE => null,
-                // 'CLOTE' => null,
-                // 'LLOTE' => null,
+                Country::CODE => null,
+                ArticleBatchHeader::CODE => null,
+                ArticleBatchLine::CODE => null,
+                ArticleGpsr::CODE => null,
                 Type::CODE => $command = new TypeCommand($line),
                 Classification::CODE => $command = new ClassificationCommand($line),
-                // 'ATRA' => null,
+                ArticleTranslation::CODE => null,
                 // 'CA' => null,
                 // 'CLOTCLI' => null,
                 // 'LLOTCLI' => null,
                 // 'PROFES' => null,
-                // Province::CODE => null,
+                Province::CODE => null,
                 // 'CAGRDTV' => null,
                 // 'LAGRDTV' => null,
                 // 'CLIDTO' => null,
@@ -184,9 +195,11 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
                 // 'TRACKS' => null,
                 // 'ATRIBU' => null,
                 // 'ARTATR' => null,
+                Coedition::CODE => null,
                 // 'ARTREC' => null,
                 // 'CDP' => null,
                 // 'LDP' => null,
+                Warning::CODE => null,
                 default => $log[] = [
                     'level' => CommandContract::LEVEL_WARNING,
                     'message' => sprintf('Unknown line code: %s', $line->getCode()),

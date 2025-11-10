@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Lunar\FieldTypes\Text;
+use Lunar\FieldTypes\TranslatedText;
 use Lunar\Models\Collection;
 use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\Classification;
@@ -25,7 +26,9 @@ class ClassificationCommand extends AbstractCommand
 
         // Falta o 'tipo de artículo' $this->>classification->typeId()
         $attributeData = [
-            'name' => new Text($this->classification->name()),
+            'name' => new TranslatedText(collect([
+                'es' => new Text($this->classification->name()),
+            ])),
         ];
 
         if (! $collection) {

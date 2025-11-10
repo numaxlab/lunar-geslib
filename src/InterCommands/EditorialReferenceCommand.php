@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Lunar\FieldTypes\Text;
+use Lunar\FieldTypes\TranslatedText;
 use Lunar\Models\ProductVariant;
 use NumaxLab\Geslib\Lines\EditorialReference;
 
@@ -24,7 +25,9 @@ class EditorialReferenceCommand extends AbstractCommand
 
         $product->update([
             'attribute_data' => array_merge($product->attribute_data->toArray(), [
-                'editorial-reference' => new Text($this->editorialReference->value()),
+                'editorial-reference' => new TranslatedText(collect([
+                    'es' => new Text($this->editorialReference->value()),
+                ])),
             ]),
         ]);
     }

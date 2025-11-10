@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NumaxLab\Lunar\Geslib\InterCommands;
 
 use Lunar\FieldTypes\Text;
+use Lunar\FieldTypes\TranslatedText;
 use Lunar\Models\Collection;
 use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\Type;
@@ -23,7 +24,9 @@ class TypeCommand extends AbstractCommand
             ->where('collection_group_id', $group->id)->first();
 
         $attributeData = [
-            'name' => new Text($this->geslibType->name()),
+            'name' => new TranslatedText(collect([
+                'es' => new Text($this->geslibType->name()),
+            ])),
         ];
 
         if (! $collection) {

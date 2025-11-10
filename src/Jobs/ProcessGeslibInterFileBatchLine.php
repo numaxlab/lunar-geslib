@@ -79,6 +79,10 @@ class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
 
         if ($command !== null) {
             $command();
+
+            if (count($command->getLog()) > 0) {
+                $log[] = $command->getLog();
+            }
         }
 
         $this->geslibInterFile->update([

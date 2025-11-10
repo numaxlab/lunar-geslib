@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace NumaxLab\Lunar\Geslib\InterCommands;
 
-use Illuminate\Support\Str;
 use Lunar\FieldTypes\Text;
+use Lunar\FieldTypes\TranslatedText;
 use NumaxLab\Geslib\Lines\AuthorBiography;
 use NumaxLab\Lunar\Geslib\Models\Author;
 
@@ -23,7 +23,9 @@ class AuthorBiographyCommand extends AbstractCommand
 
         $author->update([
             'attribute_data' => array_merge(optional($author->attribute_data)->toArray() ?? [], [
-                'biography' => new Text(Str::title($this->authorBiography->biography())),
+                'biography' => new TranslatedText(collect([
+                    'es' => new Text($this->authorBiography->biography()),
+                ])),
             ]),
         ]);
     }

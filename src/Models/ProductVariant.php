@@ -10,7 +10,7 @@ class ProductVariant extends \Lunar\Models\ProductVariant
 {
     public function getDescription(): string
     {
-        return $this->product->recordFullTitle;
+        return $this->product->recordTitle;
     }
 
     public function getThumbnail(): ?Media

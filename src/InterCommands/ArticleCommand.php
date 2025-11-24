@@ -19,9 +19,9 @@ use NumaxLab\Lunar\Geslib\Managers\CollectionGroupSync;
 
 class ArticleCommand extends AbstractCommand
 {
-    public const PRODUCT_TYPE_ID = 1;
+    public const int PRODUCT_TYPE_ID = 1;
 
-    public const DEFAULT_STATUS = 'published';
+    public const string DEFAULT_STATUS = 'published';
 
     public function __construct(private readonly Article $article, private readonly bool $isEbook = false) {}
 

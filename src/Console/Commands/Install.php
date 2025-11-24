@@ -221,9 +221,14 @@ class Install extends Command
             'default' => false,
         ]);
 
+        $noVatTaxClass = TaxClass::create([
+            'name' => 'Sin IVA',
+            'default' => false,
+        ]);
+
         $this->components->info('Adding tax zones.');
 
-        $taxZone = TaxZone::create([
+        $defaultTaxZone = TaxZone::create([
             'name' => 'España peninsular + Baleares',
             'zone_type' => 'states',
             'price_display' => 'tax_inclusive',
@@ -233,41 +238,111 @@ class Install extends Command
 
         $spain = Country::where('iso2', 'ES')->first();
 
-        $taxZone->countries()->create([
+        $defaultTaxZone->countries()->create([
             'country_id' => $spain->id,
         ]);
-        $taxZone->states()->createMany(
+        $defaultTaxZone->states()->createMany(
             State::where('country_id', $spain->id)
-                ->whereNotIn('code', ['CE', 'ML', 'CN'])
+                ->whereNotIn('code', ['CE', 'ML', 'TF', 'GC'])
                 ->get()
-                ->map(fn ($state): array => [
-                    'state_id' => $state->id,
-                ]),
+                ->map(fn ($state): array => ['state_id' => $state->id]),
+        );
+
+        $canaryIslandsCeutaMelillaTaxZone = TaxZone::create([
+            'name' => 'Canarias, Ceuta y Melilla',
+            'zone_type' => 'states',
+            'price_display' => 'tax_inclusive',
+            'default' => false,
+            'active' => true,
+        ]);
+
+        $canaryIslandsCeutaMelillaTaxZone->countries()->create([
+            'country_id' => $spain->id,
+        ]);
+        $canaryIslandsCeutaMelillaTaxZone->states()->createMany(
+            State::where('country_id', $spain->id)
+                ->whereIn('code', ['CE', 'ML', 'TF', 'GC'])
+                ->get()
+                ->map(fn ($state): array => ['state_id' => $state->id]),
+        );
+
+        $euTaxZone = TaxZone::create([
+            'name' => 'Unión Europea',
+            'zone_type' => 'countries',
+            'price_display' => 'tax_inclusive',
+            'default' => false,
+            'active' => false,
+        ]);
+
+        $euTaxZone->countries()->createMany(
+            Country::whereIn('iso2', [
+                'DE', 'AT', 'BE', 'BG', 'CY', 'HR', 'DK', 'SK', 'SI', 'EE', 'FI', 'FR', 'EL', 'HU', 'IE', 'IT',
+                'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'CZ', 'RO', 'SE',
+            ])
+                ->get()
+                ->map(fn ($country): array => ['country_id' => $country->id]),
         );
 
         $this->components->info('Adding tax rates.');
 
-        $taxRate = TaxRate::create([
+        $defaultTaxRate = TaxRate::create([
             'name' => 'IVA',
-            'tax_zone_id' => $taxZone->id,
+            'tax_zone_id' => $defaultTaxZone->id,
+            'priority' => 1,
         ]);
 
         TaxRateAmount::create([
-            'tax_rate_id' => $taxRate->id,
+            'tax_rate_id' => $defaultTaxRate->id,
             'tax_class_id' => $generalVatTaxClass->id,
             'percentage' => 21,
         ]);
 
         TaxRateAmount::create([
-            'tax_rate_id' => $taxRate->id,
+            'tax_rate_id' => $defaultTaxRate->id,
             'tax_class_id' => $reducedVatTaxClass->id,
             'percentage' => 10,
         ]);
 
         TaxRateAmount::create([
-            'tax_rate_id' => $taxRate->id,
+            'tax_rate_id' => $defaultTaxRate->id,
             'tax_class_id' => $superReducedVatTaxClass->id,
             'percentage' => 4,
+        ]);
+
+        TaxRateAmount::create([
+            'tax_rate_id' => $defaultTaxRate->id,
+            'tax_class_id' => $noVatTaxClass->id,
+            'percentage' => 0,
+        ]);
+
+        $canaryIslandsCeutaMelillaTaxRate = TaxRate::create([
+            'name' => 'IVA (exento)',
+            'tax_zone_id' => $canaryIslandsCeutaMelillaTaxZone->id,
+            'priority' => 2,
+        ]);
+
+        TaxRateAmount::create([
+            'tax_rate_id' => $canaryIslandsCeutaMelillaTaxRate->id,
+            'tax_class_id' => $generalVatTaxClass->id,
+            'percentage' => 0,
+        ]);
+
+        TaxRateAmount::create([
+            'tax_rate_id' => $canaryIslandsCeutaMelillaTaxRate->id,
+            'tax_class_id' => $reducedVatTaxClass->id,
+            'percentage' => 0,
+        ]);
+
+        TaxRateAmount::create([
+            'tax_rate_id' => $canaryIslandsCeutaMelillaTaxRate->id,
+            'tax_class_id' => $superReducedVatTaxClass->id,
+            'percentage' => 0,
+        ]);
+
+        TaxRateAmount::create([
+            'tax_rate_id' => $canaryIslandsCeutaMelillaTaxRate->id,
+            'tax_class_id' => $noVatTaxClass->id,
+            'percentage' => 0,
         ]);
     }
 

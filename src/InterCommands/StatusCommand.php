@@ -12,7 +12,7 @@ use NumaxLab\Geslib\Lines\Status;
 
 class StatusCommand extends AbstractCommand
 {
-    public const HANDLE = 'statuses';
+    public const string HANDLE = 'statuses';
 
     public function __construct(private readonly Status $status) {}
 

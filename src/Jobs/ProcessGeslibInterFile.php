@@ -19,6 +19,7 @@ use NumaxLab\Geslib\Lines\ArticleBatchLine;
 use NumaxLab\Geslib\Lines\ArticleGpsr;
 use NumaxLab\Geslib\Lines\ArticleIndex;
 use NumaxLab\Geslib\Lines\ArticleIndexTranslation;
+use NumaxLab\Geslib\Lines\ArticleResource;
 use NumaxLab\Geslib\Lines\ArticleTopic;
 use NumaxLab\Geslib\Lines\ArticleTranslation;
 use NumaxLab\Geslib\Lines\Author;
@@ -77,7 +78,7 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
 {
     use Queueable;
 
-    public const CACHE_LOCK_NAME = 'geslib-inter-files';
+    public const string CACHE_LOCK_NAME = 'geslib-inter-files';
 
     public $tries = 2;
 
@@ -101,10 +102,10 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
         $extractedFilePath = config('lunar.geslib.inter_files_path').'/'.str_replace(
-            '.zip',
-            '',
-            $this->geslibInterFile->name,
-        );
+                '.zip',
+                '',
+                $this->geslibInterFile->name,
+            );
 
         if (! $storage->exists($extractedFilePath)) {
             $this->extractZipFile($storage);
@@ -196,7 +197,7 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
                 // 'ATRIBU' => null,
                 // 'ARTATR' => null,
                 Coedition::CODE => null,
-                // 'ARTREC' => null,
+                ArticleResource::CODE => null,
                 // 'CDP' => null,
                 // 'LDP' => null,
                 Warning::CODE => null,

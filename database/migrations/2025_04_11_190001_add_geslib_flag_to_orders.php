@@ -13,8 +13,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table($this->prefix.'orders', function (Blueprint $table): void {
-            $table->string('geslib_code', 50)->after('meta')->nullable();
-            $table->dateTime('synced_with_geslib_at')->after('geslib_code')->nullable();
+            $table->boolean('is_geslib')->default(false)->after('synced_with_geslib_at');
         });
     }
 
@@ -24,8 +23,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table($this->prefix.'geslib_orders', function (Blueprint $table): void {
-            $table->dropColumn('synced_with_geslib_at');
-            $table->dropColumn('geslib_code');
+            $table->dropColumn('is_geslib');
         });
     }
 };

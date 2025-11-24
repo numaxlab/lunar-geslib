@@ -13,12 +13,16 @@ use NumaxLab\Geslib\Lines\Collection as EditorialCollection;
 
 class CollectionCommand extends AbstractCommand
 {
-    public const HANDLE = 'editorial-collections';
+    public const string HANDLE = 'editorial-collections';
 
     public function __construct(private readonly EditorialCollection $editorialCollection) {}
 
     public function __invoke(): void
     {
+        if ($this->editorialCollection->action()->isDelete()) {
+            return;
+        }
+
         $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
 
         $collection = Collection::where('geslib_code', $this->editorialCollection->id())

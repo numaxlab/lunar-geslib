@@ -1034,5 +1034,27 @@ class Install extends Command
             'system' => false,
             'searchable' => false,
         ]);
+
+        Attribute::create([
+            'attribute_type' => Author::morphName(),
+            'attribute_group_id' => $group->id,
+            'position' => 4,
+            'handle' => 'has-profile-page',
+            'name' => [
+                'es' => 'Tiene página de perfil',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => Toggle::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'richtext' => false,
+            ],
+            'system' => false,
+            'searchable' => false,
+        ]);
     }
 }

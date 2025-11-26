@@ -1096,5 +1096,4 @@ class Install extends Command
             'searchable' => false,
         ]);
     }
-
 }

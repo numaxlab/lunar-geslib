@@ -37,4 +37,15 @@ class Collection extends \Lunar\Models\Collection
 
         return false;
     }
+
+    public function getAncestorWrapper(): ?self
+    {
+        foreach ($this->ancestors as $ancestor) {
+            if ($ancestor->translateAttribute('is-section') !== true) {
+                return $ancestor;
+            }
+        }
+
+        return null;
+    }
 }

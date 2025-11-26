@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Lunar\Admin\Models\Staff;
 use Lunar\FieldTypes\Dropdown;
+use Lunar\FieldTypes\ListField;
 use Lunar\FieldTypes\Number;
 use Lunar\FieldTypes\Text;
 use Lunar\FieldTypes\Toggle;
@@ -25,6 +26,7 @@ use Lunar\Models\CustomerGroup;
 use Lunar\Models\Language;
 use Lunar\Models\Product;
 use Lunar\Models\ProductType;
+use Lunar\Models\ProductVariant;
 use Lunar\Models\State;
 use Lunar\Models\TaxClass;
 use Lunar\Models\TaxRate;
@@ -139,6 +141,7 @@ class Install extends Command
             $this->setupBrandAttributes();
             $this->setupCollectionAttributes();
             $this->setupProductAttributes();
+            $this->setupVariantAttributes();
             $this->setupAuthorAttributes();
         }
 
@@ -152,6 +155,8 @@ class Install extends Command
             $type->mappedAttributes()->attach(
                 Attribute::whereAttributeType(
                     Product::morphName(),
+                )->orWhereAttributeType(
+                    ProductVariant::morphName(),
                 )->get()->pluck('id'),
             );
         }
@@ -1002,6 +1007,40 @@ class Install extends Command
         ]);
     }
 
+    private function setupVariantAttributes(): void
+    {
+        $group = AttributeGroup::create([
+            'attributable_type' => ProductVariant::morphName(),
+            'name' => collect([
+                'es' => 'Datos de variant',
+            ]),
+            'handle' => 'book-variant-main',
+            'position' => 1,
+        ]);
+
+        Attribute::create([
+            'attribute_type' => ProductVariant::morphName(),
+            'attribute_group_id' => $group->id,
+            'position' => 4,
+            'handle' => 'stock-by-center',
+            'name' => [
+                'es' => 'Stock por centro',
+            ],
+            'description' => [
+                'es' => '',
+            ],
+            'section' => 'main',
+            'type' => ListField::class,
+            'required' => false,
+            'default_value' => null,
+            'configuration' => [
+                'lookups' => [],
+            ],
+            'system' => false,
+            'searchable' => false,
+        ]);
+    }
+
     private function setupAuthorAttributes(): void
     {
         $group = AttributeGroup::create([
@@ -1057,4 +1096,5 @@ class Install extends Command
             'searchable' => false,
         ]);
     }
+
 }

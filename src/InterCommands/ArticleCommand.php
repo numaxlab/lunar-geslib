@@ -127,6 +127,10 @@ class ArticleCommand extends AbstractCommand
                 'height_value' => $this->article->height(),
                 'weight_value' => $this->article->weight(),
                 'stock' => $this->article->stock() ?? 0,
+                'purchasable' => in_array(
+                    $this->article->statusId(),
+                    config('lunar.geslib.not_purchasable_statuses', []),
+                ) ? 'in_stock' : 'always',
             ]);
 
             $variant->prices()->first()->update([

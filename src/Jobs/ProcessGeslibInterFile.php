@@ -65,6 +65,7 @@ use NumaxLab\Lunar\Geslib\InterCommands\LanguageCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\PressPublicationCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\RecordLabelCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\StockByCenterCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\StockCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\TopicCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\TypeCommand;
@@ -102,10 +103,10 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
         $extractedFilePath = config('lunar.geslib.inter_files_path').'/'.str_replace(
-            '.zip',
-            '',
-            $this->geslibInterFile->name,
-        );
+                '.zip',
+                '',
+                $this->geslibInterFile->name,
+            );
 
         if (! $storage->exists($extractedFilePath)) {
             $this->extractZipFile($storage);
@@ -164,7 +165,7 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
                 Language::CODE => $command = new LanguageCommand($line),
                 // Preposition::CODE => null,
                 Stock::CODE => $command = new StockCommand($line),
-                CenterStock::CODE => null,
+                CenterStock::CODE => $command = new StockByCenterCommand($line),
                 Status::CODE => $command = new StatusCommand($line),
                 // 'CLI' => null,
                 Author::CODE => $command = new AuthorCommand($line),

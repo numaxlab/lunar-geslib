@@ -9,11 +9,13 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProductVariant extends \Lunar\Models\ProductVariant
 {
+    #[\Override]
     public function getDescription(): string
     {
         return $this->product->recordTitle;
     }
 
+    #[\Override]
     public function getThumbnail(): ?Media
     {
         return $this->product->getFirstMedia(config('lunar.media.collection'));
@@ -24,6 +26,7 @@ class ProductVariant extends \Lunar\Models\ProductVariant
         return $this->product->getFirstMediaUrl(config('lunar.media.collection'), 'small');
     }
 
+    #[\Override]
     public function canBeFulfilledAtQuantity(int $quantity): bool
     {
         if ($this->purchasable == 'always') {

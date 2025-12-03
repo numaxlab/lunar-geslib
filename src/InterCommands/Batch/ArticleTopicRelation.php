@@ -20,7 +20,7 @@ class ArticleTopicRelation extends AbstractBatchCommand
         if (! $variant) {
             $this->addLog(
                 CommandContract::LEVEL_WARNING,
-                "Product with code [{$this->articleId}] not found.",
+                sprintf('Product with code [%s] not found.', $this->articleId),
             );
 
             return;

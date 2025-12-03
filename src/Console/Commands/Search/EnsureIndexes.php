@@ -36,14 +36,14 @@ class EnsureIndexes extends Command
 
             try {
                 $this->client->getIndex($indexName);
-                $this->line("The index '{$indexName}' already exists.");
+                $this->line(sprintf("The index '%s' already exists.", $indexName));
             } catch (Exception $e) {
                 if ($e->getCode() === 404) {
-                    $this->warn("The index '{$indexName}' does not exist. Creating...");
+                    $this->warn(sprintf("The index '%s' does not exist. Creating...", $indexName));
                     $this->client->createIndex($indexName, ['primaryKey' => $model->getScoutKeyName()]);
-                    $this->info("Index '{$indexName}' created.");
+                    $this->info(sprintf("Index '%s' created.", $indexName));
                 } else {
-                    $this->error("Error verifying the index '{$indexName}': ".$e->getMessage());
+                    $this->error(sprintf("Error verifying the index '%s': ", $indexName).$e->getMessage());
                 }
             }
         }

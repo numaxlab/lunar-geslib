@@ -37,6 +37,7 @@ use Spatie\StructureDiscoverer\Discover;
 
 class LunarGeslibServiceProvider extends ServiceProvider
 {
+    #[\Override]
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/geslib.php', 'lunar.geslib');
@@ -61,14 +62,15 @@ class LunarGeslibServiceProvider extends ServiceProvider
             \NumaxLab\Lunar\Geslib\Models\Collection::class,
         );
 
-        $this->app->bind(CegalAvailabilityService::class, function ($app) {
-            return new CegalAvailabilityService(
+        $this->app->bind(
+            CegalAvailabilityService::class,
+            fn ($app): CegalAvailabilityService => new CegalAvailabilityService(
                 Client::create(
                     config('lunar.geslib.cegal.username'),
                     config('lunar.geslib.cegal.password'),
                 ),
-            );
-        });
+            ),
+        );
 
         AttributeData::registerFieldType(Date::class, DateField::class);
 
@@ -105,7 +107,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
                 ->extending(Model::class)
                 ->get(),
         )->mapWithKeys(
-            fn ($class)
+            fn ($class): array
                 => [
                 Str::snake(str_replace('\\', '_', Str::after($class, 'NumaxLab\\Lunar\\Geslib\\Models\\'))) => $class,
             ],

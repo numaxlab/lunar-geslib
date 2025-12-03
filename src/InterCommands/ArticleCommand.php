@@ -146,19 +146,19 @@ class ArticleCommand extends AbstractCommand
         $productTypeCollection = Collection::where('geslib_code', $this->article->typeId())
             ->where('collection_group_id', $group->id)->get();
 
-        (new CollectionGroupSync($product, $group->id, $productTypeCollection))->handle();
+        new CollectionGroupSync($product, $group->id, $productTypeCollection)->handle();
 
         // Status collection
         $group = CollectionGroup::where('handle', StatusCommand::HANDLE)->firstOrFail();
         $statusCollection = Collection::where('geslib_code', $this->article->statusId())
             ->where('collection_group_id', $group->id)->get();
 
-        (new CollectionGroupSync($product, $group->id, $statusCollection))->handle();
+        new CollectionGroupSync($product, $group->id, $statusCollection)->handle();
 
         // Language collection
         $languageCollection = Collection::where('geslib_code', $this->article->languageId())
             ->where('collection_group_id', $languageCollectionGroup->id)->get();
 
-        (new CollectionGroupSync($product, $languageCollectionGroup->id, $languageCollection))->handle();
+        new CollectionGroupSync($product, $languageCollectionGroup->id, $languageCollection)->handle();
     }
 }

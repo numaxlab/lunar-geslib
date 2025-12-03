@@ -15,11 +15,13 @@ class GeslibDashboardPage extends Page
 
     protected static string $view = 'lunar-geslib::filament.pages.geslib-dashboard-page';
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return __('filament-panels::pages/dashboard.title');
     }
 
+    #[\Override]
     public function getTitle(): string|Htmlable
     {
         return __('filament-panels::pages/dashboard.title');

@@ -14,6 +14,7 @@ use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 
 class GeslibFileImportStatsWidget extends BaseWidget
 {
+    #[\Override]
     protected function getStats(): array
     {
         $lastRun = GeslibInterFile::latest('created_at')->first();

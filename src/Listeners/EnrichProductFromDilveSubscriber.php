@@ -19,12 +19,12 @@ class EnrichProductFromDilveSubscriber implements ShouldQueue
     {
         $events->listen(
             GeslibArticleCreated::class,
-            [static::class, 'handleCreatedProduct'],
+            static::handleCreatedProduct(...),
         );
 
         $events->listen(
             GeslibArticleUpdated::class,
-            [static::class, 'handleUpdatedProduct'],
+            static::handleUpdatedProduct(...),
         );
     }
 

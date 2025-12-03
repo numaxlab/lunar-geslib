@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Traits;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

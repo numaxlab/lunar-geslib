@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Services;
 
 use Illuminate\Support\Facades\Cache;
@@ -11,12 +13,7 @@ use NumaxLab\Lunar\Geslib\Models\TrustedStockProvider;
 
 class CegalAvailabilityService
 {
-    protected Client $client;
-
-    public function __construct(Client $client)
-    {
-        $this->client = $client;
-    }
+    public function __construct(protected Client $client) {}
 
     public function getAvailability(ProductVariant $variant)
     {
@@ -41,7 +38,7 @@ class CegalAvailabilityService
 
             try {
                 $cegalAvailabilityCollection = $this->client->getAvailability($variant->gtin);
-            } catch (CegalApiException $e) {
+            } catch (CegalApiException) {
                 return null;
             }
 

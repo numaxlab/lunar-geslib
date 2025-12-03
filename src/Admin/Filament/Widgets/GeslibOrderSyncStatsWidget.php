@@ -9,6 +9,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class GeslibOrderSyncStatsWidget extends BaseWidget
 {
+    #[\Override]
     protected function getStats(): array
     {
         $lastSyncedOrder = null;

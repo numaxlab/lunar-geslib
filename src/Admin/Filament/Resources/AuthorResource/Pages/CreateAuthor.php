@@ -11,6 +11,7 @@ class CreateAuthor extends BaseCreateRecord
 {
     protected static string $resource = AuthorResource::class;
 
+    #[\Override]
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');

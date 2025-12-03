@@ -20,16 +20,19 @@ class GeslibInterFileResource extends Resource
 
     protected static ?string $navigationGroup = 'Geslib';
 
+    #[\Override]
     public static function getPluralModelLabel(): string
     {
         return 'Ficheros de intercambio';
     }
 
+    #[\Override]
     public static function form(Form $form): Form
     {
         return $form->schema([]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -89,18 +92,21 @@ class GeslibInterFileResource extends Resource
                     ->label('Ver log')
                     ->icon('heroicon-o-eye')
                     ->modalContent(fn ($record,
-                    ): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory => view('lunar-geslib::filament.modals.geslib-inter-file-log',
+                    ): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+                        => view('lunar-geslib::filament.modals.geslib-inter-file-log',
                         [
                             'log' => $record->log,
                         ]))
                     ->modalHeading('Registro de actividad')
                     ->modalSubmitAction(false)
                     ->modalCancelAction(fn (StaticAction $action,
-                    ): \Filament\Actions\StaticAction => $action->label('Cerrar')),
+                    ): \Filament\Actions\StaticAction
+                        => $action->label('Cerrar')),
             ])
             ->defaultSort('created_at', 'desc');
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

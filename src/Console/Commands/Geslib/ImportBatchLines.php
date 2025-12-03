@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Console\Commands\Geslib;
 
 use Illuminate\Console\Command;

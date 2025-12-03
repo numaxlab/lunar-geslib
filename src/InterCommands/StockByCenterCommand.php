@@ -22,11 +22,7 @@ class StockByCenterCommand extends AbstractCommand
 
         $data = $variant->translateAttribute('stock-by-center');
 
-        if (! $data) {
-            $data = [];
-        } else {
-            $data = (array) $data;
-        }
+        $data = $data ? (array) $data : [];
 
         $data[$this->centerStock->centerId()] = $this->centerStock->quantity();
 

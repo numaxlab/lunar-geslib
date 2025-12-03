@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Pipelines\Order\Creation;
 
 use Closure;
@@ -13,12 +15,16 @@ class IdentifyGeslibOrder
         $isGeslibOrder = false;
 
         foreach ($order->lines as $line) {
-            if ($line->purchasable_type === 'product_variant') {
-                if ($line->purchasable->product->product_type_id === ArticleCommand::PRODUCT_TYPE_ID) {
-                    $isGeslibOrder = true;
-                    break;
-                }
+            if ($line->purchasable_type !== 'product_variant') {
+                continue;
             }
+
+            if ($line->purchasable->product->product_type_id !== ArticleCommand::PRODUCT_TYPE_ID) {
+                continue;
+            }
+
+            $isGeslibOrder = true;
+            break;
         }
 
         if ($isGeslibOrder) {

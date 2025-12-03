@@ -13,11 +13,13 @@ class EditAuthor extends BaseEditRecord
 {
     protected static string $resource = AuthorResource::class;
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return __('lunarpanel::product.pages.edit.title');
     }
 
+    #[\Override]
     public function getTitle(): string
     {
         return __('lunar-geslib::author.pages.edit.title');

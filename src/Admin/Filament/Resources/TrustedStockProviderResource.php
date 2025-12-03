@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NumaxLab\Lunar\Geslib\Admin\Filament\Resources;
 
 use Filament\Forms;
@@ -21,21 +23,25 @@ class TrustedStockProviderResource extends BaseResource
 
     protected static ?int $navigationSort = 4;
 
+    #[\Override]
     public static function getLabel(): string
     {
         return __('lunar-geslib::trusted-stock-provider.label');
     }
 
+    #[\Override]
     public static function getPluralLabel(): string
     {
         return __('lunar-geslib::trusted-stock-provider.plural_label');
     }
 
+    #[\Override]
     public static function getNavigationIcon(): ?string
     {
         return FilamentIcon::resolve('lunar::shipping-methods');
     }
 
+    #[\Override]
     public static function getNavigationGroup(): ?string
     {
         return __('lunarpanel::global.sections.catalog');
@@ -63,7 +69,7 @@ class TrustedStockProviderResource extends BaseResource
         ])->columns(1);
     }
 
-    public static function getDefaultTable(Table $table): Table
+    protected static function getDefaultTable(Table $table): Table
     {
         return $table
             ->actions([
@@ -79,7 +85,7 @@ class TrustedStockProviderResource extends BaseResource
             ->reorderable('sort_position');
     }
 
-    public static function getDefaultPages(): array
+    protected static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListTrustedStockProviders::route('/'),

@@ -33,34 +33,28 @@ class AuthorResource extends BaseResource
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 
+    #[\Override]
     public static function getLabel(): string
     {
         return __('lunar-geslib::author.label');
     }
 
+    #[\Override]
     public static function getPluralLabel(): string
     {
         return __('lunar-geslib::author.plural_label');
     }
 
+    #[\Override]
     public static function getNavigationIcon(): ?string
     {
         return FilamentIcon::resolve('lunar::customers');
     }
 
+    #[\Override]
     public static function getNavigationGroup(): ?string
     {
         return __('lunarpanel::global.sections.catalog');
-    }
-
-    public static function getDefaultSubNavigation(): array
-    {
-        return [
-            Pages\EditAuthor::class,
-            Pages\ManageAuthorMedia::class,
-            Pages\ManageAuthorUrls::class,
-            Pages\ManageAuthorProducts::class,
-        ];
     }
 
     public static function getDefaultForm(Form $form): Form
@@ -97,7 +91,31 @@ class AuthorResource extends BaseResource
         return Attributes::make();
     }
 
-    public static function getDefaultTable(Table $table): Table
+    #[\Override]
+    public static function getGlobalSearchResultTitle(Model $record): string|Htmlable
+    {
+        return $record->name;
+    }
+
+    #[\Override]
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'name',
+        ];
+    }
+
+    protected static function getDefaultSubNavigation(): array
+    {
+        return [
+            Pages\EditAuthor::class,
+            Pages\ManageAuthorMedia::class,
+            Pages\ManageAuthorUrls::class,
+            Pages\ManageAuthorProducts::class,
+        ];
+    }
+
+    protected static function getDefaultTable(Table $table): Table
     {
         return $table
             ->columns(static::getTableColumns())
@@ -137,7 +155,7 @@ class AuthorResource extends BaseResource
             ->label(__('lunar-geslib::author.table.name.label'));
     }
 
-    public static function getDefaultPages(): array
+    protected static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListAuthors::route('/'),
@@ -146,18 +164,6 @@ class AuthorResource extends BaseResource
             'media' => Pages\ManageAuthorMedia::route('/{record}/media'),
             'urls' => Pages\ManageAuthorUrls::route('/{record}/urls'),
             'products' => Pages\ManageAuthorProducts::route('/{record}/products'),
-        ];
-    }
-
-    public static function getGlobalSearchResultTitle(Model $record): string|Htmlable
-    {
-        return $record->name;
-    }
-
-    public static function getGloballySearchableAttributes(): array
-    {
-        return [
-            'name',
         ];
     }
 }

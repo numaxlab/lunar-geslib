@@ -20,9 +20,9 @@ class ForceProductEnrichment extends Command
         $this->withProgressBar(ProductVariant::all(), function (ProductVariant $variant): void {
             try {
                 GeslibArticleUpdated::dispatch($variant);
-            } catch (FileCannotBeAdded $e) {
+            } catch (FileCannotBeAdded $fileCannotBeAdded) {
                 $this->newLine();
-                $this->error($e->getMessage());
+                $this->error($fileCannotBeAdded->getMessage());
             }
         });
 

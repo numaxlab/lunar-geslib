@@ -22,7 +22,7 @@ use NumaxLab\Lunar\Geslib\InterCommands\TypeCommand;
 
 class CollectionResourceExtension extends ResourceExtension
 {
-    private const HIDDEN_FIELDS = [
+    private const array HIDDEN_FIELDS = [
         TypeCommand::HANDLE => [
             'subtitle',
             'description',

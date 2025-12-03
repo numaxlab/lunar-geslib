@@ -12,11 +12,13 @@ class EditTrustedStockProvider extends BaseEditRecord
 {
     protected static string $resource = TrustedStockProviderResource::class;
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return __('lunarpanel::product.pages.edit.title');
     }
 
+    #[\Override]
     public function getTitle(): string
     {
         return __('lunar-geslib::author.pages.edit.title');

@@ -12,6 +12,7 @@ use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
 
 class ProductIndexer extends \Lunar\Search\ProductIndexer
 {
+    #[\Override]
     public function getFilterableFields(): array
     {
         return [
@@ -25,6 +26,7 @@ class ProductIndexer extends \Lunar\Search\ProductIndexer
         ];
     }
 
+    #[\Override]
     public function makeAllSearchableUsing(Builder $query): Builder
     {
         return $query->with([
@@ -43,6 +45,7 @@ class ProductIndexer extends \Lunar\Search\ProductIndexer
         ]);
     }
 
+    #[\Override]
     public function toSearchableArray(Model $model): array
     {
         $data = array_merge([
@@ -55,7 +58,7 @@ class ProductIndexer extends \Lunar\Search\ProductIndexer
         $relatedTaxonomies = $collectionsByGroup->get(Handle::COLLECTION_GROUP_TAXONOMIES);
 
         if ($relatedTaxonomies) {
-            $relatedTaxonomies->each(function ($item) use (&$taxonomies) {
+            $relatedTaxonomies->each(function ($item) use (&$taxonomies): void {
                 $taxonomies->push($item);
                 $taxonomies = $taxonomies->merge($item->ancestors);
             });

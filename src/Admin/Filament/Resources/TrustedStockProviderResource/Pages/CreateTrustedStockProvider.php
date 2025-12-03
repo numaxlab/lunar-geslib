@@ -11,6 +11,7 @@ class CreateTrustedStockProvider extends BaseCreateRecord
 {
     protected static string $resource = TrustedStockProviderResource::class;
 
+    #[\Override]
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');

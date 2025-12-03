@@ -1,5 +1,8 @@
 # Lunar Geslib Integration
 
+[![tests](https://github.com/numaxlab/lunar-geslib/actions/workflows/tests.yml/badge.svg)](https://github.com/numaxlab/lunar-geslib/actions/workflows/tests.yml)
+[![linter](https://github.com/numaxlab/lunar-geslib/actions/workflows/lint.yml/badge.svg)](https://github.com/numaxlab/lunar-geslib/actions/workflows/lint.yml)
+
 This package integrates [Geslib](https://editorial.trevenque.es/productos/geslib/) data with
 the [Lunar](https://lunarphp.io/) e-commerce
 platform, providing an online store solution for products managed in Geslib. It allows for the import and mapping of
@@ -187,6 +190,34 @@ The `ProcessGeslibInterFile` job is responsible for parsing the content of a Ges
 
 Each line in a Geslib INTER file starts with a code indicating the type of data it represents. The import process maps
 these codes to specific handler commands within this package.
+
+## Testing
+
+To run the automated test suite, use the following command:
+
+```bash
+composer run test
+```
+
+## Linting
+
+This project uses [Laravel Pint](https://laravel.com/docs/pint) for code styling. To format your code, run:
+
+```bash
+vendor/bin/pint
+```
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
+## Contributing
+
+Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
+
+## Security Vulnerabilities
+
+Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
 ## License
 

@@ -10,6 +10,7 @@ use Lunar\Admin\Support\Extending\RelationManagerExtension;
 
 class ManageProductCollectionsExtension extends RelationManagerExtension
 {
+    #[\Override]
     public function extendTable(Table $table): Table
     {
         return $table->columns([

@@ -63,7 +63,7 @@ class Product extends \Lunar\Models\Product
 
     public function taxonomies(): BelongsToMany
     {
-        return $this->collections()->whereHas('group', function ($query) {
+        return $this->collections()->whereHas('group', function ($query): void {
             $query->where('handle', Handle::COLLECTION_GROUP_TAXONOMIES);
         });
     }
@@ -87,28 +87,28 @@ class Product extends \Lunar\Models\Product
 
     public function editorialCollections(): BelongsToMany
     {
-        return $this->collections()->whereHas('group', function ($query) {
+        return $this->collections()->whereHas('group', function ($query): void {
             $query->where('handle', CollectionCommand::HANDLE);
         });
     }
 
     public function languages(): BelongsToMany
     {
-        return $this->collections()->whereHas('group', function ($query) {
+        return $this->collections()->whereHas('group', function ($query): void {
             $query->where('handle', LanguageCommand::HANDLE);
         });
     }
 
     public function statuses(): BelongsToMany
     {
-        return $this->collections()->whereHas('group', function ($query) {
+        return $this->collections()->whereHas('group', function ($query): void {
             $query->where('handle', StatusCommand::HANDLE);
         });
     }
 
     public function bindingTypes(): BelongsToMany
     {
-        return $this->collections()->whereHas('group', function ($query) {
+        return $this->collections()->whereHas('group', function ($query): void {
             $query->where('handle', BindingTypeCommand::HANDLE);
         });
     }

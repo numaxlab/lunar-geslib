@@ -62,8 +62,7 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
             DetachAction::make()
                 ->action(function (Model $record, Table $table): void {
                     $relationship = Relation::noConstraints(fn (
-                    ): \Illuminate\Database\Eloquent\Relations\Relation|\Illuminate\Database\Eloquent\Builder|null
-                        => $table->getRelationship());
+                    ): \Illuminate\Database\Eloquent\Relations\Relation|\Illuminate\Database\Eloquent\Builder|null => $table->getRelationship());
 
                     $relationship->detach($record);
 
@@ -85,12 +84,10 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
                         ->required()
                         ->searchable()
                         ->getSearchResultsUsing(
-                            static fn (Forms\Components\Select $component, string $search): array
-                                => Product::search($search)
+                            static fn (Forms\Components\Select $component, string $search): array => Product::search($search)
                                 ->get()
                                 ->mapWithKeys(
-                                    fn (ProductContract $record): array
-                                        => [
+                                    fn (ProductContract $record): array => [
                                         $record->getKey() => $record->translateAttribute('name'),
                                     ],
                                 )
@@ -105,8 +102,7 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
                 ])
                 ->action(function (array $arguments, array $data, Form $form, Table $table): void {
                     $relationship = Relation::noConstraints(fn (
-                    ): \Illuminate\Database\Eloquent\Relations\Relation|\Illuminate\Database\Eloquent\Builder|null
-                        => $table->getRelationship());
+                    ): \Illuminate\Database\Eloquent\Relations\Relation|\Illuminate\Database\Eloquent\Builder|null => $table->getRelationship());
 
                     $product = Product::find($data['recordId']);
 

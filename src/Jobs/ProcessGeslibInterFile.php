@@ -103,10 +103,10 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
         $extractedFilePath = config('lunar.geslib.inter_files_path').'/'.str_replace(
-            '.zip',
-            '',
-            $this->geslibInterFile->name,
-        );
+                '.zip',
+                '',
+                $this->geslibInterFile->name,
+            );
 
         if (! $storage->exists($extractedFilePath)) {
             $this->extractZipFile($storage);
@@ -311,26 +311,5 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
             ]),
             'finished_at' => Carbon::now(),
         ]);
-
-        // Check if notifications are enabled and mail_to is configured
-        /*if (!config('lunar.geslib.notifications.enabled') || !config('lunar.geslib.notifications.mail_to')) {
-            return;
-        }
-
-        $mailTo = config('lunar.geslib.notifications.mail_to');
-        $throttlePeriodMinutes = config('lunar.geslib.notifications.throttle_period_minutes', 60);
-        $cacheKey = 'geslib_notification_import_failed_' . $this->geslibInterFile->id;
-
-        // Throttle notifications
-        if (Cache::has($cacheKey)) {
-            return; // Already notified recently
-        }
-
-        // Send notification
-        NotificationFacade::route('mail', $mailTo)
-            ->notify(new GeslibFileImportFailed($this->geslibInterFile, $exception->getMessage()));
-
-        // Cache that notification has been sent
-        Cache::put($cacheKey, true, now()->addMinutes($throttlePeriodMinutes));*/
     }
 }

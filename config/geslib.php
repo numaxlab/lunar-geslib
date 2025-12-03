@@ -15,17 +15,22 @@ return [
     'inter_files_path' => '/geslib/inter',
 
     /*
-     * Product type ID.
+     * Geslib product type ID in Lunar product types.
+     * If you executed the lunar:geslib:install command on a fresh database, the geslib product type ID should be 1.
      */
     'product_type_id' => 1,
 
     /*
-     * Currency ID
+     * Geslib products price currency ID.
+     * If you executed the lunar:geslib:install command on a fresh database, the EUR currency was created and has the ID 1.
      */
     'currency_id' => 1,
 
     /*
-     * Geslib code => Tax Class ID pairs
+     * Geslib products taxation configuration.
+     * Geslib code => Tax Class ID pairs.
+     * If you executed the lunar:geslib:install command on a fresh database, the tax classes were created with the
+     * expected IDs specified in the config.
      */
     'product_types_taxation' => [
         'L0' => 3, // Libros => superreducido
@@ -35,7 +40,8 @@ return [
     ],
 
     /*
-     * Geslib statuses codes that make a product not purchasable
+     * Geslib statuses codes that make a product not purchasable.
+     * This are the codes of the Geslib system, not the Lunar statuses IDs.
      */
     'not_purchasable_statuses' => [
         2, // Descatalogado
@@ -43,7 +49,7 @@ return [
     ],
 
     /*
-     * Geslib products measurements units
+     * Geslib products measurements units. You can change them to match your Geslib data measurements.
      * Check Lunar shipping config to find out the available valid units
      */
     'measurements' => [
@@ -79,21 +85,4 @@ return [
      *
      */
     'api_routes_enabled' => env('GESLIB_API_ROUTES_ENABLED', true),
-
-    /*
-     *--------------------------------------------------------------------------
-     * Notification Settings
-     *--------------------------------------------------------------------------
-     *
-     * Configure email notifications for important events within the Geslib integration.
-     *
-     */
-    'notifications' => [
-        'enabled' => env('GESLIB_NOTIFICATIONS_ENABLED', true),
-
-        'mail_to' => env('GESLIB_NOTIFICATIONS_MAIL_TO', 'admin@example.com'), // Default admin email
-
-        // Throttle period in minutes to avoid spamming notifications for the same issue.
-        'throttle_period_minutes' => env('GESLIB_NOTIFICATIONS_THROTTLE_MINUTES', 60),
-    ],
 ];

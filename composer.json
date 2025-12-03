@@ -11,8 +11,9 @@
         "lunarphp/core": "^1.0.0",
         "lunarphp/lunar": "^1.0.0",
         "numaxlab/atomic-laravel": "dev-main",
-        "numaxlab/geslib-files": "^1.0@beta",
+        "numaxlab/cegal-client": "@dev",
         "numaxlab/dilve-client": "@dev",
+        "numaxlab/geslib-files": "^1.0@beta",
         "spatie/array-to-xml": "^3.4"
     },
     "require-dev": {

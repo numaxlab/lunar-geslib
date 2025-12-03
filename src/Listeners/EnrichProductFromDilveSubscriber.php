@@ -39,6 +39,10 @@ class EnrichProductFromDilveSubscriber implements ShouldQueue
             return;
         }
 
+        if (! config('lunar.geslib.dilve.enabled')) {
+            return;
+        }
+
         $client = new Client(
             config('lunar.geslib.dilve.username'),
             config('lunar.geslib.dilve.password'),

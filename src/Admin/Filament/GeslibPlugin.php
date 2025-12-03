@@ -9,6 +9,7 @@ use Filament\Panel;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Pages\GeslibDashboardPage;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\AuthorResource;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibInterFileResource;
+use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\TrustedStockProviderResource;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\GeslibFileImportStatsWidget;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Widgets\GeslibOrderSyncStatsWidget;
 
@@ -38,6 +39,7 @@ class GeslibPlugin implements Plugin
             ->resources([
                 AuthorResource::class,
                 GeslibInterFileResource::class,
+                TrustedStockProviderResource::class,
             ])
             ->widgets([
                 GeslibFileImportStatsWidget::class,

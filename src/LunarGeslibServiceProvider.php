@@ -17,6 +17,7 @@ use Lunar\Admin\Support\Facades\AttributeData;
 use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Facades\AttributeManifest;
 use Lunar\Facades\ModelManifest;
+use NumaxLab\Cegal\Client;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\CollectionResourceExtension;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\ManageProductCollectionsExtension;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\ProductResourceExtension;
@@ -30,6 +31,7 @@ use NumaxLab\Lunar\Geslib\Console\Commands\Search\EnsureIndexes;
 use NumaxLab\Lunar\Geslib\FieldTypes\Date;
 use NumaxLab\Lunar\Geslib\Listeners\EnrichProductFromDilveSubscriber;
 use NumaxLab\Lunar\Geslib\Models\Author;
+use NumaxLab\Lunar\Geslib\Services\CegalAvailabilityService;
 use Spatie\ArrayToXml\ArrayToXml;
 use Spatie\StructureDiscoverer\Discover;
 
@@ -58,6 +60,15 @@ class LunarGeslibServiceProvider extends ServiceProvider
             \Lunar\Models\Contracts\Collection::class,
             \NumaxLab\Lunar\Geslib\Models\Collection::class,
         );
+
+        $this->app->bind(CegalAvailabilityService::class, function ($app) {
+            return new CegalAvailabilityService(
+                Client::create(
+                    config('lunar.geslib.cegal.username'),
+                    config('lunar.geslib.cegal.password'),
+                ),
+            );
+        });
 
         AttributeData::registerFieldType(Date::class, DateField::class);
 
@@ -94,7 +105,8 @@ class LunarGeslibServiceProvider extends ServiceProvider
                 ->extending(Model::class)
                 ->get(),
         )->mapWithKeys(
-            fn ($class) => [
+            fn ($class)
+                => [
                 Str::snake(str_replace('\\', '_', Str::after($class, 'NumaxLab\\Lunar\\Geslib\\Models\\'))) => $class,
             ],
         );

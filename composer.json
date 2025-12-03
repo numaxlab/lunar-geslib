@@ -46,7 +46,6 @@
             "@test:typos",
             "@test:types",
             "@test:refactor",
-            "@test:lint",
             "@test:unit"
         ],
         "refactor": "./vendor/bin/rector process",

@@ -8,8 +8,8 @@
         "ext-zip": "*",
         "illuminate/support": "*",
         "livewire/livewire": "^3.6",
-        "lunarphp/core": "^1.0.0",
-        "lunarphp/lunar": "^1.0.0",
+        "lunarphp/core": "^1.1.0",
+        "lunarphp/lunar": "^1.1.0",
         "numaxlab/atomic-laravel": "dev-main",
         "numaxlab/cegal-client": "@dev",
         "numaxlab/dilve-client": "@dev",
@@ -71,7 +71,6 @@
             "email": "noa@numax.org"
         }
     ],
-    "minimum-stability": "dev",
     "config": {
         "allow-plugins": {
             "pestphp/pest-plugin": true

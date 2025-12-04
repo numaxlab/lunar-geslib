@@ -4,23 +4,15 @@ declare(strict_types=1);
 
 namespace NumaxLab\Lunar\Geslib\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Lunar\Base\BaseModel;
+use NumaxLab\Lunar\Geslib\Database\Factories\GeslibInterFileFactory;
 
-/**
- * @property int $id
- * @property string $name
- * @property string $status
- * @property ?\Illuminate\Support\Carbon $received_at
- * @property ?\Illuminate\Support\Carbon $started_at
- * @property ?\Illuminate\Support\Carbon $finished_at
- * @property int $total_lines
- * @property int $processed_lines
- * @property ?array $log
- * @property ?string $progress
- */
 class GeslibInterFile extends BaseModel
 {
+    use HasFactory;
+
     public const STATUS_PENDING = 'pending';
 
     public const STATUS_PROCESSING = 'processing';
@@ -48,6 +40,11 @@ class GeslibInterFile extends BaseModel
         'finished_at' => 'datetime',
         'log' => 'array',
     ];
+
+    protected static function newFactory()
+    {
+        return GeslibInterFileFactory::new();
+    }
 
     public function batchLines(): HasMany
     {

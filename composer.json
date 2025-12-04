@@ -19,7 +19,8 @@
     "require-dev": {
         "pestphp/pest": "^3.8",
         "pestphp/pest-plugin-laravel": "^3.2",
-        "orchestra/testbench": "^10.4",
+        "pestphp/pest-plugin-livewire": "^3.0",
+        "orchestra/testbench": "^10.8",
         "laravel/pint": "dev-main",
         "peckphp/peck": "dev-main",
         "larastan/larastan": "^3.0",
@@ -27,7 +28,8 @@
     },
     "autoload": {
         "psr-4": {
-            "NumaxLab\\Lunar\\Geslib\\": "src/"
+            "NumaxLab\\Lunar\\Geslib\\": "src/",
+            "NumaxLab\\Lunar\\Geslib\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {

@@ -16,6 +16,7 @@ use Lunar\Base\Traits\HasUrls;
 use Lunar\Base\Traits\LogsActivity;
 use Lunar\Base\Traits\Searchable;
 use Lunar\Models\Product;
+use NumaxLab\Lunar\Geslib\Database\Factories\AuthorFactory;
 use Spatie\MediaLibrary\HasMedia as SpatieHasMedia;
 
 class Author extends BaseModel implements Contracts\Author, SpatieHasMedia
@@ -36,6 +37,11 @@ class Author extends BaseModel implements Contracts\Author, SpatieHasMedia
     protected $casts = [
         'attribute_data' => AsAttributeData::class,
     ];
+
+    protected static function newFactory()
+    {
+        return AuthorFactory::new();
+    }
 
     public function products(): BelongsToMany
     {

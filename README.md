@@ -164,4 +164,4 @@ This package is developed by:
 - Adrián Pardellas Blunier ([adrian@numax.org](mailto:adrian@numax.org))
 - Noa García Amado ([noa@numax.org](mailto:noa@numax.org))
 
-Maintained by [Numax Lab](https://laboratorio.numax.org/).
+Maintained by [Laboratorio NUMAX](https://laboratorio.numax.org/).

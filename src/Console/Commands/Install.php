@@ -153,11 +153,10 @@ class Install extends Command
             ]);
 
             $type->mappedAttributes()->attach(
-                Attribute::whereAttributeType(
-                    Product::morphName(),
-                )->orWhereAttributeType(
-                    ProductVariant::morphName(),
-                )->get()->pluck('id'),
+                Attribute::where('attribute_type', Product::morphName())
+                    ->orWhere('attribute_type', ProductVariant::morphName())
+                    ->get()
+                    ->pluck('id'),
             );
         }
 

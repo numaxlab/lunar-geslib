@@ -11,11 +11,11 @@ use NumaxLab\Cegal\Exceptions\CegalApiException;
 use NumaxLab\Lunar\Geslib\Models\ProductVariant;
 use NumaxLab\Lunar\Geslib\Models\TrustedStockProvider;
 
-class CegalAvailabilityService
+class CegalAvailability
 {
     public function __construct(protected Client $client) {}
 
-    public function getAvailability(ProductVariant $variant)
+    public function getAvailability(ProductVariant $variant): ?TrustedStockProvider
     {
         if (! config('lunar.geslib.cegal.enabled')) {
             return null;

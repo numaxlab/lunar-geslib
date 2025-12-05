@@ -17,6 +17,7 @@ use NumaxLab\Lunar\Geslib\InterCommands\Batch\ArticleTopicRelation;
 use NumaxLab\Lunar\Geslib\InterCommands\Contracts\CommandContract;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFileBatchLine;
+use Throwable;
 
 class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
 {
@@ -105,12 +106,12 @@ class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
         }
 
         $this->geslibInterFile->update([
-            'status' => $this->getStatusFromLog($this->geslibInterFile->log),
+            'status' => self::getStatusFromLog($this->geslibInterFile->log),
             'finished_at' => Carbon::now(),
         ]);
     }
 
-    private function getStatusFromLog(array $log): string
+    public static function getStatusFromLog(array $log): string
     {
         if (array_any($log, fn ($line): bool => $line['level'] === CommandContract::LEVEL_ERROR)) {
             return GeslibInterFile::STATUS_FAILED;
@@ -121,5 +122,19 @@ class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
         }
 
         return GeslibInterFile::STATUS_SUCCESS;
+    }
+
+    public function failed(Throwable $exception): void
+    {
+        $this->geslibInterFile->update([
+            'status' => GeslibInterFile::STATUS_FAILED,
+            'log' => array_merge($this->geslibInterFile->log, [
+                [
+                    'level' => CommandContract::LEVEL_ERROR,
+                    'message' => $exception->getMessage(),
+                ],
+            ]),
+            'finished_at' => Carbon::now(),
+        ]);
     }
 }

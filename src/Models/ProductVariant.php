@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace NumaxLab\Lunar\Geslib\Models;
 
-use NumaxLab\Lunar\Geslib\Services\CegalAvailabilityService;
+use NumaxLab\Lunar\Geslib\Services\CegalAvailability;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProductVariant extends \Lunar\Models\ProductVariant
@@ -33,11 +33,11 @@ class ProductVariant extends \Lunar\Models\ProductVariant
             return true;
         }
 
-        $cegalAvailabilityService = app(CegalAvailabilityService::class);
+        $cegalAvailability = app(CegalAvailability::class);
 
-        $cegalAvailability = $cegalAvailabilityService->getAvailability($this);
+        $firstTrustedStockProvider = $cegalAvailability->getAvailability($this);
 
-        if ($cegalAvailability) {
+        if ($firstTrustedStockProvider) {
             return true;
         }
 

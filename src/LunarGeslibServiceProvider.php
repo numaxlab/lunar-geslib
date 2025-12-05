@@ -17,7 +17,8 @@ use Lunar\Admin\Support\Facades\AttributeData;
 use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Facades\AttributeManifest;
 use Lunar\Facades\ModelManifest;
-use NumaxLab\Cegal\Client;
+use NumaxLab\Cegal\Client as CegalClient;
+use NumaxLab\Dilve\Client as DilveClient;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\CollectionResourceExtension;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\ManageProductCollectionsExtension;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\ProductResourceExtension;
@@ -28,10 +29,14 @@ use NumaxLab\Lunar\Geslib\Console\Commands\Geslib\ImportBatchLines;
 use NumaxLab\Lunar\Geslib\Console\Commands\ImportAddressData;
 use NumaxLab\Lunar\Geslib\Console\Commands\Install;
 use NumaxLab\Lunar\Geslib\Console\Commands\Search\EnsureIndexes;
+use NumaxLab\Lunar\Geslib\Events\GeslibArticleCreated;
+use NumaxLab\Lunar\Geslib\Events\GeslibArticleUpdated;
 use NumaxLab\Lunar\Geslib\FieldTypes\Date;
-use NumaxLab\Lunar\Geslib\Listeners\EnrichProductFromDilveSubscriber;
+use NumaxLab\Lunar\Geslib\Listeners\HandleGeslibArticleCreated;
+use NumaxLab\Lunar\Geslib\Listeners\HandleGeslibArticleUpdated;
 use NumaxLab\Lunar\Geslib\Models\Author;
-use NumaxLab\Lunar\Geslib\Services\CegalAvailabilityService;
+use NumaxLab\Lunar\Geslib\Services\CegalAvailability;
+use NumaxLab\Lunar\Geslib\Services\DilveEnricher;
 use Spatie\ArrayToXml\ArrayToXml;
 use Spatie\StructureDiscoverer\Discover;
 
@@ -42,6 +47,14 @@ class LunarGeslibServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/geslib.php', 'lunar.geslib');
 
+        $this->registerModelManifests();
+        $this->registerServices();
+        $this->registerLunarAttributes();
+        $this->registerLunarExtensions();
+    }
+
+    protected function registerModelManifests(): void
+    {
         ModelManifest::add(
             \NumaxLab\Lunar\Geslib\Models\Contracts\Author::class,
             Author::class,
@@ -61,21 +74,40 @@ class LunarGeslibServiceProvider extends ServiceProvider
             \Lunar\Models\Contracts\Collection::class,
             \NumaxLab\Lunar\Geslib\Models\Collection::class,
         );
+    }
+
+    protected function registerServices(): void
+    {
+        $this->app->bind(
+            DilveEnricher::class,
+            fn ($app): DilveEnricher => new DilveEnricher(
+                new DilveClient(
+                    config('lunar.geslib.dilve.username'),
+                    config('lunar.geslib.dilve.password'),
+                ),
+            ),
+        );
 
         $this->app->bind(
-            CegalAvailabilityService::class,
-            fn ($app): CegalAvailabilityService => new CegalAvailabilityService(
-                Client::create(
+            CegalAvailability::class,
+            fn ($app): CegalAvailability => new CegalAvailability(
+                CegalClient::create(
                     config('lunar.geslib.cegal.username'),
                     config('lunar.geslib.cegal.password'),
                 ),
             ),
         );
+    }
 
+    protected function registerLunarAttributes(): void
+    {
         AttributeData::registerFieldType(Date::class, DateField::class);
 
         AttributeManifest::addType(Author::class);
+    }
 
+    protected function registerLunarExtensions(): void
+    {
         LunarPanel::extensions([
             CollectionResource::class => CollectionResourceExtension::class,
             ManageProductCollections::class => ManageProductCollectionsExtension::class,
@@ -99,20 +131,9 @@ class LunarGeslibServiceProvider extends ServiceProvider
             __DIR__.'/../routes/storefront.php' => base_path('routes/storefront.php'),
         ], ['lunar']);
 
-        Event::subscribe(EnrichProductFromDilveSubscriber::class);
+        $this->bootEvents();
 
-        $modelClasses = collect(
-            Discover::in(__DIR__.'/Models')
-                ->classes()
-                ->extending(Model::class)
-                ->get(),
-        )->mapWithKeys(
-            fn ($class): array => [
-                Str::snake(str_replace('\\', '_', Str::after($class, 'NumaxLab\\Lunar\\Geslib\\Models\\'))) => $class,
-            ],
-        );
-
-        Relation::morphMap($modelClasses->toArray());
+        $this->bootMorphMap();
 
         Response::macro(
             'xml',
@@ -140,5 +161,34 @@ class LunarGeslibServiceProvider extends ServiceProvider
 
             $this->commands($commands);
         }
+    }
+
+    protected function bootEvents(): void
+    {
+        Event::listen(
+            GeslibArticleCreated::class,
+            HandleGeslibArticleCreated::class,
+        );
+        Event::listen(
+            GeslibArticleUpdated::class,
+            HandleGeslibArticleUpdated::class,
+        );
+    }
+
+    protected function bootMorphMap(): void
+    {
+        $modelClasses = collect(
+            Discover::in(__DIR__.'/Models')
+                ->classes()
+                ->extending(Model::class)
+                ->get(),
+        )->mapWithKeys(
+            fn ($class): array
+                => [
+                Str::snake(str_replace('\\', '_', Str::after($class, 'NumaxLab\\Lunar\\Geslib\\Models\\'))) => $class,
+            ],
+        );
+
+        Relation::morphMap($modelClasses->toArray());
     }
 }

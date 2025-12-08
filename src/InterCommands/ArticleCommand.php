@@ -160,5 +160,14 @@ class ArticleCommand extends AbstractCommand
             ->where('collection_group_id', $languageCollectionGroup->id)->get();
 
         new CollectionGroupSync($product, $languageCollectionGroup->id, $languageCollection)->handle();
+
+        // EditorialCollection collection
+        $group = CollectionGroup::where('handle', CollectionCommand::HANDLE)->firstOrFail();
+        $editorialCollection = Collection::where(
+            'geslib_code',
+            CollectionCommand::getGeslibId($this->article->editorialId(), $this->article->collectionId()),
+        )->where('collection_group_id', $group->id)->get();
+
+        new CollectionGroupSync($product, $group->id, $editorialCollection)->handle();
     }
 }

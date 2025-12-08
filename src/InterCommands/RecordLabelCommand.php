@@ -18,33 +18,29 @@ class RecordLabelCommand extends AbstractCommand
     public function __invoke(): void
     {
         if ($this->recordLabel->action()->isDelete()) {
-            $brand = Brand::where('geslib_code', $this->recordLabel->id())->first();
+            return;
+        }
 
-            if ($brand) {
-                $brand->delete();
-            }
+        $brand = Brand::where('geslib_code', $this->recordLabel->id())->first();
+
+        $attributeData = [
+            'type' => new Dropdown(self::BRAND_TYPE),
+            'external-name' => new Text($this->recordLabel->externalName()),
+            'country' => new Text($this->recordLabel->country()),
+
+        ];
+
+        if (! $brand) {
+            Brand::create([
+                'geslib_code' => $this->recordLabel->id(),
+                'name' => $this->recordLabel->name(),
+                'attribute_data' => $attributeData,
+            ]);
         } else {
-            $brand = Brand::where('geslib_code', $this->recordLabel->id())->first();
-
-            $attributeData = [
-                'type' => new Dropdown(self::BRAND_TYPE),
-                'external-name' => new Text($this->recordLabel->externalName()),
-                'country' => new Text($this->recordLabel->country()),
-
-            ];
-
-            if (! $brand) {
-                Brand::create([
-                    'geslib_code' => $this->recordLabel->id(),
-                    'name' => $this->recordLabel->name(),
-                    'attribute_data' => $attributeData,
-                ]);
-            } else {
-                $brand->update([
-                    'name' => $this->recordLabel->name(),
-                    'attribute_data' => $attributeData,
-                ]);
-            }
+            $brand->update([
+                'name' => $this->recordLabel->name(),
+                'attribute_data' => $attributeData,
+            ]);
         }
     }
 }

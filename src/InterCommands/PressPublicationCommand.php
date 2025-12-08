@@ -18,31 +18,27 @@ class PressPublicationCommand extends AbstractCommand
     public function __invoke(): void
     {
         if ($this->pressPublication->action()->isDelete()) {
-            $brand = Brand::where('geslib_code', $this->pressPublication->id())->first();
+            return;
+        }
 
-            if ($brand) {
-                $brand->delete();
-            }
+        $brand = Brand::where('geslib_code', $this->pressPublication->id())->first();
+
+        $attributeData = [
+            'type' => new Dropdown(self::BRAND_TYPE),
+            'country' => new Text($this->pressPublication->countryId()),
+        ];
+
+        if (! $brand) {
+            Brand::create([
+                'geslib_code' => $this->pressPublication->id(),
+                'name' => $this->pressPublication->name(),
+                'attribute_data' => $attributeData,
+            ]);
         } else {
-            $brand = Brand::where('geslib_code', $this->pressPublication->id())->first();
-
-            $attributeData = [
-                'type' => new Dropdown(self::BRAND_TYPE),
-                'country' => new Text($this->pressPublication->countryId()),
-            ];
-
-            if (! $brand) {
-                Brand::create([
-                    'geslib_code' => $this->pressPublication->id(),
-                    'name' => $this->pressPublication->name(),
-                    'attribute_data' => $attributeData,
-                ]);
-            } else {
-                $brand->update([
-                    'name' => $this->pressPublication->name(),
-                    'attribute_data' => $attributeData,
-                ]);
-            }
+            $brand->update([
+                'name' => $this->pressPublication->name(),
+                'attribute_data' => $attributeData,
+            ]);
         }
     }
 }

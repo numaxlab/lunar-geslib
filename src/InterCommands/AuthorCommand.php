@@ -14,6 +14,10 @@ class AuthorCommand extends AbstractCommand
 
     public function __invoke(): void
     {
+        if ($this->author->action()->isDelete()) {
+            return;
+        }
+
         $author = Author::where('geslib_code', $this->author->id())->first();
 
         $attributeData = [

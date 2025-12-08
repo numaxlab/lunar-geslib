@@ -15,6 +15,10 @@ class CollectionCommand extends AbstractCommand
 {
     public const string HANDLE = 'editorial-collections';
 
+    private array $excluded = [
+        '< Genérica >',
+    ];
+
     public function __construct(private readonly EditorialCollection $editorialCollection) {}
 
     public function __invoke(): void
@@ -23,10 +27,17 @@ class CollectionCommand extends AbstractCommand
             return;
         }
 
+        if (in_array($this->editorialCollection->name(), $this->excluded)) {
+            return;
+        }
+
         $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
 
-        $collection = Collection::where('geslib_code', $this->editorialCollection->id())
-            ->where('collection_group_id', $group->id)->first();
+        $geslibCode = self::getGeslibId($this->editorialCollection->editorialId(), $this->editorialCollection->id());
+
+        $collection = Collection::where('geslib_code', $geslibCode)
+            ->where('collection_group_id', $group->id)
+            ->first();
 
         $attributeData = [
             'name' => new TranslatedText(collect([
@@ -35,8 +46,8 @@ class CollectionCommand extends AbstractCommand
         ];
 
         if (! $collection) {
-            Collection::create([
-                'geslib_code' => $this->editorialCollection->id(),
+            $collection = Collection::create([
+                'geslib_code' => $geslibCode,
                 'attribute_data' => $attributeData,
                 'collection_group_id' => $group->id,
             ]);
@@ -51,5 +62,10 @@ class CollectionCommand extends AbstractCommand
         if ($brand) {
             $collection->brands()->sync([$brand->id]);
         }
+    }
+
+    public static function getGeslibId(string $editorialId, string $collectionId): string
+    {
+        return $editorialId.'-'.$collectionId;
     }
 }

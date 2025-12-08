@@ -18,32 +18,28 @@ class EditorialCommand extends AbstractCommand
     public function __invoke(): void
     {
         if ($this->editorial->action()->isDelete()) {
-            $brand = Brand::where('geslib_code', $this->editorial->id())->first();
+            return;
+        }
 
-            if ($brand) {
-                $brand->delete();
-            }
+        $brand = Brand::where('geslib_code', $this->editorial->id())->first();
+
+        $attributeData = [
+            'type' => new Dropdown(self::BRAND_TYPE),
+            'external-name' => new Text($this->editorial->externalName()),
+            'country' => new Text($this->editorial->countryId()),
+        ];
+
+        if (! $brand) {
+            Brand::create([
+                'geslib_code' => $this->editorial->id(),
+                'name' => $this->editorial->name(),
+                'attribute_data' => $attributeData,
+            ]);
         } else {
-            $brand = Brand::where('geslib_code', $this->editorial->id())->first();
-
-            $attributeData = [
-                'type' => new Dropdown(self::BRAND_TYPE),
-                'external-name' => new Text($this->editorial->externalName()),
-                'country' => new Text($this->editorial->countryId()),
-            ];
-
-            if (! $brand) {
-                Brand::create([
-                    'geslib_code' => $this->editorial->id(),
-                    'name' => $this->editorial->name(),
-                    'attribute_data' => $attributeData,
-                ]);
-            } else {
-                $brand->update([
-                    'name' => $this->editorial->name(),
-                    'attribute_data' => $attributeData,
-                ]);
-            }
+            $brand->update([
+                'name' => $this->editorial->name(),
+                'attribute_data' => $attributeData,
+            ]);
         }
     }
 }

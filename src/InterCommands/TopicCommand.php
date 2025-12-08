@@ -19,6 +19,10 @@ class TopicCommand extends AbstractCommand
 
     public function __invoke(): void
     {
+        if ($this->topic->action()->isDelete()) {
+            return;
+        }
+
         $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
 
         $collection = Collection::where('geslib_code', $this->topic->id())

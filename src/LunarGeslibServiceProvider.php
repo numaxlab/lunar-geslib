@@ -128,7 +128,6 @@ class LunarGeslibServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/geslib.php' => config_path('lunar/geslib.php'),
             __DIR__.'/../resources/views' => resource_path('views/vendor/lunar/geslib'),
-            __DIR__.'/../routes/storefront.php' => base_path('routes/storefront.php'),
         ], ['lunar']);
 
         $this->bootEvents();
@@ -183,7 +182,8 @@ class LunarGeslibServiceProvider extends ServiceProvider
                 ->extending(Model::class)
                 ->get(),
         )->mapWithKeys(
-            fn ($class): array => [
+            fn ($class): array
+                => [
                 Str::snake(str_replace('\\', '_', Str::after($class, 'NumaxLab\\Lunar\\Geslib\\Models\\'))) => $class,
             ],
         );

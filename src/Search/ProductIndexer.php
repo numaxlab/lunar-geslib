@@ -7,11 +7,21 @@ namespace NumaxLab\Lunar\Geslib\Search;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use NumaxLab\Lunar\Geslib\Handle;
+use NumaxLab\Lunar\Geslib\InterCommands\ArticleCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\LanguageCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
 
 class ProductIndexer extends \Lunar\Search\ProductIndexer
 {
+    public function shouldBeSearchable(Model $model): bool
+    {
+        if ($model->productType->id === config('lunar.geslib.product_type_id', ArticleCommand::PRODUCT_TYPE_ID)) {
+            return true;
+        }
+
+        return false;
+    }
+
     #[\Override]
     public function getFilterableFields(): array
     {
@@ -67,14 +77,14 @@ class ProductIndexer extends \Lunar\Search\ProductIndexer
         $languages = $collectionsByGroup->get(LanguageCommand::HANDLE);
         $geslibStatus = $collectionsByGroup->get(StatusCommand::HANDLE);
 
-        $pricing = $model->variant->pricing()->get()->matched;
+        $pricing = $model->variant?->pricing()?->get()->matched;
 
         $data = array_merge($data, [
             'authors' => $model->authors->map(fn ($author) => $author->toSearchableArray())->toArray(),
             'taxonomies' => $taxonomies->map(fn ($taxon) => $taxon->toSearchableArray())->toArray(),
             'languages' => $languages?->map(fn ($language) => $language->toSearchableArray())->toArray(),
             'isbns' => $model->variants->pluck('gtin')->toArray(),
-            'price' => $pricing->priceIncTax()->unitDecimal(),
+            'price' => $pricing?->priceIncTax()->unitDecimal(),
             'geslib_status' => $geslibStatus?->first()->toSearchableArray(),
             'brand' => $model->brand?->name,
             'status' => $model->status,

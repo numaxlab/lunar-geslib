@@ -19,7 +19,10 @@ class IdentifyGeslibOrder
                 continue;
             }
 
-            if ($line->purchasable->product->product_type_id !== ArticleCommand::PRODUCT_TYPE_ID) {
+            if (
+                $line->purchasable->product->product_type_id !==
+                config('lunar.geslib.product_type_id', ArticleCommand::PRODUCT_TYPE_ID)
+            ) {
                 continue;
             }
 

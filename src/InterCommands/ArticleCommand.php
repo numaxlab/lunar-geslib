@@ -70,7 +70,7 @@ class ArticleCommand extends AbstractCommand
 
         if (! $variant) {
             $product = Product::create([
-                'product_type_id' => self::PRODUCT_TYPE_ID,
+                'product_type_id' => config('lunar.geslib.product_type_id', self::PRODUCT_TYPE_ID),
                 'brand_id' => $brand?->id,
                 'status' => self::DEFAULT_STATUS,
                 'attribute_data' => $productAttributeData,

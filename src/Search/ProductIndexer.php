@@ -13,13 +13,10 @@ use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
 
 class ProductIndexer extends \Lunar\Search\ProductIndexer
 {
+    #[\Override]
     public function shouldBeSearchable(Model $model): bool
     {
-        if ($model->productType->id === config('lunar.geslib.product_type_id', ArticleCommand::PRODUCT_TYPE_ID)) {
-            return true;
-        }
-
-        return false;
+        return $model->productType->id === config('lunar.geslib.product_type_id', ArticleCommand::PRODUCT_TYPE_ID);
     }
 
     #[\Override]

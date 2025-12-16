@@ -1,4 +1,4 @@
-# Lunar Geslib Integration
+# Lunar-Geslib Integration
 
 [![tests](https://github.com/numaxlab/lunar-geslib/actions/workflows/tests.yml/badge.svg)](https://github.com/numaxlab/lunar-geslib/actions/workflows/tests.yml)
 [![linter](https://github.com/numaxlab/lunar-geslib/actions/workflows/lint.yml/badge.svg)](https://github.com/numaxlab/lunar-geslib/actions/workflows/lint.yml)

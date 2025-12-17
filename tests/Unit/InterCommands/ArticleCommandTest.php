@@ -31,7 +31,7 @@ beforeEach(function () {
     CollectionGroup::factory(['handle' => CollectionCommand::HANDLE])->create();
 });
 
-afterEach(fn() => Mockery::close());
+afterEach(fn () => Mockery::close());
 
 function makeArticleMock(array $overrides = []): ArticleLine
 {

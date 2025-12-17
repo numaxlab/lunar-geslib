@@ -119,7 +119,8 @@ test('it exits early when the worker is busy (lock not acquired)', function (): 
     putWithMTime($disk, "$base/file.zip", 'zip', $ts);
 
     // Simulate busy lock
-    Cache::partialMock()->shouldReceive('lock')->once()->andReturn(new class {
+    Cache::partialMock()->shouldReceive('lock')->once()->andReturn(new class
+    {
         public function get(): bool
         {
             return false;

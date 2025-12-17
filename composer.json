@@ -43,7 +43,7 @@
         "test:lint": "./vendor/bin/pint --test",
         "test:types": "@phpstan",
         "test:refactor": "./vendor/bin/rector process --dry-run",
-        "test:unit": "./vendor/bin/pest",
+        "test:unit": "./vendor/bin/pest --parallel",
         "test": [
             "@test:typos",
             "@test:types",

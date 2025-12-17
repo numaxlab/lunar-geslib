@@ -103,10 +103,10 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
         $extractedFilePath = config('lunar.geslib.inter_files_path').'/'.str_replace(
-            '.zip',
-            '',
-            $this->geslibInterFile->name,
-        );
+                '.zip',
+                '',
+                $this->geslibInterFile->name,
+            );
 
         if (! $storage->exists($extractedFilePath)) {
             $this->extractZipFile($storage);
@@ -231,7 +231,7 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
         ];
 
         $this->geslibInterFile->update([
-            GeslibInterFile::STATUS_PROCESSING,
+            'status' => GeslibInterFile::STATUS_PROCESSING,
             'processed_lines' => $endLine,
             'log' => $log,
             'finished_at' => null,
@@ -308,7 +308,7 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
 
         $this->geslibInterFile->update([
             'status' => GeslibInterFile::STATUS_FAILED,
-            'log' => array_merge($this->geslibInterFile->log, [
+            'log' => array_merge($this->geslibInterFile->log ?? [], [
                 [
                     'level' => CommandContract::LEVEL_ERROR,
                     'message' => $exception->getMessage(),

@@ -89,6 +89,11 @@ abstract class TestCase extends OrchestraTestCase
             'model_has_roles' => 'model_has_roles',
             'role_has_permissions' => 'role_has_permissions',
         ]);
+
+        $app['config']->set('cache.default', 'array');
+        $app['config']->set('cache.stores.array', [
+            'driver' => 'array',
+        ]);
     }
 
     protected function asStaff($admin = true): TestCase

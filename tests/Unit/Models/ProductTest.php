@@ -20,7 +20,7 @@ uses(TestCase::class, RefreshDatabase::class);
 beforeEach(fn () => Language::factory()->create());
 
 it('has a contributors relationship', function () {
-    $product = Product::factory()->create();
+    $product = new Product;
 
     expect($product->contributors())
         ->toBeInstanceOf(BelongsToMany::class)
@@ -88,7 +88,7 @@ it('has all contributor types relationships', function () {
 });
 
 it('has a favouriteOf relationship', function () {
-    $product = Product::factory()->create();
+    $product = new Product;
 
     expect($product->favouriteOf())
         ->toBeInstanceOf(BelongsToMany::class)
@@ -218,7 +218,7 @@ it('has an ancestor section taxonomy', function () {
 });
 
 it('has a editorialCollections relationship', function () {
-    $product = Product::factory()->create();
+    $product = new Product;
 
     expect($product->editorialCollections())
         ->toBeInstanceOf(BelongsToMany::class)
@@ -228,7 +228,7 @@ it('has a editorialCollections relationship', function () {
 });
 
 it('has a languages relationship', function () {
-    $product = Product::factory()->create();
+    $product = new Product;
 
     expect($product->languages())
         ->toBeInstanceOf(BelongsToMany::class)
@@ -238,7 +238,7 @@ it('has a languages relationship', function () {
 });
 
 it('has a statuses relationship', function () {
-    $product = Product::factory()->create();
+    $product = new Product;
 
     expect($product->statuses())
         ->toBeInstanceOf(BelongsToMany::class)
@@ -248,7 +248,7 @@ it('has a statuses relationship', function () {
 });
 
 it('has a bindingTypes relationship', function () {
-    $product = Product::factory()->create();
+    $product = new Product;
 
     expect($product->bindingTypes())
         ->toBeInstanceOf(BelongsToMany::class)

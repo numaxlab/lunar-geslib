@@ -17,7 +17,8 @@ use NumaxLab\Lunar\Geslib\Models\GeslibInterFileBatchLine;
 function fakeLines(int $count, string $code): array
 {
     return array_map(function () use ($code) {
-        return new class($code) {
+        return new class($code)
+        {
             public function __construct(private string $code) {}
 
             public function getCode(): string
@@ -36,7 +37,7 @@ beforeEach(function () {
     Cache::flush();
 });
 
-afterEach(fn() => Mockery::close());
+afterEach(fn () => Mockery::close());
 
 it('generates a unique id including file id, start and chunk', function () {
     $file = GeslibInterFile::factory()->create();
@@ -49,7 +50,8 @@ it('generates a unique id including file id, start and chunk', function () {
 it('processes a chunk and dispatches next job when not finished', function () {
     Bus::fake();
 
-    $fakeParsed = new class {
+    $fakeParsed = new class
+    {
         public function lines(): array
         {
             return fakeLines(5, StationeryCategory::CODE);
@@ -86,7 +88,8 @@ it('processes a chunk and dispatches next job when not finished', function () {
 it('does not update status or started_at when file is already processing', function () {
     Bus::fake();
 
-    $fakeParsed = new class {
+    $fakeParsed = new class
+    {
         public function lines(): array
         {
             return fakeLines(5, StationeryCategory::CODE);
@@ -119,7 +122,8 @@ it('does not update status or started_at when file is already processing', funct
 it('extracts zip file when extracted file does not exist', function () {
     Bus::fake();
 
-    $fakeParsed = new class {
+    $fakeParsed = new class
+    {
         public function lines(): array
         {
             return fakeLines(2, Province::CODE);
@@ -155,13 +159,14 @@ it('throws exception when zip file cannot be opened', function () {
 
     $job = new ProcessGeslibInterFile($file, startLine: 0, chunkSize: 10);
 
-    expect(fn() => $job->handle())->toThrow(RuntimeException::class, 'Unable to open zip file');
+    expect(fn () => $job->handle())->toThrow(RuntimeException::class, 'Unable to open zip file');
 });
 
 it('finalizes when file finished and there are no batch lines', function () {
     Bus::fake();
 
-    $fakeParsed = new class {
+    $fakeParsed = new class
+    {
         public function lines(): array
         {
             return fakeLines(2, Province::CODE);
@@ -193,7 +198,8 @@ it('finalizes when file finished and there are no batch lines', function () {
 it('dispatches ProcessGeslibInterFileBatchLine when batch lines exist after finishing', function () {
     Bus::fake();
 
-    $fakeParsed = new class {
+    $fakeParsed = new class
+    {
         public function lines(): array
         {
             return fakeLines(2, Province::CODE);
@@ -221,7 +227,8 @@ it('dispatches ProcessGeslibInterFileBatchLine when batch lines exist after fini
 it('updates processed_lines correctly for each chunk', function () {
     Bus::fake();
 
-    $fakeParsed = new class {
+    $fakeParsed = new class
+    {
         public function lines(): array
         {
             return fakeLines(10, StationeryCategory::CODE);
@@ -255,7 +262,8 @@ it('updates processed_lines correctly for each chunk', function () {
 it('clears log when it exceeds 2000 entries', function () {
     Bus::fake();
 
-    $fakeParsed = new class {
+    $fakeParsed = new class
+    {
         public function lines(): array
         {
             return fakeLines(2, Province::CODE);
@@ -284,7 +292,8 @@ it('clears log when it exceeds 2000 entries', function () {
 it('handles empty file correctly', function () {
     Bus::fake();
 
-    $fakeParsed = new class {
+    $fakeParsed = new class
+    {
         public function lines(): array
         {
             return [];
@@ -314,7 +323,8 @@ it('handles empty file correctly', function () {
 it('handles chunk that exceeds total lines correctly', function () {
     Bus::fake();
 
-    $fakeParsed = new class {
+    $fakeParsed = new class
+    {
         public function lines(): array
         {
             return fakeLines(5, StationeryCategory::CODE);
@@ -341,7 +351,8 @@ it('handles chunk that exceeds total lines correctly', function () {
 it('releases cache lock when file is finished', function () {
     Bus::fake();
 
-    $fakeParsed = new class {
+    $fakeParsed = new class
+    {
         public function lines(): array
         {
             return fakeLines(2, Province::CODE);

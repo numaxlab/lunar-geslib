@@ -18,7 +18,7 @@ beforeEach(function () {
 it('complies pending orders xsd', function () {
     $response = $this->get('api/geslib/orders/pending');
 
-    $dom = new DOMDocument();
+    $dom = new DOMDocument;
     $dom->loadXML($response->getContent());
 
     expect($dom->schemaValidate(getSchemaPath('Geslib/pending-orders.xsd')))->toBeTrue();
@@ -113,7 +113,7 @@ it('complies order xsd', function () {
 
     $response = $this->get('api/geslib/orders/'.$order->reference);
 
-    $dom = new DOMDocument();
+    $dom = new DOMDocument;
     $dom->loadXML($response->getContent());
 
     expect($dom->schemaValidate(getSchemaPath('Geslib/order.xsd')))->toBeTrue();

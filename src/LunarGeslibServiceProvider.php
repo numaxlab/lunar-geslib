@@ -32,6 +32,7 @@ use NumaxLab\Lunar\Geslib\Console\Commands\Search\EnsureIndexes;
 use NumaxLab\Lunar\Geslib\Events\GeslibArticleCreated;
 use NumaxLab\Lunar\Geslib\Events\GeslibArticleUpdated;
 use NumaxLab\Lunar\Geslib\FieldTypes\Date;
+use NumaxLab\Lunar\Geslib\Http\Middleware\AuthenticateGeslibApi;
 use NumaxLab\Lunar\Geslib\Listeners\HandleGeslibArticleCreated;
 use NumaxLab\Lunar\Geslib\Listeners\HandleGeslibArticleUpdated;
 use NumaxLab\Lunar\Geslib\Models\Author;
@@ -80,7 +81,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             DilveEnricher::class,
-            fn ($app): DilveEnricher => new DilveEnricher(
+            fn($app): DilveEnricher => new DilveEnricher(
                 new DilveClient(
                     config('lunar.geslib.dilve.username'),
                     config('lunar.geslib.dilve.password'),
@@ -90,7 +91,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
 
         $this->app->bind(
             CegalAvailability::class,
-            fn ($app): CegalAvailability => new CegalAvailability(
+            fn($app): CegalAvailability => new CegalAvailability(
                 CegalClient::create(
                     config('lunar.geslib.cegal.username'),
                     config('lunar.geslib.cegal.password'),
@@ -121,8 +122,20 @@ class LunarGeslibServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'lunar-geslib');
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'lunar-geslib');
 
-        if (config('lunar.geslib.api_routes_enabled', false)) {
+        if (config('lunar.geslib.api.enabled', false)) {
             $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
+            $this->app->get('router')->aliasMiddleware('auth.geslib', AuthenticateGeslibApi::class);
+
+            Response::macro(
+                'xml',
+                function (array $data, int $status = 200, array $headers = [], string $rootElement = 'response') {
+                    $xml = ArrayToXml::convert($data, $rootElement, true, 'utf-8');
+
+                    return Response::make($xml, $status, array_merge($headers, [
+                        'Content-Type' => 'application/xml',
+                    ]));
+                },
+            );
         }
 
         $this->publishes([
@@ -133,17 +146,6 @@ class LunarGeslibServiceProvider extends ServiceProvider
         $this->bootEvents();
 
         $this->bootMorphMap();
-
-        Response::macro(
-            'xml',
-            function (array $data, int $status = 200, array $headers = [], string $rootElement = 'response') {
-                $xml = ArrayToXml::convert($data, $rootElement, true, 'utf-8');
-
-                return Response::make($xml, $status, array_merge($headers, [
-                    'Content-Type' => 'application/xml',
-                ]));
-            },
-        );
 
         if ($this->app->runningInConsole()) {
             $commands = [
@@ -182,7 +184,8 @@ class LunarGeslibServiceProvider extends ServiceProvider
                 ->extending(Model::class)
                 ->get(),
         )->mapWithKeys(
-            fn ($class): array => [
+            fn($class): array
+                => [
                 Str::snake(str_replace('\\', '_', Str::after($class, 'NumaxLab\\Lunar\\Geslib\\Models\\'))) => $class,
             ],
         );

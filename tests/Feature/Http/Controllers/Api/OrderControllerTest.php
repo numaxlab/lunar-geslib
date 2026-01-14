@@ -17,8 +17,13 @@ beforeEach(function () {
     Currency::factory()->create();
 });
 
+function getCredentialsParams(): string
+{
+    return '?usuario='.config('lunar.geslib.api.username').'&clave='.config('lunar.geslib.api.password');
+}
+
 it('complies pending orders xsd', function () {
-    $response = $this->get('api/geslib/orders/pending');
+    $response = $this->get('api/geslib/orders/pending'.getCredentialsParams());
 
     $dom = new DOMDocument;
     $dom->loadXML($response->getContent());
@@ -31,7 +36,7 @@ it('complies pending orders xsd', function () {
         'placed_at' => now()->subHours(5),
     ]);
 
-    $response = $this->get('api/geslib/orders/pending');
+    $response = $this->get('api/geslib/orders/pending'.getCredentialsParams());
 
     $dom->loadXML($response->getContent());
 
@@ -45,7 +50,7 @@ it('lists pending orders', function () {
         'placed_at' => now()->subHours(5),
     ]);
 
-    $response = $this->get('api/geslib/orders/pending');
+    $response = $this->get('api/geslib/orders/pending'.getCredentialsParams());
 
     $response
         ->assertOk()
@@ -74,7 +79,7 @@ it('lists pending order with customer', function () {
         'customer_id' => $customer->id,
     ]);
 
-    $response = $this->get('api/geslib/orders/pending');
+    $response = $this->get('api/geslib/orders/pending'.getCredentialsParams());
 
     $response
         ->assertOk()
@@ -89,7 +94,7 @@ it('lists pending order with customer', function () {
 });
 
 it('returns empty list if no pending orders', function () {
-    $response = $this->get('api/geslib/orders/pending');
+    $response = $this->get('api/geslib/orders/pending'.getCredentialsParams());
 
     $response
         ->assertOk()
@@ -113,7 +118,7 @@ it('complies order xsd', function () {
         'order_id' => $order->id,
     ]);
 
-    $response = $this->get('api/geslib/orders/'.$order->reference);
+    $response = $this->get('api/geslib/orders/'.$order->reference.getCredentialsParams());
 
     $dom = new DOMDocument;
     $dom->loadXML($response->getContent());
@@ -131,7 +136,7 @@ it('gets pending order', function () {
         'customer_id' => $customer->id,
     ]);
 
-    $response = $this->get('api/geslib/orders/'.$order->reference);
+    $response = $this->get('api/geslib/orders/'.$order->reference.getCredentialsParams());
 
     $response
         ->assertOk()
@@ -176,7 +181,7 @@ it('gets pending order with customer geslib code and shipping address', function
         'country_id' => $country->id,
     ]);
 
-    $response = $this->get('api/geslib/orders/'.$order->reference);
+    $response = $this->get('api/geslib/orders/'.$order->reference.getCredentialsParams());
 
     $response
         ->assertOk()
@@ -218,7 +223,7 @@ it('gets pending order with billing address', function () {
         'country_id' => $country->id,
     ]);
 
-    $response = $this->get('api/geslib/orders/'.$order->reference);
+    $response = $this->get('api/geslib/orders/'.$order->reference.getCredentialsParams());
 
     $response
         ->assertOk()
@@ -270,7 +275,7 @@ it('gets pending order with lines', function () {
         ]);
     }
 
-    $response = $this->get('api/geslib/orders/'.$order->reference);
+    $response = $this->get('api/geslib/orders/'.$order->reference.getCredentialsParams());
 
     $response
         ->assertOk()

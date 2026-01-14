@@ -78,11 +78,15 @@ return [
 
     /*
      *--------------------------------------------------------------------------
-     * API Routes Configuration
+     * API Configuration
      *--------------------------------------------------------------------------
      *
      * Enable or disable the API routes for Geslib.
      *
      */
-    'api_routes_enabled' => env('GESLIB_API_ROUTES_ENABLED', true),
+    'api' => [
+        'enabled' => env('GESLIB_API_ENABLED', true),
+        'username' => env('GESLIB_API_USERNAME', ''),
+        'password' => env('GESLIB_API_PASSWORD', ''),
+    ],
 ];

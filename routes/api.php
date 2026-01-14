@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use NumaxLab\Lunar\Geslib\Http\Controllers\Api\OrderController;
 
 Route::prefix('api/geslib')
-    ->middleware('api')
+    ->middleware(['api', 'auth.geslib'])
     ->group(function (): void {
         Route::get('/orders/pending', [OrderController::class, 'indexPending'])
             ->name('lunar.geslib.orders.pending');

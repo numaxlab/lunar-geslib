@@ -29,5 +29,7 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="GESLIB_API_USERNAME" value="testuser"/>
+        <env name="GESLIB_API_PASSWORD" value="testpassword"/>
     </php>
 </phpunit>

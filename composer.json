@@ -6,6 +6,7 @@
     "require": {
         "php": "^8.4",
         "ext-zip": "*",
+        "ext-simplexml": "*",
         "illuminate/support": "*",
         "livewire/livewire": "^3.6",
         "lunarphp/core": "^1.1.0",

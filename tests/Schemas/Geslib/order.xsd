@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="getPedido">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="glmcpedcli">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="codigo" type="xs:string"/>
+                            <xs:element name="fecha" type="xs:string"/>
+                            <xs:element name="hora" type="xs:string"/>
+                            <xs:element name="ip_origen" type="xs:string"/>
+                            <xs:element name="cod_cliente" type="xs:string" minOccurs="0"/>
+                            <xs:element name="nombre" type="xs:string" minOccurs="0"/>
+                            <xs:element name="apellidos" type="xs:string" minOccurs="0"/>
+                            <xs:element name="cif" type="xs:string" minOccurs="0"/>
+                            <xs:element name="direccion" type="xs:string" minOccurs="0"/>
+                            <xs:element name="email" type="xs:string" minOccurs="0"/>
+                            <xs:element name="provincia" type="xs:string" minOccurs="0"/>
+                            <xs:element name="localidad" type="xs:string" minOccurs="0"/>
+                            <xs:element name="codigo_postal" type="xs:string" minOccurs="0"/>
+                            <xs:element name="pais" type="xs:string" minOccurs="0"/>
+                            <xs:element name="telefono" type="xs:string" minOccurs="0"/>
+                            <xs:element name="fax" type="xs:string" minOccurs="0"/>
+                            <xs:element name="nombre_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="cif_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="direccion_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="email_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="provincia_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="localidad_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="codigo_postal_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="pais_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="telefono_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="fax_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="envolver" type="xs:string" minOccurs="0"/>
+                            <xs:element name="enviar_factura" type="xs:string" minOccurs="0"/>
+                            <xs:element name="cod_zona_envio" type="xs:string" minOccurs="0"/>
+                            <xs:element name="zona_envio" type="xs:string" minOccurs="0"/>
+                            <xs:element name="cod_forma_pago" type="xs:string" minOccurs="0"/>
+                            <xs:element name="forma_pago" type="xs:string" minOccurs="0"/>
+                            <xs:element name="cod_forma_envio" type="xs:string" minOccurs="0"/>
+                            <xs:element name="forma_envio" type="xs:string" minOccurs="0"/>
+                            <xs:element name="referencia_transferencia" type="xs:string" minOccurs="0"/>
+                            <xs:element name="numero_tarjeta" type="xs:string" minOccurs="0"/>
+                            <xs:element name="numero_trasero_tarjeta" type="xs:string" minOccurs="0"/>
+                            <xs:element name="titular" type="xs:string" minOccurs="0"/>
+                            <xs:element name="tipo_tarjeta" type="xs:string" minOccurs="0"/>
+                            <xs:element name="mes_tarjeta" type="xs:string" minOccurs="0"/>
+                            <xs:element name="anio_tarjeta" type="xs:string" minOccurs="0"/>
+                            <xs:element name="observaciones" type="xs:string" minOccurs="0"/>
+                            <xs:element name="plazo_entrega" type="xs:string" minOccurs="0"/>
+                            <xs:element name="gastos_envio" type="xs:integer"/>
+                            <xs:element name="observaciones_gastos_envio" type="xs:string" minOccurs="0"/>
+                            <xs:element name="estado" type="xs:string"/>
+                            <xs:element name="sincronizado" type="xs:string"/>
+                            <xs:element name="usuario_sincronizacion" type="xs:string" minOccurs="0"/>
+                            <xs:element name="fecha_sincronizacion" type="xs:string" minOccurs="0"/>
+                            <xs:element name="pedido_ebook" type="xs:string"/>
+                            <xs:element name="pedido_texto" type="xs:string"/>
+                            <xs:element name="codigo_iso_pais" type="xs:string" minOccurs="0"/>
+                            <xs:element name="idioma" type="xs:string"/>
+                            <xs:element name="cod_error_pasarela" type="xs:string" minOccurs="0"/>
+                            <xs:element name="descripcion_error_pasarela" type="xs:string" minOccurs="0"/>
+                            <xs:element name="token_pasarela" type="xs:string" minOccurs="0"/>
+                            <xs:element name="afiliado" type="xs:string" minOccurs="0"/>
+                            <xs:element name="cupon" type="xs:string" minOccurs="0"/>
+                            <xs:element name="descuento_cupon" type="xs:string" minOccurs="0"/>
+                            <xs:element name="importe_cupon" type="xs:string" minOccurs="0"/>
+                            <xs:element name="cupon_gastos" type="xs:string" minOccurs="0"/>
+                            <xs:element name="tarifa_plana_aplicada" type="xs:string"/>
+                            <xs:element name="puntos" type="xs:string" minOccurs="0"/>
+                            <xs:element name="ebook_ref_pedido" type="xs:string" minOccurs="0"/>
+                            <xs:element name="mensaje_regalo" type="xs:string" minOccurs="0"/>
+                            <xs:element name="fecha_confirmacion" type="xs:string"/>
+                            <xs:element name="calle" type="xs:string" minOccurs="0"/>
+                            <xs:element name="num_exterior" type="xs:string" minOccurs="0"/>
+                            <xs:element name="num_interior" type="xs:string" minOccurs="0"/>
+                            <xs:element name="entre_calle1" type="xs:string" minOccurs="0"/>
+                            <xs:element name="entre_calle2" type="xs:string" minOccurs="0"/>
+                            <xs:element name="colonia" type="xs:string" minOccurs="0"/>
+                            <xs:element name="tlf_oficina" type="xs:string" minOccurs="0"/>
+                            <xs:element name="tlf_movil" type="xs:string" minOccurs="0"/>
+                            <xs:element name="horario_entrega" type="xs:string" minOccurs="0"/>
+                            <xs:element name="calle_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="num_exterior_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="num_interior_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="entre_calle1_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="entre_calle2_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="colonia_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="num_modificaciones" type="xs:integer"/>
+                            <xs:element name="paypal_transaction_id" type="xs:string" minOccurs="0"/>
+                            <xs:element name="cfdi" type="xs:string" minOccurs="0"/>
+                            <xs:element name="recargo_forma_pago" type="xs:string" minOccurs="0"/>
+                            <xs:element name="importe_recargo_forma_pago" type="xs:string" minOccurs="0"/>
+                            <xs:element name="cod_transportista" type="xs:string" minOccurs="0"/>
+                            <xs:element name="nombre_transportista" type="xs:string" minOccurs="0"/>
+                            <xs:element name="id_seguimiento" type="xs:string" minOccurs="0"/>
+                            <xs:element name="fecha_aviso_seguimiento" type="xs:string" minOccurs="0"/>
+                            <xs:element name="recoger_libreria" type="xs:string"/>
+                            <xs:element name="recibo" type="xs:string" minOccurs="0"/>
+                            <xs:element name="fac_papel" type="xs:string" minOccurs="0"/>
+                            <xs:element name="fac_electronica" type="xs:string" minOccurs="0"/>
+                            <xs:element name="movil" type="xs:string" minOccurs="0"/>
+                            <xs:element name="movil_fac" type="xs:string" minOccurs="0"/>
+                            <xs:element name="login" type="xs:string" minOccurs="0"/>
+                            <xs:element name="password" type="xs:string" minOccurs="0"/>
+                            <xs:element name="n_pedido" type="xs:string"/>
+                            <xs:element name="cliente_web" type="xs:string" minOccurs="0"/>
+                            <xs:element name="cliente_geslib" type="xs:string" minOccurs="0"/>
+                            <xs:element name="gastos_contrareembolso" type="xs:integer"/>
+                            <xs:element name="importe_total" type="xs:integer"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="glmlpedcli" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="cod_linea" type="xs:string"/>
+                            <xs:element name="cod_pedido" type="xs:string"/>
+                            <xs:element name="articulo" type="xs:string"/>
+                            <xs:element name="tipo_articulo" type="xs:string"/>
+                            <xs:element name="orden" type="xs:integer"/>
+                            <xs:element name="cantidad" type="xs:integer"/>
+                            <xs:element name="precio" type="xs:decimal"/>
+                            <xs:element name="descripcion" type="xs:string"/>
+                            <xs:element name="isbn" type="xs:string"/>
+                            <xs:element name="ean" type="xs:string"/>
+                            <xs:element name="respetar_precio" type="xs:string"/>
+                            <xs:element name="descuento" type="xs:decimal"/>
+                            <xs:element name="ebook_codigo" type="xs:string" minOccurs="0"/>
+                            <xs:element name="cod_distribuidora" type="xs:string"/>
+                            <xs:element name="ebook_formato" type="xs:string" minOccurs="0"/>
+                            <xs:element name="link_portada" type="xs:string" minOccurs="0"/>
+                            <xs:element name="cod_seguridad" type="xs:string"/>
+                            <xs:element name="estado_descarga" type="xs:string" minOccurs="0"/>
+                            <xs:element name="link_descarga" type="xs:string" minOccurs="0"/>
+                            <xs:element name="num_pedido_distribuidora" type="xs:string" minOccurs="0"/>
+                            <xs:element name="cancelado" type="xs:string"/>
+                            <xs:element name="num_ficheros" type="xs:integer" minOccurs="0"/>
+                            <xs:element name="precio_bruto_original" type="xs:string" minOccurs="0"/>
+                            <xs:element name="cupon" type="xs:string" minOccurs="0"/>
+                            <xs:element name="descuento_cupon" type="xs:decimal"/>
+                            <xs:element name="disponibilidad" type="xs:string"/>
+                            <xs:element name="dispo_distri" type="xs:string" minOccurs="0"/>
+                            <xs:element name="ebook_drm" type="xs:string" minOccurs="0"/>
+                            <xs:element name="disponibilidad_web" type="xs:string" minOccurs="0"/>
+                            <xs:element name="precio_euros" type="xs:integer"/>
+                            <xs:element name="pvp_euros" type="xs:integer"/>
+                            <xs:element name="pvp_bruto" type="xs:decimal"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

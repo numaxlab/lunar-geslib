@@ -9,30 +9,32 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderLineResource extends JsonResource
 {
+    #[\Override]
     public function toArray(Request $request): array
     {
         return [
             'cod_linea' => $this->resource->id,
             'cod_pedido' => $this->resource->order->reference,
             'articulo' => $this->resource->purchasable->sku,
-            'tipo_articulo' => null,
+            'tipo_articulo' => $this->resource->purchasable->product->types->isNotEmpty() ?
+                $this->resource->purchasable->product->types->first()->geslib_code : null,
             'orden' => $this->additional['index'] ?? null,
             'cantidad' => $this->resource->quantity,
-            'precio' => 38.00,
+            'precio' => $this->resource->unit_price->decimal(),
             'descripcion' => $this->resource->purchasable->getDescription(),
             'isbn' => $this->resource->purchasable->gtin,
             'ean' => $this->resource->purchasable->ean,
             'respetar_precio' => 'S',
-            'descuento' => 0.00,
+            'descuento' => $this->resource->discount_total->decimal(),
             'ebook_codigo' => null,
-            'cod_distribuidora' => null,
+            'cod_distribuidora' => 0,
             'ebook_formato' => null,
             'link_portada' => null,
-            'cod_seguridad' => null,
+            'cod_seguridad' => 0,
             'estado_descarga' => null,
             'link_descarga' => null,
             'num_pedido_distribuidora' => null,
-            'cancelado' => null,
+            'cancelado' => 'N',
             'num_ficheros' => 0,
             'precio_bruto_original' => null,
             'cupon' => null,

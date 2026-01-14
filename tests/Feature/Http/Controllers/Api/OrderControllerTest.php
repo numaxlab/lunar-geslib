@@ -9,6 +9,8 @@ use Lunar\Models\Language;
 use Lunar\Models\Order;
 use Lunar\Models\OrderAddress;
 use Lunar\Models\OrderLine;
+use Lunar\Models\Product;
+use Lunar\Models\ProductVariant;
 
 beforeEach(function () {
     Language::factory()->create();
@@ -236,4 +238,63 @@ it('gets pending order with billing address', function () {
         ->and((string) $xml->glmcpedcli[0]->codigo_postal_fac)->toBe((string) $billingAddress->postcode)
         ->and((string) $xml->glmcpedcli[0]->pais_fac)->toBe((string) $country->name)
         ->and((string) $xml->glmcpedcli[0]->telefono_fac)->toBe((string) $billingAddress->contact_phone);
+});
+
+it('gets pending order with lines', function () {
+    $customer = Customer::factory()->create();
+
+    $order = Order::factory()->create([
+        'is_geslib' => true,
+        'status' => 'payment-received',
+        'placed_at' => now()->subHours(5),
+        'customer_id' => $customer->id,
+    ]);
+
+    $geslibIds = [12345, 67890];
+    $lines = [];
+
+    $typeId = ensureCollectionsForArticle(typeId: 'L')[0];
+
+    foreach ($geslibIds as $geslibId) {
+        $product = Product::factory()->create();
+
+        $product->collections()->attach($typeId);
+
+        $variant = ProductVariant::factory()->for($product)->create([
+            'sku' => $geslibId,
+        ]);
+
+        $lines[] = OrderLine::factory()->create([
+            'order_id' => $order->id,
+            'purchasable_id' => $variant->id,
+        ]);
+    }
+
+    $response = $this->get('api/geslib/orders/'.$order->reference);
+
+    $response
+        ->assertOk()
+        ->assertHeader('Content-Type', 'application/xml');
+
+    $xml = new SimpleXMLElement($response->getContent());
+
+    expect($xml->getName())
+        ->toBe('getPedido')
+        ->and($xml->glmlpedcli->count())->toBe(2)
+        ->and((string) $xml->glmlpedcli[0]->cod_linea)->toBe((string) $lines[0]->id)
+        ->and((string) $xml->glmlpedcli[0]->cod_pedido)->toBe($order->reference)
+        ->and((string) $xml->glmlpedcli[0]->articulo)->toBe((string) $lines[0]->purchasable->sku)
+        ->and((string) $xml->glmlpedcli[0]->tipo_articulo)->toBe('L')
+        ->and((string) $xml->glmlpedcli[0]->orden)->toBe('1')
+        ->and((string) $xml->glmlpedcli[0]->cantidad)->toBe((string) $lines[0]->quantity)
+        ->and((string) $xml->glmlpedcli[0]->precio)->toBe((string) $lines[0]->unit_price->decimal())
+        ->and((string) $xml->glmlpedcli[0]->descripcion)->toBe((string) $lines[0]->purchasable->getDescription())
+        ->and((string) $xml->glmlpedcli[0]->isbn)->toBe((string) $lines[0]->purchasable->gtin)
+        ->and((string) $xml->glmlpedcli[0]->ean)->toBe((string) $lines[0]->purchasable->ean)
+        ->and((string) $xml->glmlpedcli[0]->respetar_precio)->toBe('S')
+        ->and((string) $xml->glmlpedcli[0]->descuento)->toBe((string) $lines[0]->discount_total->decimal())
+        ->and((string) $xml->glmlpedcli[0]->cancelado)->toBe('N')
+        ->and((string) $xml->glmlpedcli[0]->precio_euros)->toBe((string) $lines[0]->unit_price)
+        ->and((string) $xml->glmlpedcli[0]->pvp_euros)->toBe((string) $lines[0]->unit_price)
+        ->and((string) $xml->glmlpedcli[0]->pvp_bruto)->toBe((string) $lines[0]->sub_total->decimal());
 });

@@ -12,6 +12,7 @@ use NumaxLab\Lunar\Geslib\InterCommands\BindingTypeCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\CollectionCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\LanguageCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
+use NumaxLab\Lunar\Geslib\InterCommands\TypeCommand;
 
 class Product extends \Lunar\Models\Product
 {
@@ -103,6 +104,13 @@ class Product extends \Lunar\Models\Product
     {
         return $this->collections()->whereHas('group', function ($query): void {
             $query->where('handle', StatusCommand::HANDLE);
+        });
+    }
+
+    public function types(): BelongsToMany
+    {
+        return $this->collections()->whereHas('group', function ($query): void {
+            $query->where('handle', TypeCommand::HANDLE);
         });
     }
 

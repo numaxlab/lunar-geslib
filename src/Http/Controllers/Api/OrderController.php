@@ -44,6 +44,7 @@ class OrderController
                 'billingAddress.country',
                 'productLines',
                 'productLines.purchasable',
+                'productLines.order',
             ])
             ->first();
 
@@ -52,11 +53,9 @@ class OrderController
         }
 
         $response = [
-            'glmcpedcli' => (new OrderResource($order))->resolve(),
+            'glmcpedcli' => new OrderResource($order)->resolve(),
             'glmlpedcli' => OrderLineResource::collection($order->productLines)
-                ->map(function ($line, $index) {
-                    return $line->additional(['index' => $index + 1])->resolve();
-                })
+                ->map(fn($line, $index) => $line->additional(['index' => $index + 1])->resolve())
                 ->toArray(),
         ];
 

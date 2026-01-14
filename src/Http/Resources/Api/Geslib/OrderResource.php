@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderResource extends JsonResource
 {
+    #[\Override]
     public function toArray(Request $request): array
     {
         $shippingAddress = $this->resource->shippingAddress;

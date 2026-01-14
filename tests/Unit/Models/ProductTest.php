@@ -17,7 +17,7 @@ use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
 
-beforeEach(fn () => Language::factory()->create());
+beforeEach(fn() => Language::factory()->create());
 
 it('has a contributors relationship', function () {
     $product = new Product;
@@ -244,6 +244,16 @@ it('has a statuses relationship', function () {
         ->toBeInstanceOf(BelongsToMany::class)
         ->and($product->statuses()->getModel())->toBeInstanceOf(LunarGeslibCollection::class)
         ->and($product->statuses)->toBeInstanceOf(Collection::class)
+        ->toHaveCount(0);
+});
+
+it('has a types relationship', function () {
+    $product = new Product;
+
+    expect($product->types())
+        ->toBeInstanceOf(BelongsToMany::class)
+        ->and($product->statuses()->getModel())->toBeInstanceOf(LunarGeslibCollection::class)
+        ->and($product->types)->toBeInstanceOf(Collection::class)
         ->toHaveCount(0);
 });
 

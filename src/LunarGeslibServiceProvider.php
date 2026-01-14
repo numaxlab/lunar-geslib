@@ -81,7 +81,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             DilveEnricher::class,
-            fn($app): DilveEnricher => new DilveEnricher(
+            fn ($app): DilveEnricher => new DilveEnricher(
                 new DilveClient(
                     config('lunar.geslib.dilve.username'),
                     config('lunar.geslib.dilve.password'),
@@ -91,7 +91,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
 
         $this->app->bind(
             CegalAvailability::class,
-            fn($app): CegalAvailability => new CegalAvailability(
+            fn ($app): CegalAvailability => new CegalAvailability(
                 CegalClient::create(
                     config('lunar.geslib.cegal.username'),
                     config('lunar.geslib.cegal.password'),
@@ -184,8 +184,7 @@ class LunarGeslibServiceProvider extends ServiceProvider
                 ->extending(Model::class)
                 ->get(),
         )->mapWithKeys(
-            fn($class): array
-                => [
+            fn ($class): array => [
                 Str::snake(str_replace('\\', '_', Str::after($class, 'NumaxLab\\Lunar\\Geslib\\Models\\'))) => $class,
             ],
         );

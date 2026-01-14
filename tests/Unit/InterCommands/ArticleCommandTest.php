@@ -19,8 +19,7 @@ beforeEach(function () {
     Language::factory()->create();
 });
 
-afterEach(fn() => Mockery::close());
-
+afterEach(fn () => Mockery::close());
 
 it('does nothing when the line action is delete and no variant exists', function () {
     Event::fake();

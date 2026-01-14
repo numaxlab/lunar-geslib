@@ -17,7 +17,7 @@ use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
 
-beforeEach(fn() => Language::factory()->create());
+beforeEach(fn () => Language::factory()->create());
 
 it('has a contributors relationship', function () {
     $product = new Product;

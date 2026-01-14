@@ -55,7 +55,7 @@ class OrderController
         $response = [
             'glmcpedcli' => new OrderResource($order)->resolve(),
             'glmlpedcli' => OrderLineResource::collection($order->productLines)
-                ->map(fn($line, $index) => $line->additional(['index' => $index + 1])->resolve())
+                ->map(fn ($line, $index) => $line->additional(['index' => $index + 1])->resolve())
                 ->toArray(),
         ];
 

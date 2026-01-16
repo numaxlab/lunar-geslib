@@ -8,21 +8,19 @@ use NumaxLab\Lunar\Geslib\InterCommands\Contracts\CommandContract;
 
 abstract class AbstractCommand implements CommandContract
 {
-    public ?string $type = null;
+    public ?string $type = null {
+        get {
+            return $this->type;
+        }
+    }
 
-    protected bool $isBatch = false;
+    public bool $isBatch = false {
+        get {
+            return $this->isBatch;
+        }
+    }
 
     protected array $log = [];
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function isBatch(): bool
-    {
-        return $this->isBatch;
-    }
 
     public function addLog(string $level, string $message): void
     {

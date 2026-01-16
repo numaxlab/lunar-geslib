@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
 
-beforeEach(fn() => Language::factory()->create());
+beforeEach(fn () => Language::factory()->create());
 
 it('saves index in product attribute_data', function () {
     $product = Product::factory()->create();

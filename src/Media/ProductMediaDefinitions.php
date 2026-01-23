@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NumaxLab\Lunar\Geslib\Media;
 
 use Lunar\Base\MediaDefinitionsInterface;
+use Spatie\Image\Enums\BorderType;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\MediaCollection;
@@ -40,24 +41,45 @@ class ProductMediaDefinitions implements MediaDefinitionsInterface
         $conversions = [
             'zoom' => [
                 'width' => 1000,
+                'fit' => Fit::Contain,
             ],
             'large' => [
                 'width' => 800,
+                'fit' => Fit::Contain,
             ],
             'medium' => [
                 'width' => 500,
+                'fit' => Fit::Contain,
+            ],
+            'open-graph' => [
+                'width' => 1200,
+                'height' => 630,
+                'fit' => Fit::Fill,
             ],
         ];
 
         $collection->registerMediaConversions(function (Media $media) use ($model, $conversions): void {
             foreach ($conversions as $key => $conversion) {
-                $model
-                    ->addMediaConversion($key)
-                    ->fit(
-                        fit: Fit::Contain,
-                        desiredWidth: $conversion['width'],
-                    )
-                    ->keepOriginalImageFormat();
+                if ($conversion['fit']->value === Fit::Fill->value) {
+                    $model
+                        ->addMediaConversion($key)
+                        ->fit(
+                            fit: $conversion['fit'],
+                            desiredWidth: $conversion['width'],
+                            desiredHeight: $conversion['height'],
+                        )
+                        ->border(0, BorderType::Overlay, color: '#FFF')
+                        ->background('#FFF')
+                        ->keepOriginalImageFormat();
+                } else {
+                    $model
+                        ->addMediaConversion($key)
+                        ->fit(
+                            fit: $conversion['fit'],
+                            desiredWidth: $conversion['width'],
+                        )
+                        ->keepOriginalImageFormat();
+                }
             }
         });
     }

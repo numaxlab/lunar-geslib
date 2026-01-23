@@ -50,4 +50,14 @@ class Author extends BaseModel implements Contracts\Author, SpatieHasMedia
             config('lunar.database.table_prefix').'geslib_author_product',
         )->withPivot(['author_type', 'position']);
     }
+
+    public function getFirstNameAttribute()
+    {
+        return collect(explode(', ', $this->attributes['name'] ?? ''))->last();
+    }
+
+    public function getLastNameAttribute()
+    {
+        return collect(explode(', ', $this->attributes['name'] ?? ''))->first();
+    }
 }

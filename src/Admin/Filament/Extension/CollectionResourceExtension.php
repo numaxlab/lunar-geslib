@@ -62,7 +62,6 @@ class CollectionResourceExtension extends ResourceExtension
         ],
         Handle::COLLECTION_GROUP_TAXONOMIES => [
             'subtitle',
-            'description',
             'is-special',
         ],
         Handle::COLLECTION_GROUP_FEATURED => [

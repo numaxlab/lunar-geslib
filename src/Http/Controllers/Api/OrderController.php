@@ -16,6 +16,7 @@ class OrderController
         $orders = Order::where('is_geslib', true)
             ->whereIn('status', ['payment-received', 'dispatched'])
             ->whereNotNull('placed_at')
+            ->whereNull('synced_with_geslib_at')
             ->orderBy('placed_at', 'desc')
             ->with(['customer'])
             ->get();
@@ -55,7 +56,7 @@ class OrderController
         $response = [
             'glmcpedcli' => new OrderResource($order)->resolve(),
             'glmlpedcli' => OrderLineResource::collection($order->productLines)
-                ->map(fn ($line, $index) => $line->additional(['index' => $index + 1])->resolve())
+                ->map(fn($line, $index) => $line->additional(['index' => $index + 1])->resolve())
                 ->toArray(),
         ];
 
@@ -64,8 +65,35 @@ class OrderController
 
     public function sync($reference)
     {
-        $order = [];
+        $order = Order::where('reference', $reference)
+            ->where('is_geslib', true)
+            ->whereNotNull('placed_at')
+            ->with([
+                'customer',
+                'shippingAddress',
+                'shippingAddress.country',
+                'billingAddress',
+                'billingAddress.country',
+                'productLines',
+                'productLines.purchasable',
+                'productLines.order',
+            ])
+            ->first();
 
-        return response()->xml($order, 200, [], 'getPedido');
+        if (! $order) {
+            return response()->xml([], 200, [], 'getPedido');
+        }
+
+        $order->synced_with_geslib_at = now();
+        $order->save();
+
+        $response = [
+            'glmcpedcli' => new OrderResource($order)->resolve(),
+            'glmlpedcli' => OrderLineResource::collection($order->productLines)
+                ->map(fn($line, $index) => $line->additional(['index' => $index + 1])->resolve())
+                ->toArray(),
+        ];
+
+        return response()->xml($response, 200, [], 'getPedido');
     }
 }

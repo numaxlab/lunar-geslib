@@ -245,6 +245,99 @@ it('gets pending order with billing address', function () {
         ->and((string) $xml->glmcpedcli[0]->telefono_fac)->toBe((string) $billingAddress->contact_phone);
 });
 
+it('does not list already synced orders as pending', function () {
+    Order::factory()->count(3)->create([
+        'is_geslib' => true,
+        'status' => 'payment-received',
+        'placed_at' => now()->subHours(5),
+        'synced_with_geslib_at' => now()->subHour(),
+    ]);
+
+    Order::factory()->count(2)->create([
+        'is_geslib' => true,
+        'status' => 'payment-received',
+        'placed_at' => now()->subHours(5),
+    ]);
+
+    $response = $this->get('api/geslib/orders/pending'.getCredentialsParams());
+
+    $response->assertOk();
+
+    $xml = new SimpleXMLElement($response->getContent());
+
+    expect($xml->count())->toBe(2);
+});
+
+it('syncs an order and returns its detail', function () {
+    $customer = Customer::factory()->create();
+
+    $order = Order::factory()->create([
+        'is_geslib' => true,
+        'status' => 'payment-received',
+        'placed_at' => now()->subHours(5),
+        'customer_id' => $customer->id,
+        'synced_with_geslib_at' => null,
+    ]);
+
+    $response = $this->get('api/geslib/orders/'.$order->reference.'/sync'.getCredentialsParams());
+
+    $response
+        ->assertOk()
+        ->assertHeader('Content-Type', 'application/xml');
+
+    $xml = new SimpleXMLElement($response->getContent());
+
+    expect($xml->getName())
+        ->toBe('getPedido')
+        ->and((string) $xml->glmcpedcli[0]->codigo)->toBe($order->reference)
+        ->and((string) $xml->glmcpedcli[0]->n_pedido)->toBe($order->reference);
+
+    $this->assertDatabaseMissing('orders', [
+        'id' => $order->id,
+        'synced_with_geslib_at' => null,
+    ]);
+});
+
+it('synced order no longer appears in pending list', function () {
+    $order = Order::factory()->create([
+        'is_geslib' => true,
+        'status' => 'payment-received',
+        'placed_at' => now()->subHours(5),
+    ]);
+
+    $this
+        ->get('api/geslib/orders/pending'.getCredentialsParams())
+        ->assertOk();
+
+    $xml = new SimpleXMLElement(
+        $this->get('api/geslib/orders/pending'.getCredentialsParams())->getContent(),
+    );
+    expect($xml->count())->toBe(1);
+
+    $this
+        ->get('api/geslib/orders/'.$order->reference.'/sync'.getCredentialsParams())
+        ->assertOk();
+
+    $xml = new SimpleXMLElement(
+        $this->get('api/geslib/orders/pending'.getCredentialsParams())->getContent(),
+    );
+    expect($xml->count())->toBe(0);
+});
+
+it('returns empty response when syncing a non-existent order', function () {
+    $response = $this->get('api/geslib/orders/NON-EXISTENT/sync'.getCredentialsParams());
+
+    $response
+        ->assertOk()
+        ->assertHeader('Content-Type', 'application/xml');
+
+    $xml = new SimpleXMLElement($response->getContent());
+
+    expect($xml->getName())
+        ->toBe('getPedido')
+        ->and($xml->count())->toBe(0);
+});
+
 it('gets pending order with lines', function () {
     $customer = Customer::factory()->create();
 

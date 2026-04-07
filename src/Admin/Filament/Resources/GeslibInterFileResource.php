@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Resources\GeslibInterFileResource\Pages\ListGeslibInterFiles;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 
@@ -92,14 +93,14 @@ class GeslibInterFileResource extends Resource
                     ->label('Ver log')
                     ->icon('heroicon-o-eye')
                     ->modalContent(fn ($record,
-                    ): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory => view('lunar-geslib::filament.modals.geslib-inter-file-log',
+                    ): View|\Illuminate\Contracts\View\Factory => view('lunar-geslib::filament.modals.geslib-inter-file-log',
                         [
                             'log' => $record->log,
                         ]))
                     ->modalHeading('Registro de actividad')
                     ->modalSubmitAction(false)
                     ->modalCancelAction(fn (StaticAction $action,
-                    ): \Filament\Actions\StaticAction => $action->label('Cerrar')),
+                    ): StaticAction => $action->label('Cerrar')),
             ])
             ->defaultSort('created_at', 'desc');
     }

@@ -19,9 +19,7 @@ class CollectionCommand extends AbstractCommand
         '< Genérica >',
     ];
 
-    public function __construct(private readonly EditorialCollection $editorialCollection)
-    {
-    }
+    public function __construct(private readonly EditorialCollection $editorialCollection) {}
 
     public function __invoke(): void
     {
@@ -47,7 +45,7 @@ class CollectionCommand extends AbstractCommand
             ])),
         ];
 
-        if (!$collection) {
+        if (! $collection) {
             $collection = Collection::create([
                 'geslib_code' => $geslibCode,
                 'attribute_data' => $attributeData,
@@ -68,6 +66,6 @@ class CollectionCommand extends AbstractCommand
 
     public static function getGeslibId(string $editorialId, string $collectionId): string
     {
-        return $editorialId . '-' . $collectionId;
+        return $editorialId.'-'.$collectionId;
     }
 }

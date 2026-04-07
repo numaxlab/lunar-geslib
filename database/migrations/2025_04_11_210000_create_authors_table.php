@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Lunar\Base\Migration;
+use NumaxLab\Geslib\Lines\AuthorType;
 
 return new class extends Migration
 {
@@ -26,7 +27,7 @@ return new class extends Migration
         Schema::create($this->prefix.'geslib_author_product', function (Blueprint $table): void {
             $table->unsignedBigInteger('author_id');
             $table->unsignedBigInteger('product_id');
-            $table->string('author_type')->default(\NumaxLab\Geslib\Lines\AuthorType::AUTHOR);
+            $table->string('author_type')->default(AuthorType::AUTHOR);
             $table->integer('position')->default(0);
 
             $table

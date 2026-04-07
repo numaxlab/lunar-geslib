@@ -14,9 +14,7 @@ class ClassificationCommand extends AbstractCommand
 {
     public const HANDLE = 'classifications';
 
-    public function __construct(private readonly Classification $classification)
-    {
-    }
+    public function __construct(private readonly Classification $classification) {}
 
     public function __invoke(): void
     {
@@ -33,7 +31,7 @@ class ClassificationCommand extends AbstractCommand
             ])),
         ];
 
-        if (!$collection) {
+        if (! $collection) {
             Collection::create([
                 'geslib_code' => $this->classification->id(),
                 'attribute_data' => $attributeData,

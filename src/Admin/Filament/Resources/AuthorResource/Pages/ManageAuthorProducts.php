@@ -62,7 +62,7 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
             DetachAction::make()
                 ->action(function (Model $record, Table $table): void {
                     $relationship = Relation::noConstraints(fn (
-                    ): \Illuminate\Database\Eloquent\Relations\Relation|\Illuminate\Database\Eloquent\Builder|null => $table->getRelationship());
+                    ): Relation|\Illuminate\Database\Eloquent\Builder|null => $table->getRelationship());
 
                     $relationship->detach($record);
 
@@ -102,7 +102,7 @@ class ManageAuthorProducts extends BaseManageRelatedRecords
                 ])
                 ->action(function (array $arguments, array $data, Form $form, Table $table): void {
                     $relationship = Relation::noConstraints(fn (
-                    ): \Illuminate\Database\Eloquent\Relations\Relation|\Illuminate\Database\Eloquent\Builder|null => $table->getRelationship());
+                    ): Relation|\Illuminate\Database\Eloquent\Builder|null => $table->getRelationship());
 
                     $product = Product::find($data['recordId']);
 

@@ -14,9 +14,7 @@ class LanguageCommand extends AbstractCommand
 {
     public const HANDLE = 'languages';
 
-    public function __construct(private readonly Language $language)
-    {
-    }
+    public function __construct(private readonly Language $language) {}
 
     public function __invoke(): void
     {
@@ -31,7 +29,7 @@ class LanguageCommand extends AbstractCommand
             ])),
         ];
 
-        if (!$collection) {
+        if (! $collection) {
             Collection::create([
                 'geslib_code' => $this->language->id(),
                 'attribute_data' => $attributeData,

@@ -14,9 +14,7 @@ class StatusCommand extends AbstractCommand
 {
     public const string HANDLE = 'statuses';
 
-    public function __construct(private readonly Status $status)
-    {
-    }
+    public function __construct(private readonly Status $status) {}
 
     public function __invoke(): void
     {
@@ -31,7 +29,7 @@ class StatusCommand extends AbstractCommand
             ])),
         ];
 
-        if (!$collection) {
+        if (! $collection) {
             Collection::create([
                 'geslib_code' => $this->status->id(),
                 'attribute_data' => $attributeData,

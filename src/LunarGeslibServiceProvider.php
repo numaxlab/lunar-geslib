@@ -17,6 +17,9 @@ use Lunar\Admin\Support\Facades\AttributeData;
 use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Facades\AttributeManifest;
 use Lunar\Facades\ModelManifest;
+use Lunar\Models\Contracts\Collection;
+use Lunar\Models\Contracts\Product;
+use Lunar\Models\Contracts\ProductVariant;
 use NumaxLab\Cegal\Client as CegalClient;
 use NumaxLab\Dilve\Client as DilveClient;
 use NumaxLab\Lunar\Geslib\Admin\Filament\Extension\CollectionResourceExtension;
@@ -57,23 +60,23 @@ class LunarGeslibServiceProvider extends ServiceProvider
     protected function registerModelManifests(): void
     {
         ModelManifest::add(
-            \NumaxLab\Lunar\Geslib\Models\Contracts\Author::class,
+            Models\Contracts\Author::class,
             Author::class,
         );
 
         ModelManifest::replace(
-            \Lunar\Models\Contracts\Product::class,
-            \NumaxLab\Lunar\Geslib\Models\Product::class,
+            Product::class,
+            Models\Product::class,
         );
 
         ModelManifest::replace(
-            \Lunar\Models\Contracts\ProductVariant::class,
-            \NumaxLab\Lunar\Geslib\Models\ProductVariant::class,
+            ProductVariant::class,
+            Models\ProductVariant::class,
         );
 
         ModelManifest::replace(
-            \Lunar\Models\Contracts\Collection::class,
-            \NumaxLab\Lunar\Geslib\Models\Collection::class,
+            Collection::class,
+            Models\Collection::class,
         );
     }
 

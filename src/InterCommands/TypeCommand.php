@@ -14,9 +14,7 @@ class TypeCommand extends AbstractCommand
 {
     public const HANDLE = 'product-types';
 
-    public function __construct(private readonly Type $geslibType)
-    {
-    }
+    public function __construct(private readonly Type $geslibType) {}
 
     public function __invoke(): void
     {
@@ -31,7 +29,7 @@ class TypeCommand extends AbstractCommand
             ])),
         ];
 
-        if (!$collection) {
+        if (! $collection) {
             Collection::create([
                 'geslib_code' => $this->geslibType->id(),
                 'attribute_data' => $attributeData,

@@ -4,6 +4,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection as SupportCollection;
+use Lunar\FieldTypes\Text;
 use Lunar\Models\Language;
 use Lunar\Models\Product;
 use Lunar\Models\Url;
@@ -86,7 +87,7 @@ it('is searchable', function () {
 it('has attributes', function () {
     $author = Author::factory()->create([
         'attribute_data' => collect([
-            'biography' => new \Lunar\FieldTypes\Text('Naomi Klein is a Canadian author and social activist.'),
+            'biography' => new Text('Naomi Klein is a Canadian author and social activist.'),
         ]),
     ]);
 

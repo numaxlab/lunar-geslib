@@ -15,9 +15,7 @@ class TopicCommand extends AbstractCommand
 {
     public const string HANDLE = Handle::COLLECTION_GROUP_TAXONOMIES;
 
-    public function __construct(private readonly Topic $topic)
-    {
-    }
+    public function __construct(private readonly Topic $topic) {}
 
     public function __invoke(): void
     {
@@ -37,7 +35,7 @@ class TopicCommand extends AbstractCommand
             ])),
         ];
 
-        if (!$collection) {
+        if (! $collection) {
             Collection::create([
                 'geslib_code' => $this->topic->id(),
                 'attribute_data' => $attributeData,

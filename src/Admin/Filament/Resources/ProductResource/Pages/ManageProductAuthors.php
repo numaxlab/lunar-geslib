@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Lunar\Admin\Filament\Resources\ProductResource;
@@ -60,7 +61,7 @@ class ManageProductAuthors extends BaseManageRelatedRecords
                 DetachAction::make()
                     ->action(function (Model $record, Table $table): void {
                         $relationship = Relation::noConstraints(fn (
-                        ): \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\Relation|null => $table->getRelationship());
+                        ): Builder|\Illuminate\Database\Eloquent\Relations\Relation|null => $table->getRelationship());
 
                         $relationship->detach($record);
 
@@ -107,7 +108,7 @@ class ManageProductAuthors extends BaseManageRelatedRecords
                     ])
                     ->action(function (array $arguments, array $data, Form $form, Table $table): void {
                         $relationship = Relation::noConstraints(fn (
-                        ): \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\Relation|null => $table->getRelationship());
+                        ): Builder|\Illuminate\Database\Eloquent\Relations\Relation|null => $table->getRelationship());
 
                         $author = Author::find($data['recordId']);
 

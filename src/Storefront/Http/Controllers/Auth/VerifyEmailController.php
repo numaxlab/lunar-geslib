@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NumaxLab\Lunar\Geslib\Storefront\Http\Controllers\Auth;
 
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
 
@@ -17,7 +18,7 @@ class VerifyEmailController
         }
 
         if ($request->user()->markEmailAsVerified()) {
-            /** @var \Illuminate\Contracts\Auth\MustVerifyEmail $user */
+            /** @var MustVerifyEmail $user */
             $user = $request->user();
 
             event(new Verified($user));

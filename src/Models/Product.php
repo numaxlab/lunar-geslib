@@ -6,6 +6,7 @@ namespace NumaxLab\Lunar\Geslib\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Lunar\Models\Collection;
 use NumaxLab\Geslib\Lines\AuthorType;
 use NumaxLab\Lunar\Geslib\Handle;
 use NumaxLab\Lunar\Geslib\InterCommands\BindingTypeCommand;
@@ -69,7 +70,7 @@ class Product extends \Lunar\Models\Product
         });
     }
 
-    public function getSectionTaxonomy(): ?\Lunar\Models\Collection
+    public function getSectionTaxonomy(): ?Collection
     {
         foreach ($this->taxonomies as $taxonomy) {
             if ($taxonomy->translateAttribute('is-section') === true) {

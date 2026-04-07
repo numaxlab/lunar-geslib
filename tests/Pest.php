@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Lunar\Models\Collection;
 use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\Action;
@@ -8,10 +9,11 @@ use NumaxLab\Lunar\Geslib\InterCommands\CollectionCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\LanguageCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\StatusCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\TypeCommand;
+use Tests\TestCase;
 
 pest()
-    ->extend(Tests\TestCase::class)
-    ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    ->extend(TestCase::class)
+    ->use(RefreshDatabase::class)
     ->in('Feature');
 
 function getSchemaPath(string $filename): string

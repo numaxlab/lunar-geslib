@@ -14,9 +14,7 @@ class BindingTypeCommand extends AbstractCommand
 {
     public const HANDLE = 'binding-types';
 
-    public function __construct(private readonly BindingType $bindingType)
-    {
-    }
+    public function __construct(private readonly BindingType $bindingType) {}
 
     public function __invoke(): void
     {
@@ -31,7 +29,7 @@ class BindingTypeCommand extends AbstractCommand
             ])),
         ];
 
-        if (!$collection) {
+        if (! $collection) {
             Collection::create([
                 'geslib_code' => $this->bindingType->id(),
                 'attribute_data' => $attributeData,

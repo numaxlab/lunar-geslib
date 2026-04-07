@@ -8,8 +8,8 @@ use Lunar\FieldTypes\Text;
 use Lunar\FieldTypes\TranslatedText;
 use Lunar\Models\Brand;
 use Lunar\Models\Collection;
-use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\Collection as EditorialCollection;
+use NumaxLab\Lunar\Geslib\Support\ImportRegistry;
 
 class CollectionCommand extends AbstractCommand
 {
@@ -19,7 +19,9 @@ class CollectionCommand extends AbstractCommand
         '< Genérica >',
     ];
 
-    public function __construct(private readonly EditorialCollection $editorialCollection) {}
+    public function __construct(private readonly EditorialCollection $editorialCollection)
+    {
+    }
 
     public function __invoke(): void
     {
@@ -31,7 +33,7 @@ class CollectionCommand extends AbstractCommand
             return;
         }
 
-        $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
+        $group = ImportRegistry::collectionGroup(self::HANDLE);
 
         $geslibCode = self::getGeslibId($this->editorialCollection->editorialId(), $this->editorialCollection->id());
 
@@ -45,7 +47,7 @@ class CollectionCommand extends AbstractCommand
             ])),
         ];
 
-        if (! $collection) {
+        if (!$collection) {
             $collection = Collection::create([
                 'geslib_code' => $geslibCode,
                 'attribute_data' => $attributeData,
@@ -66,6 +68,6 @@ class CollectionCommand extends AbstractCommand
 
     public static function getGeslibId(string $editorialId, string $collectionId): string
     {
-        return $editorialId.'-'.$collectionId;
+        return $editorialId . '-' . $collectionId;
     }
 }

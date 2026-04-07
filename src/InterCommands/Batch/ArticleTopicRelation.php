@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace NumaxLab\Lunar\Geslib\InterCommands\Batch;
 
 use Lunar\Models\Collection as LunarCollection;
-use Lunar\Models\CollectionGroup;
 use Lunar\Models\ProductVariant;
 use NumaxLab\Lunar\Geslib\InterCommands\Contracts\CommandContract;
 use NumaxLab\Lunar\Geslib\InterCommands\TopicCommand;
 use NumaxLab\Lunar\Geslib\Managers\CollectionGroupSync;
+use NumaxLab\Lunar\Geslib\Support\ImportRegistry;
 
 class ArticleTopicRelation extends AbstractBatchCommand
 {
@@ -17,7 +17,7 @@ class ArticleTopicRelation extends AbstractBatchCommand
     {
         $variant = ProductVariant::where('sku', $this->articleId)->first();
 
-        if (! $variant) {
+        if (!$variant) {
             $this->addLog(
                 CommandContract::LEVEL_WARNING,
                 sprintf('Product with code [%s] not found.', $this->articleId),
@@ -28,7 +28,7 @@ class ArticleTopicRelation extends AbstractBatchCommand
 
         $product = $variant->product;
 
-        $collectionGroup = CollectionGroup::where('handle', TopicCommand::HANDLE)->firstOrFail();
+        $collectionGroup = ImportRegistry::collectionGroup(TopicCommand::HANDLE);
 
         $topicsCollection = LunarCollection::where('collection_group_id', $collectionGroup->id)
             ->where(function ($query): void {
@@ -57,5 +57,7 @@ class ArticleTopicRelation extends AbstractBatchCommand
         }
 
         new CollectionGroupSync($product, $collectionGroup->id, $topicsCollection)->handle();
+
+        $product->searchable();
     }
 }

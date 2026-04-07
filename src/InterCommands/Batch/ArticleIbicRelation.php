@@ -12,6 +12,7 @@ use Lunar\Models\ProductVariant;
 use NumaxLab\Lunar\Geslib\InterCommands\Contracts\CommandContract;
 use NumaxLab\Lunar\Geslib\InterCommands\IbicCommand;
 use NumaxLab\Lunar\Geslib\Managers\CollectionGroupSync;
+use NumaxLab\Lunar\Geslib\Support\ImportRegistry;
 
 class ArticleIbicRelation extends AbstractBatchCommand
 {
@@ -19,7 +20,7 @@ class ArticleIbicRelation extends AbstractBatchCommand
     {
         $variant = ProductVariant::where('sku', $this->articleId)->first();
 
-        if (! $variant) {
+        if (!$variant) {
             $this->addLog(
                 CommandContract::LEVEL_WARNING,
                 sprintf('Product with code [%s] not found.', $this->articleId),
@@ -30,20 +31,22 @@ class ArticleIbicRelation extends AbstractBatchCommand
 
         $product = $variant->product;
 
-        $collectionGroup = CollectionGroup::where('handle', IbicCommand::HANDLE)->firstOrFail();
+        $collectionGroup = ImportRegistry::collectionGroup(IbicCommand::HANDLE);
 
         $ibicCollection = $this->getIbicCollection($collectionGroup);
 
         if ($ibicCollection->count() < count($this->data)) {
-            $this->createMissingCollections($collectionGroup);
+            $this->createMissingCollections($collectionGroup, $ibicCollection);
 
             $ibicCollection = $this->getIbicCollection($collectionGroup);
         }
 
         new CollectionGroupSync($product, $collectionGroup->id, $ibicCollection)->handle();
+
+        $product->searchable();
     }
 
-    private function getIbicCollection($collectionGroup): Collection
+    private function getIbicCollection(CollectionGroup $collectionGroup): Collection
     {
         return LunarCollection::where('collection_group_id', $collectionGroup->id)
             ->where(function ($query): void {
@@ -53,13 +56,12 @@ class ArticleIbicRelation extends AbstractBatchCommand
             })->get();
     }
 
-    private function createMissingCollections(CollectionGroup $collectionGroup): void
+    private function createMissingCollections(CollectionGroup $collectionGroup, Collection $existing): void
     {
-        foreach ($this->data as $item) {
-            $ibicCollection = LunarCollection::where('collection_group_id', $collectionGroup->id)
-                ->where('geslib_code', $item['code'])->first();
+        $existingCodes = $existing->pluck('geslib_code')->toArray();
 
-            if ($ibicCollection) {
+        foreach ($this->data as $item) {
+            if (in_array($item['code'], $existingCodes)) {
                 continue;
             }
 

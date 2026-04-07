@@ -28,22 +28,23 @@ class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
     public $uniqueFor = 900; // 15 minutes
 
     public function __construct(
-        protected GeslibInterFile $geslibInterFile,
+        protected GeslibInterFile          $geslibInterFile,
         protected GeslibInterFileBatchLine $batchLine,
-    ) {
+    )
+    {
         $this->onQueue('geslib-inter-files');
     }
 
     public function uniqueId(): string
     {
-        return $this->geslibInterFile->id.'-batch-'.$this->batchLine->id;
+        return $this->geslibInterFile->id . '-batch-' . $this->batchLine->id;
     }
 
     public function handle(): void
     {
         $batchLines = GeslibInterFileBatchLine::whereHas('geslibInterFile', function ($query): void {
             $query->where('id', $this->geslibInterFile->id);
-        })->orderBy('created_at')->take(5)->get();
+        })->orderBy('created_at')->take(50)->get();
 
         $log = is_array($this->geslibInterFile->log) ? $this->geslibInterFile->log : [];
         // Clear the log if it exceeds a certain size to prevent memory issues
@@ -51,41 +52,33 @@ class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
             $log = [];
         }
 
-        $log[] = [
-            'level' => CommandContract::LEVEL_INFO,
-            'message' => sprintf(
-                'Processing batch line %s',
-                $this->batchLine->id,
-            ),
-        ];
+        foreach ($batchLines as $batchLine) {
+            $log[] = [
+                'level' => CommandContract::LEVEL_INFO,
+                'message' => sprintf('Processing batch line %s', $batchLine->id),
+            ];
 
-        $command = null;
+            $command = match ($batchLine->line_type) {
+                ArticleAuthor::CODE => new ArticleAuthorRelation($batchLine->article_id, $batchLine->data),
+                ArticleTopic::CODE => new ArticleTopicRelation($batchLine->article_id, $batchLine->data),
+                Ibic::CODE => new ArticleIbicRelation($batchLine->article_id, $batchLine->data),
+                default => null,
+            };
 
-        match ($this->batchLine->line_type) {
-            ArticleAuthor::CODE => $command = new ArticleAuthorRelation(
-                $this->batchLine->article_id,
-                $this->batchLine->data,
-            ),
-            ArticleTopic::CODE => $command = new ArticleTopicRelation(
-                $this->batchLine->article_id,
-                $this->batchLine->data,
-            ),
-            Ibic::CODE => $command = new ArticleIbicRelation(
-                $this->batchLine->article_id,
-                $this->batchLine->data,
-            ),
-            default => $log[] = [
-                'level' => CommandContract::LEVEL_WARNING,
-                'message' => sprintf('Unexpected batch command for line type: %s', $this->batchLine->line_type),
-            ],
-        };
+            if ($command !== null) {
+                $command();
 
-        if ($command !== null) {
-            $command();
-
-            if ($command->getLog() !== []) {
-                $log[] = $command->getLog();
+                if ($command->getLog() !== []) {
+                    $log[] = $command->getLog();
+                }
+            } else {
+                $log[] = [
+                    'level' => CommandContract::LEVEL_WARNING,
+                    'message' => sprintf('Unexpected batch command for line type: %s', $batchLine->line_type),
+                ];
             }
+
+            $batchLine->delete();
         }
 
         $this->geslibInterFile->update([
@@ -93,16 +86,14 @@ class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
             'log' => $log,
         ]);
 
-        $this->batchLine->delete();
+        $nextBatchLine = GeslibInterFileBatchLine::whereHas('geslibInterFile', function ($query): void {
+            $query->where('id', $this->geslibInterFile->id);
+        })->orderBy('created_at')->first();
 
-        if ($batchLines->count() > 1) {
-            $nextBatchLine = $batchLines->first(fn ($line): bool => $line->id !== $this->batchLine->id);
+        if ($nextBatchLine) {
+            self::dispatch($this->geslibInterFile, $nextBatchLine);
 
-            if ($nextBatchLine) {
-                self::dispatch($this->geslibInterFile, $nextBatchLine);
-
-                return;
-            }
+            return;
         }
 
         $this->geslibInterFile->update([
@@ -113,11 +104,11 @@ class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
 
     public static function getStatusFromLog(array $log): string
     {
-        if (array_any($log, fn ($line): bool => $line['level'] === CommandContract::LEVEL_ERROR)) {
+        if (array_any($log, fn($line): bool => $line['level'] === CommandContract::LEVEL_ERROR)) {
             return GeslibInterFile::STATUS_FAILED;
         }
 
-        if (array_any($log, fn ($line): bool => $line['level'] === CommandContract::LEVEL_WARNING)) {
+        if (array_any($log, fn($line): bool => $line['level'] === CommandContract::LEVEL_WARNING)) {
             return GeslibInterFile::STATUS_WARNING;
         }
 

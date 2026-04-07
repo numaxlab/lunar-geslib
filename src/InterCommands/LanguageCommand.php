@@ -7,18 +7,20 @@ namespace NumaxLab\Lunar\Geslib\InterCommands;
 use Lunar\FieldTypes\Text;
 use Lunar\FieldTypes\TranslatedText;
 use Lunar\Models\Collection;
-use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\Language;
+use NumaxLab\Lunar\Geslib\Support\ImportRegistry;
 
 class LanguageCommand extends AbstractCommand
 {
     public const HANDLE = 'languages';
 
-    public function __construct(private readonly Language $language) {}
+    public function __construct(private readonly Language $language)
+    {
+    }
 
     public function __invoke(): void
     {
-        $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
+        $group = ImportRegistry::collectionGroup(self::HANDLE);
 
         $collection = Collection::where('geslib_code', $this->language->id())
             ->where('collection_group_id', $group->id)->first();
@@ -29,7 +31,7 @@ class LanguageCommand extends AbstractCommand
             ])),
         ];
 
-        if (! $collection) {
+        if (!$collection) {
             Collection::create([
                 'geslib_code' => $this->language->id(),
                 'attribute_data' => $attributeData,

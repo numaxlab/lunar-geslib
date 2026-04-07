@@ -87,33 +87,48 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
 
     public function __construct(
         protected GeslibInterFile $geslibInterFile,
-        protected int $startLine = 0,
-        protected int $chunkSize = 1000,
-    ) {
+        protected int             $startLine = 0,
+        protected int             $chunkSize = 1000,
+    )
+    {
         $this->onQueue('geslib-inter-files');
     }
 
     public function uniqueId(): string
     {
-        return $this->geslibInterFile->id.'-'.$this->startLine.'-'.$this->chunkSize;
+        return $this->geslibInterFile->id . '-' . $this->startLine . '-' . $this->chunkSize;
     }
 
     public function handle(): void
     {
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
-        $extractedFilePath = config('lunar.geslib.inter_files_path').'/'.str_replace(
-            '.zip',
-            '',
-            $this->geslibInterFile->name,
-        );
+        $extractedFilePath = config('lunar.geslib.inter_files_path') . '/' . str_replace(
+                '.zip',
+                '',
+                $this->geslibInterFile->name,
+            );
 
-        if (! $storage->exists($extractedFilePath)) {
+        if (!$storage->exists($extractedFilePath)) {
             $this->extractZipFile($storage);
         }
 
-        $geslibFile = GeslibFile::parse($storage->get($extractedFilePath));
-        $totalLines = count($geslibFile->lines());
+        $cachedLinesPath = $extractedFilePath . '.cache';
+
+        if ($storage->exists($cachedLinesPath)) {
+            $lines = unserialize($storage->get($cachedLinesPath));
+        } else {
+            $geslibFile = GeslibFile::parse($storage->get($extractedFilePath));
+            $lines = $geslibFile->lines();
+
+            try {
+                $storage->put($cachedLinesPath, serialize($lines));
+            } catch (Throwable) {
+                // not serializable – each chunk will re-parse, which is correct for tests
+            }
+        }
+
+        $totalLines = count($lines);
 
         if ($this->geslibInterFile->status === GeslibInterFile::STATUS_PENDING) {
             $this->geslibInterFile->update([
@@ -139,7 +154,7 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
         $batchCommands = collect();
 
         for ($i = $this->startLine; $i < $endLine; $i++) {
-            $line = $geslibFile->lines()[$i];
+            $line = $lines[$i];
             $command = null;
 
             match ($line->getCode()) {
@@ -263,7 +278,7 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
             }
         }
 
-        if (! $fileFinished) {
+        if (!$fileFinished) {
             self::dispatch($this->geslibInterFile, $endLine, $this->chunkSize);
 
             return;
@@ -285,20 +300,21 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
         }
 
         $storage->delete($extractedFilePath);
+        $storage->delete($cachedLinesPath);
     }
 
     protected function extractZipFile(Filesystem $storage): void
     {
         $zip = new ZipArchive;
 
-        $zipFilePath = $storage->path(config('lunar.geslib.inter_files_path').'/'.$this->geslibInterFile->name);
+        $zipFilePath = $storage->path(config('lunar.geslib.inter_files_path') . '/' . $this->geslibInterFile->name);
 
         if ($zip->open($zipFilePath) === true) {
             $zip->extractTo($storage->path(config('lunar.geslib.inter_files_path')));
 
             $zip->close();
         } else {
-            throw new RuntimeException('Unable to open zip file: '.$zipFilePath);
+            throw new RuntimeException('Unable to open zip file: ' . $zipFilePath);
         }
     }
 

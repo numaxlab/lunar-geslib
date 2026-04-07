@@ -7,18 +7,20 @@ namespace NumaxLab\Lunar\Geslib\InterCommands;
 use Lunar\FieldTypes\Text;
 use Lunar\FieldTypes\TranslatedText;
 use Lunar\Models\Collection;
-use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\Classification;
+use NumaxLab\Lunar\Geslib\Support\ImportRegistry;
 
 class ClassificationCommand extends AbstractCommand
 {
     public const HANDLE = 'classifications';
 
-    public function __construct(private readonly Classification $classification) {}
+    public function __construct(private readonly Classification $classification)
+    {
+    }
 
     public function __invoke(): void
     {
-        $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
+        $group = ImportRegistry::collectionGroup(self::HANDLE);
 
         $collection = Collection::where('geslib_code', $this->classification->id())
             ->where('collection_group_id', $group->id)
@@ -31,7 +33,7 @@ class ClassificationCommand extends AbstractCommand
             ])),
         ];
 
-        if (! $collection) {
+        if (!$collection) {
             Collection::create([
                 'geslib_code' => $this->classification->id(),
                 'attribute_data' => $attributeData,

@@ -8,14 +8,13 @@ use Lunar\FieldTypes\Number;
 use Lunar\FieldTypes\Text;
 use Lunar\Models\Brand;
 use Lunar\Models\Collection;
-use Lunar\Models\CollectionGroup;
 use Lunar\Models\Product;
 use Lunar\Models\ProductVariant;
 use NumaxLab\Geslib\Lines\Article;
 use NumaxLab\Lunar\Geslib\Events\GeslibArticleCreated;
 use NumaxLab\Lunar\Geslib\Events\GeslibArticleUpdated;
 use NumaxLab\Lunar\Geslib\FieldTypes\Date;
-use NumaxLab\Lunar\Geslib\Managers\CollectionGroupSync;
+use NumaxLab\Lunar\Geslib\Support\ImportRegistry;
 
 class ArticleCommand extends AbstractCommand
 {
@@ -23,7 +22,9 @@ class ArticleCommand extends AbstractCommand
 
     public const string DEFAULT_STATUS = 'published';
 
-    public function __construct(private readonly Article $article, private readonly bool $isEbook = false) {}
+    public function __construct(private readonly Article $article, private readonly bool $isEbook = false)
+    {
+    }
 
     public function __invoke(): void
     {
@@ -39,7 +40,7 @@ class ArticleCommand extends AbstractCommand
             return;
         }
 
-        $languageCollectionGroup = CollectionGroup::where('handle', LanguageCommand::HANDLE)->firstOrFail();
+        $languageCollectionGroup = ImportRegistry::collectionGroup(LanguageCommand::HANDLE);
 
         $originalLanguageCollection = Collection::where('geslib_code', $this->article->originalLanguageId())
             ->where('collection_group_id', $languageCollectionGroup->id)
@@ -68,7 +69,7 @@ class ArticleCommand extends AbstractCommand
 
         $brand = Brand::where('geslib_code', $this->article->editorialId())->first();
 
-        if (! $variant) {
+        if (!$variant) {
             $product = Product::create([
                 'product_type_id' => config('lunar.geslib.product_type_id', self::PRODUCT_TYPE_ID),
                 'brand_id' => $brand?->id,
@@ -78,7 +79,7 @@ class ArticleCommand extends AbstractCommand
 
             $variant = ProductVariant::create([
                 'product_id' => $product->id,
-                'tax_class_id' => config('lunar.geslib.product_types_taxation.'.$this->article->typeId(), 1),
+                'tax_class_id' => config('lunar.geslib.product_types_taxation.' . $this->article->typeId(), 1),
                 'tax_ref' => $this->article->taxes(),
                 'sku' => $this->article->id(),
                 'gtin' => $this->article->isbn(),
@@ -89,7 +90,7 @@ class ArticleCommand extends AbstractCommand
                 'height_unit' => config('lunar.geslib.measurements.height_unit', 'mm'),
                 'weight_value' => $this->article->weight(),
                 'weight_unit' => config('lunar.geslib.measurements.weight_unit', 'g'),
-                'shippable' => ! $this->isEbook,
+                'shippable' => !$this->isEbook,
                 'stock' => $this->article->stock() ?? 0,
                 'unit_quantity' => 1,
                 'min_quantity' => 1,
@@ -119,7 +120,7 @@ class ArticleCommand extends AbstractCommand
             ]);
 
             $variant->update([
-                'tax_class_id' => config('lunar.geslib.product_types_taxation.'.$this->article->typeId(), 1),
+                'tax_class_id' => config('lunar.geslib.product_types_taxation.' . $this->article->typeId(), 1),
                 'tax_ref' => $this->article->taxes(),
                 'gtin' => $this->article->isbn(),
                 'ean' => $this->article->ean(),
@@ -141,33 +142,46 @@ class ArticleCommand extends AbstractCommand
             GeslibArticleUpdated::dispatch($variant);
         }
 
-        // Product type collection
-        $group = CollectionGroup::where('handle', TypeCommand::HANDLE)->firstOrFail();
-        $productTypeCollection = Collection::where('geslib_code', $this->article->typeId())
-            ->where('collection_group_id', $group->id)->get();
+        // Resolve the four collection groups (all served from the in-process registry)
+        $typeGroup = ImportRegistry::collectionGroup(TypeCommand::HANDLE);
+        $statusGroup = ImportRegistry::collectionGroup(StatusCommand::HANDLE);
+        $editorialGroup = ImportRegistry::collectionGroup(CollectionCommand::HANDLE);
 
-        new CollectionGroupSync($product, $group->id, $productTypeCollection)->handle();
+        // Fetch the four new collection sets (4 queries)
+        $productTypeCollections = Collection::where('geslib_code', $this->article->typeId())
+            ->where('collection_group_id', $typeGroup->id)->get();
 
-        // Status collection
-        $group = CollectionGroup::where('handle', StatusCommand::HANDLE)->firstOrFail();
-        $statusCollection = Collection::where('geslib_code', $this->article->statusId())
-            ->where('collection_group_id', $group->id)->get();
+        $statusCollections = Collection::where('geslib_code', $this->article->statusId())
+            ->where('collection_group_id', $statusGroup->id)->get();
 
-        new CollectionGroupSync($product, $group->id, $statusCollection)->handle();
-
-        // Language collection
-        $languageCollection = Collection::where('geslib_code', $this->article->languageId())
+        $languageCollections = Collection::where('geslib_code', $this->article->languageId())
             ->where('collection_group_id', $languageCollectionGroup->id)->get();
 
-        new CollectionGroupSync($product, $languageCollectionGroup->id, $languageCollection)->handle();
-
-        // EditorialCollection collection
-        $group = CollectionGroup::where('handle', CollectionCommand::HANDLE)->firstOrFail();
-        $editorialCollection = Collection::where(
+        $editorialCollections = Collection::where(
             'geslib_code',
             CollectionCommand::getGeslibId($this->article->editorialId(), $this->article->collectionId()),
-        )->where('collection_group_id', $group->id)->get();
+        )->where('collection_group_id', $editorialGroup->id)->get();
 
-        new CollectionGroupSync($product, $group->id, $editorialCollection)->handle();
+        // Load current product collections once, replace all four groups in a single sync
+        $replacedGroupIds = [
+            $typeGroup->id,
+            $statusGroup->id,
+            $languageCollectionGroup->id,
+            $editorialGroup->id,
+        ];
+
+        $keepIds = $product->collections()->get()
+            ->filter(fn($c): bool => !in_array($c->group_id, $replacedGroupIds))
+            ->pluck('id');
+
+        $newIds = collect()
+            ->merge($productTypeCollections->pluck('id'))
+            ->merge($statusCollections->pluck('id'))
+            ->merge($languageCollections->pluck('id'))
+            ->merge($editorialCollections->pluck('id'));
+
+        $product->collections()->sync($keepIds->merge($newIds)->unique()->toArray());
+
+        $product->searchable();
     }
 }

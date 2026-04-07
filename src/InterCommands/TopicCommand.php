@@ -7,15 +7,17 @@ namespace NumaxLab\Lunar\Geslib\InterCommands;
 use Lunar\FieldTypes\Text;
 use Lunar\FieldTypes\TranslatedText;
 use Lunar\Models\Collection;
-use Lunar\Models\CollectionGroup;
 use NumaxLab\Geslib\Lines\Topic;
 use NumaxLab\Lunar\Geslib\Handle;
+use NumaxLab\Lunar\Geslib\Support\ImportRegistry;
 
 class TopicCommand extends AbstractCommand
 {
     public const string HANDLE = Handle::COLLECTION_GROUP_TAXONOMIES;
 
-    public function __construct(private readonly Topic $topic) {}
+    public function __construct(private readonly Topic $topic)
+    {
+    }
 
     public function __invoke(): void
     {
@@ -23,7 +25,7 @@ class TopicCommand extends AbstractCommand
             return;
         }
 
-        $group = CollectionGroup::where('handle', self::HANDLE)->firstOrFail();
+        $group = ImportRegistry::collectionGroup(self::HANDLE);
 
         $collection = Collection::where('geslib_code', $this->topic->id())
             ->where('collection_group_id', $group->id)
@@ -35,7 +37,7 @@ class TopicCommand extends AbstractCommand
             ])),
         ];
 
-        if (! $collection) {
+        if (!$collection) {
             Collection::create([
                 'geslib_code' => $this->topic->id(),
                 'attribute_data' => $attributeData,

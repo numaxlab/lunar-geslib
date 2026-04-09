@@ -1,82 +1,82 @@
 {
-    "name": "numaxlab/lunar-geslib",
-    "type": "library",
-    "version": "1.0.0-beta.4",
-    "license": "MIT",
-    "require": {
-        "php": "^8.4",
-        "ext-zip": "*",
-        "ext-simplexml": "*",
-        "illuminate/support": "*",
-        "livewire/livewire": "^3.6",
-        "lunarphp/core": "^1.1.0",
-        "lunarphp/lunar": "^1.1.0",
-        "numaxlab/atomic-laravel": "dev-main",
-        "numaxlab/cegal-client": "@dev",
-        "numaxlab/dilve-client": "@dev",
-        "numaxlab/geslib-files": "^1.0@beta",
-        "spatie/array-to-xml": "^3.4"
-    },
-    "require-dev": {
-        "pestphp/pest": "^3.8",
-        "pestphp/pest-plugin-laravel": "^3.2",
-        "pestphp/pest-plugin-livewire": "^3.0",
-        "orchestra/testbench": "^10.8",
-        "laravel/pint": "dev-main",
-        "peckphp/peck": "dev-main",
-        "larastan/larastan": "^3.0",
-        "rector/rector": "dev-main"
-    },
-    "autoload": {
-        "psr-4": {
-            "NumaxLab\\Lunar\\Geslib\\": "src/",
-            "NumaxLab\\Lunar\\Geslib\\Database\\Factories\\": "database/factories/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\": "tests/"
-        }
-    },
-    "scripts": {
-        "phpstan": "./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=512M",
-        "test:typos": "./vendor/bin/peck",
-        "test:lint": "./vendor/bin/pint --test",
-        "test:types": "@phpstan",
-        "test:refactor": "./vendor/bin/rector process --dry-run",
-        "test:unit": "./vendor/bin/pest --parallel",
-        "test": [
-            "@test:typos",
-            "@test:types",
-            "@test:refactor",
-            "@test:unit"
-        ],
-        "refactor": "./vendor/bin/rector process",
-        "fix": [
-            "@refactor",
-            "./vendor/bin/pint"
-        ]
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "NumaxLab\\Lunar\\Geslib\\LunarGeslibServiceProvider"
-            ]
-        }
-    },
-    "authors": [
-        {
-            "name": "Adrián Pardellas Blunier",
-            "email": "adrian@numax.org"
-        },
-        {
-            "name": "Noa García Amado",
-            "email": "noa@numax.org"
-        }
-    ],
-    "config": {
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
+  "name": "numaxlab/lunar-geslib",
+  "type": "library",
+  "version": "1.0.0-beta.5",
+  "license": "MIT",
+  "require": {
+    "php": "^8.4",
+    "ext-zip": "*",
+    "ext-simplexml": "*",
+    "illuminate/support": "*",
+    "livewire/livewire": "^3.6",
+    "lunarphp/core": "^1.1.0",
+    "lunarphp/lunar": "^1.1.0",
+    "numaxlab/atomic-laravel": "dev-main",
+    "numaxlab/cegal-client": "@dev",
+    "numaxlab/dilve-client": "@dev",
+    "numaxlab/geslib-files": "^1.0@beta",
+    "spatie/array-to-xml": "^3.4"
+  },
+  "require-dev": {
+    "pestphp/pest": "^3.8",
+    "pestphp/pest-plugin-laravel": "^3.2",
+    "pestphp/pest-plugin-livewire": "^3.0",
+    "orchestra/testbench": "^10.8",
+    "laravel/pint": "dev-main",
+    "peckphp/peck": "dev-main",
+    "larastan/larastan": "^3.0",
+    "rector/rector": "dev-main"
+  },
+  "autoload": {
+    "psr-4": {
+      "NumaxLab\\Lunar\\Geslib\\": "src/",
+      "NumaxLab\\Lunar\\Geslib\\Database\\Factories\\": "database/factories/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "phpstan": "./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=512M",
+    "test:typos": "./vendor/bin/peck",
+    "test:lint": "./vendor/bin/pint --test",
+    "test:types": "@phpstan",
+    "test:refactor": "./vendor/bin/rector process --dry-run",
+    "test:unit": "./vendor/bin/pest --parallel",
+    "test": [
+      "@test:typos",
+      "@test:types",
+      "@test:refactor",
+      "@test:unit"
+    ],
+    "refactor": "./vendor/bin/rector process",
+    "fix": [
+      "@refactor",
+      "./vendor/bin/pint"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "NumaxLab\\Lunar\\Geslib\\LunarGeslibServiceProvider"
+      ]
+    }
+  },
+  "authors": [
+    {
+      "name": "Adrián Pardellas Blunier",
+      "email": "adrian@numax.org"
+    },
+    {
+      "name": "Noa García Amado",
+      "email": "noa@numax.org"
+    }
+  ],
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
 }

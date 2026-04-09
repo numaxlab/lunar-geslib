@@ -28,16 +28,15 @@ class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
     public $uniqueFor = 900; // 15 minutes
 
     public function __construct(
-        protected GeslibInterFile          $geslibInterFile,
+        protected GeslibInterFile $geslibInterFile,
         protected GeslibInterFileBatchLine $batchLine,
-    )
-    {
+    ) {
         $this->onQueue('geslib-inter-files');
     }
 
     public function uniqueId(): string
     {
-        return $this->geslibInterFile->id . '-batch-' . $this->batchLine->id;
+        return $this->geslibInterFile->id.'-batch-'.$this->batchLine->id;
     }
 
     public function handle(): void
@@ -105,11 +104,11 @@ class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
 
     public static function getStatusFromLog(array $log): string
     {
-        if (array_any($log, fn($line): bool => $line['level'] === CommandContract::LEVEL_ERROR)) {
+        if (array_any($log, fn ($line): bool => $line['level'] === CommandContract::LEVEL_ERROR)) {
             return GeslibInterFile::STATUS_FAILED;
         }
 
-        if (array_any($log, fn($line): bool => $line['level'] === CommandContract::LEVEL_WARNING)) {
+        if (array_any($log, fn ($line): bool => $line['level'] === CommandContract::LEVEL_WARNING)) {
             return GeslibInterFile::STATUS_WARNING;
         }
 

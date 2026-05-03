@@ -77,7 +77,7 @@ class ProductIndexer extends \Lunar\Search\ProductIndexer
         $pricing = $model->variant?->pricing()?->get()->matched;
 
         $data = array_merge($data, [
-            'authors' => $model->authors->map(fn ($author) => $author->toSearchableArray())->toArray(),
+            'authors' => $model->authors?->map(fn ($author) => $author->toSearchableArray())->toArray() ?? [],
             'taxonomies' => $taxonomies->map(fn ($taxon) => $taxon->toSearchableArray())->toArray(),
             'languages' => $languages?->map(fn ($language) => $language->toSearchableArray())->toArray(),
             'isbns' => $model->variants->pluck('gtin')->toArray(),
@@ -85,8 +85,8 @@ class ProductIndexer extends \Lunar\Search\ProductIndexer
             'geslib_status' => $geslibStatus?->first()->toSearchableArray(),
             'brand' => $model->brand?->name,
             'status' => $model->status,
-            'product_type' => $model->productType->name,
-            'created_at' => (int) $model->created_at->timestamp,
+            'product_type' => $model->productType?->name,
+            'created_at' => $model->created_at ? (int) $model->created_at->timestamp : 0,
         ]);
 
         $data['skus'] = $model->variants->pluck('sku')->toArray();

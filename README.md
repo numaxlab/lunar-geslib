@@ -55,7 +55,7 @@ This command will:
 
 * Publish all the Lunar configuration files, including `config/lunar/geslib.php`.
 * Run necessary database migrations.
-* Set up essential Lunar data):
+* Set up essential Lunar data:
     * Create a default admin user.
     * Import country and currency data.
     * Create a default webstore channel language, currency, and a retail customer group.

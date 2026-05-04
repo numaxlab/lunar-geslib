@@ -68,7 +68,7 @@ class ProcessGeslibInterFileBatchLine implements ShouldBeUnique, ShouldQueue
                 $command();
 
                 if ($command->getLog() !== []) {
-                    $log[] = $command->getLog();
+                    $log = array_merge($log, $command->getLog());
                 }
             } else {
                 $log[] = [

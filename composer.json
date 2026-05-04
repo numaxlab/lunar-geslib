@@ -1,5 +1,6 @@
 {
   "name": "numaxlab/lunar-geslib",
+  "description": "Laravel package that integrates Geslib bookstore management with LunarPHP e-commerce platform.",
   "type": "library",
   "version": "1.0.0-beta.5",
   "license": "MIT",
@@ -7,13 +8,13 @@
     "php": "^8.4",
     "ext-zip": "*",
     "ext-simplexml": "*",
-    "illuminate/support": "*",
+    "illuminate/support": "^11.0 || ^12.0",
     "livewire/livewire": "^3.6",
     "lunarphp/core": "^1.1.0",
     "lunarphp/lunar": "^1.1.0",
-    "numaxlab/atomic-laravel": "dev-main",
-    "numaxlab/cegal-client": "@dev",
-    "numaxlab/dilve-client": "@dev",
+    "numaxlab/atomic-laravel": "^1.0@beta",
+    "numaxlab/cegal-client": "^1.0@beta",
+    "numaxlab/dilve-client": "^1.0@beta",
     "numaxlab/geslib-files": "^1.0@beta",
     "spatie/array-to-xml": "^3.4"
   },
@@ -22,10 +23,10 @@
     "pestphp/pest-plugin-laravel": "^3.2",
     "pestphp/pest-plugin-livewire": "^3.0",
     "orchestra/testbench": "^10.8",
-    "laravel/pint": "dev-main",
-    "peckphp/peck": "dev-main",
+    "laravel/pint": "^1.21",
+    "peckphp/peck": "^0.2",
     "larastan/larastan": "^3.0",
-    "rector/rector": "dev-main"
+    "rector/rector": "^2.0"
   },
   "autoload": {
     "psr-4": {

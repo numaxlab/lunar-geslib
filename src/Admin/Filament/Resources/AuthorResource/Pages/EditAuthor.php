@@ -25,6 +25,7 @@ class EditAuthor extends BaseEditRecord
         return __('lunar-geslib::author.pages.edit.title');
     }
 
+    #[\Override]
     protected function getDefaultHeaderActions(): array
     {
         return [

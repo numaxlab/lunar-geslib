@@ -41,7 +41,7 @@ final readonly class DilveEnricher
             ->usingName(__('Portada'))
             ->usingFileName(
                 $productVariant->product->defaultUrl->slug.'-portada.'.pathinfo(
-                    (string) $onixProduct->coverUrl,
+                    $onixProduct->coverUrl,
                     PATHINFO_EXTENSION,
                 ),
             )

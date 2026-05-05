@@ -11,6 +11,7 @@ class ListGeslibInterFiles extends ListRecords
 {
     protected static string $resource = GeslibInterFileResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [];

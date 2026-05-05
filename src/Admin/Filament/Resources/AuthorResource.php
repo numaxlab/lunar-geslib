@@ -57,6 +57,7 @@ class AuthorResource extends BaseResource
         return __('lunarpanel::global.sections.catalog');
     }
 
+    #[\Override]
     public static function getDefaultForm(Form $form): Form
     {
         return $form
@@ -70,6 +71,7 @@ class AuthorResource extends BaseResource
             ->columns(1);
     }
 
+    #[\Override]
     protected static function getMainFormComponents(): array
     {
         return [
@@ -105,6 +107,7 @@ class AuthorResource extends BaseResource
         ];
     }
 
+    #[\Override]
     protected static function getDefaultSubNavigation(): array
     {
         return [
@@ -115,6 +118,7 @@ class AuthorResource extends BaseResource
         ];
     }
 
+    #[\Override]
     protected static function getDefaultTable(Table $table): Table
     {
         return $table
@@ -155,6 +159,7 @@ class AuthorResource extends BaseResource
             ->label(__('lunar-geslib::author.table.name.label'));
     }
 
+    #[\Override]
     protected static function getDefaultPages(): array
     {
         return [

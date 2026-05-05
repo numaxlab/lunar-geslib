@@ -12,6 +12,7 @@ class ListTrustedStockProviders extends BaseListRecords
 {
     protected static string $resource = TrustedStockProviderResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

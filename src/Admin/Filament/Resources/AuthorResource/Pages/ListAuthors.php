@@ -12,6 +12,7 @@ class ListAuthors extends BaseListRecords
 {
     protected static string $resource = AuthorResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

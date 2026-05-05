@@ -47,6 +47,7 @@ class TrustedStockProviderResource extends BaseResource
         return __('lunarpanel::global.sections.catalog');
     }
 
+    #[\Override]
     public static function getDefaultForm(Form $form): Form
     {
         return $form->schema([
@@ -69,6 +70,7 @@ class TrustedStockProviderResource extends BaseResource
         ])->columns(1);
     }
 
+    #[\Override]
     protected static function getDefaultTable(Table $table): Table
     {
         return $table
@@ -85,6 +87,7 @@ class TrustedStockProviderResource extends BaseResource
             ->reorderable('sort_position');
     }
 
+    #[\Override]
     protected static function getDefaultPages(): array
     {
         return [

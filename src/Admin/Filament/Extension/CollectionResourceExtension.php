@@ -110,6 +110,7 @@ class CollectionResourceExtension extends ResourceExtension
                         return in_array(
                             $component->getName(),
                             self::HIDDEN_FIELDS[$collectionGroup->handle],
+                            true,
                         );
                     },
                 );

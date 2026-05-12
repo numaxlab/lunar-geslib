@@ -24,7 +24,7 @@
     "pestphp/pest-plugin-livewire": "^3.0",
     "orchestra/testbench": "^10.8",
     "laravel/pint": "^1.21",
-    "peckphp/peck": "^0.2",
+    "peckphp/peck": "^0.2 || ^0.3",
     "larastan/larastan": "^3.0",
     "rector/rector": "^2.0"
   },

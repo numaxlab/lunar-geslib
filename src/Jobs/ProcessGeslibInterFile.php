@@ -100,6 +100,13 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
 
     public function handle(): void
     {
+        if ($this->geslibInterFile->usesInitialStrategy()) {
+            throw new RuntimeException(
+                'ProcessGeslibInterFile only accepts normal_update files. '.
+                'Use ProcessInitialGeslibInterFile for initial_load files.',
+            );
+        }
+
         $storage = Storage::disk(config('lunar.geslib.inter_files_disk'));
 
         $extractedFilePath = config('lunar.geslib.inter_files_path').'/'.str_replace(
@@ -117,7 +124,7 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
         if ($storage->exists($cachedLinesPath)) {
             $lines = unserialize($storage->get($cachedLinesPath));
         } else {
-            $geslibFile = GeslibFile::parse($storage->get($extractedFilePath));
+            $geslibFile = $this->parseGeslibContent($storage->get($extractedFilePath));
             $lines = $geslibFile->lines();
 
             try {
@@ -278,7 +285,7 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
         }
 
         if (! $fileFinished) {
-            self::dispatch($this->geslibInterFile, $endLine, $this->chunkSize);
+            $this->dispatchNextChunk($endLine);
 
             return;
         }
@@ -302,6 +309,16 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
         $storage->delete($cachedLinesPath);
     }
 
+    protected function dispatchNextChunk(int $endLine): void
+    {
+        self::dispatch($this->geslibInterFile, $endLine, $this->chunkSize);
+    }
+
+    protected function parseGeslibContent(string $content): GeslibFile
+    {
+        return GeslibFile::parse($content);
+    }
+
     protected function extractZipFile(Filesystem $storage): void
     {
         $zip = new ZipArchive;
@@ -310,11 +327,27 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
 
         if ($zip->open($zipFilePath) === true) {
             $zip->extractTo($storage->path(config('lunar.geslib.inter_files_path')));
-
             $zip->close();
-        } else {
-            throw new RuntimeException('Unable to open zip file: '.$zipFilePath);
+
+            return;
         }
+
+        // The file has a .zip extension but contains plain-text INTER content.
+        // Copy the raw content to the expected extracted path so the rest of the
+        // pipeline can proceed unchanged.
+        $rawContent = $storage->get(config('lunar.geslib.inter_files_path').'/'.$this->geslibInterFile->name);
+
+        if ($rawContent === null) {
+            throw new RuntimeException('Unable to read file: '.$zipFilePath);
+        }
+
+        $extractedFilePath = config('lunar.geslib.inter_files_path').'/'.str_replace(
+            '.zip',
+            '',
+            $this->geslibInterFile->name,
+        );
+
+        $storage->put($extractedFilePath, $rawContent);
     }
 
     public function failed(Throwable $exception): void

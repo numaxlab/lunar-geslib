@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use NumaxLab\Lunar\Geslib\Jobs\ProcessGeslibInterFile;
+use NumaxLab\Lunar\Geslib\Jobs\ProcessInitialGeslibInterFile;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 
 class Import extends Command
@@ -66,11 +67,16 @@ class Import extends Command
                 'name' => $filename,
                 'received_at' => $fileLastModified,
                 'status' => GeslibInterFile::STATUS_PENDING,
+                'file_type' => $this->detectFileType($storage->get($file)),
             ]);
 
             $interFile->save();
 
-            ProcessGeslibInterFile::dispatch($interFile);
+            if ($interFile->usesInitialStrategy()) {
+                ProcessInitialGeslibInterFile::dispatch($interFile);
+            } else {
+                ProcessGeslibInterFile::dispatch($interFile);
+            }
 
             $this->components->info(sprintf('Dispatching %s...', $filename));
 
@@ -78,5 +84,14 @@ class Import extends Command
         }
 
         return self::SUCCESS;
+    }
+
+    protected function detectFileType(string $rawContent): string
+    {
+        $firstLine = strtok($rawContent, "\n");
+
+        return str_starts_with((string) $firstLine, 'I|')
+            ? GeslibInterFile::FILE_TYPE_INITIAL_LOAD
+            : GeslibInterFile::FILE_TYPE_NORMAL_UPDATE;
     }
 }

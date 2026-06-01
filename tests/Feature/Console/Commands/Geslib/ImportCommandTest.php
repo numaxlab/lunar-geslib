@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use NumaxLab\Lunar\Geslib\Console\Commands\Geslib\Import;
 use NumaxLab\Lunar\Geslib\Jobs\ProcessGeslibInterFile;
+use NumaxLab\Lunar\Geslib\Jobs\ProcessInitialGeslibInterFile;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 
 function putWithMTime(string $disk, string $path, string $contents, int $mtime): void
@@ -28,6 +29,8 @@ beforeEach(function (): void {
     Storage::fake('local');
     Bus::fake();
 });
+
+afterEach(fn () => Mockery::close());
 
 test('it exits successfully when there are no files', function (): void {
     Cache::partialMock()->shouldReceive('lock')->never();
@@ -135,4 +138,40 @@ test('it exits early when the worker is busy (lock not acquired)', function (): 
     // No records created and no job dispatched
     expect(GeslibInterFile::count())->toBe(0);
     Bus::assertNothingDispatched();
+});
+
+test('it marks a normal update file as normal_update file_type', function (): void {
+    $disk = config('lunar.geslib.inter_files_disk');
+    $base = config('lunar.geslib.inter_files_path');
+
+    $ts = Carbon::now()->subMinutes(5)->timestamp;
+    putWithMTime($disk, "$base/INTER001.zip", "EDI|001\nART|123", $ts);
+
+    $this->artisan('lunar:geslib:import')->assertExitCode(Import::SUCCESS);
+
+    $file = GeslibInterFile::first();
+
+    expect($file)->not->toBeNull()
+        ->and($file->file_type)->toBe(GeslibInterFile::FILE_TYPE_NORMAL_UPDATE);
+
+    Bus::assertDispatched(ProcessGeslibInterFile::class);
+    Bus::assertNotDispatched(ProcessInitialGeslibInterFile::class);
+});
+
+test('it marks an initial load file as initial_load file_type and dispatches the initial coordinator', function (): void {
+    $disk = config('lunar.geslib.inter_files_disk');
+    $base = config('lunar.geslib.inter_files_path');
+
+    $ts = Carbon::now()->subMinutes(5)->timestamp;
+    putWithMTime($disk, "$base/INTER682.zip", "I|20240101\nEDI|001", $ts);
+
+    $this->artisan('lunar:geslib:import')->assertExitCode(Import::SUCCESS);
+
+    $file = GeslibInterFile::first();
+
+    expect($file)->not->toBeNull()
+        ->and($file->file_type)->toBe(GeslibInterFile::FILE_TYPE_INITIAL_LOAD);
+
+    Bus::assertDispatched(ProcessInitialGeslibInterFile::class);
+    Bus::assertNotDispatched(ProcessGeslibInterFile::class);
 });

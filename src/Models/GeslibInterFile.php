@@ -13,6 +13,10 @@ class GeslibInterFile extends BaseModel
 {
     use HasFactory;
 
+    public const string FILE_TYPE_INITIAL_LOAD = 'initial_load';
+
+    public const string FILE_TYPE_NORMAL_UPDATE = 'normal_update';
+
     public const STATUS_PENDING = 'pending';
 
     public const STATUS_PROCESSING = 'processing';
@@ -26,6 +30,8 @@ class GeslibInterFile extends BaseModel
     protected $fillable = [
         'name',
         'status',
+        'file_type',
+        'strategy_metadata',
         'received_at',
         'started_at',
         'finished_at',
@@ -39,7 +45,13 @@ class GeslibInterFile extends BaseModel
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
         'log' => 'array',
+        'strategy_metadata' => 'array',
     ];
+
+    public function usesInitialStrategy(): bool
+    {
+        return $this->file_type === self::FILE_TYPE_INITIAL_LOAD;
+    }
 
     protected static function newFactory()
     {

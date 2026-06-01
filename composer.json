@@ -2,7 +2,7 @@
   "name": "numaxlab/lunar-geslib",
   "description": "Laravel package that integrates Geslib bookstore management with LunarPHP e-commerce platform.",
   "type": "library",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.7",
   "license": "MIT",
   "require": {
     "php": "^8.4",

@@ -88,10 +88,42 @@ class Import extends Command
 
     protected function detectFileType(string $rawContent): string
     {
-        $firstLine = strtok($rawContent, "\n");
+        // Real ZIP archives start with the PK magic bytes; plain-text pseudo-zips do not.
+        $content = str_starts_with($rawContent, "PK\x03\x04")
+            ? $this->readFirstFileFromZip($rawContent)
+            : $rawContent;
+
+        $firstLine = strtok($content, "\n");
 
         return str_starts_with((string) $firstLine, 'I|')
             ? GeslibInterFile::FILE_TYPE_INITIAL_LOAD
             : GeslibInterFile::FILE_TYPE_NORMAL_UPDATE;
+    }
+
+    /**
+     * Write raw ZIP bytes to a temp file, open it with ZipArchive, and return
+     * the beginning of the first contained file — enough to inspect the header line.
+     */
+    protected function readFirstFileFromZip(string $rawContent): string
+    {
+        $tmp = tempnam(sys_get_temp_dir(), 'geslib_');
+
+        try {
+            file_put_contents($tmp, $rawContent);
+
+            $zip = new \ZipArchive();
+
+            if ($zip->open($tmp) !== true || $zip->numFiles === 0) {
+                return '';
+            }
+
+            // Read just the first 256 bytes — enough to check the header line.
+            $content = (string) $zip->getFromIndex(0, 256);
+            $zip->close();
+
+            return $content;
+        } finally {
+            @unlink($tmp);
+        }
     }
 }

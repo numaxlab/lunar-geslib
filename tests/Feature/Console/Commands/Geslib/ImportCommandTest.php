@@ -175,3 +175,62 @@ test('it marks an initial load file as initial_load file_type and dispatches the
     Bus::assertDispatched(ProcessInitialGeslibInterFile::class);
     Bus::assertNotDispatched(ProcessGeslibInterFile::class);
 });
+
+// ---------------------------------------------------------------------------
+// Real ZIP archive cases (not plain-text pseudo-zips)
+// ---------------------------------------------------------------------------
+
+function makeZipContent(string $entryName, string $entryContent): string
+{
+    $tmp = tempnam(sys_get_temp_dir(), 'geslib_test_');
+
+    $zip = new ZipArchive();
+    $zip->open($tmp, ZipArchive::OVERWRITE);
+    $zip->addFromString($entryName, $entryContent);
+    $zip->close();
+
+    $bytes = file_get_contents($tmp);
+    @unlink($tmp);
+
+    return $bytes;
+}
+
+test('it detects initial_load for a real ZIP containing an initial-load INTER file', function (): void {
+    $disk = config('lunar.geslib.inter_files_disk');
+    $base = config('lunar.geslib.inter_files_path');
+
+    $ts = Carbon::now()->subMinutes(5)->timestamp;
+    $zipContent = makeZipContent('INTER682', "I|20240101\nEDI|001\n");
+
+    putWithMTime($disk, "$base/INTER682.zip", $zipContent, $ts);
+
+    $this->artisan('lunar:geslib:import')->assertExitCode(Import::SUCCESS);
+
+    $file = GeslibInterFile::first();
+
+    expect($file)->not->toBeNull()
+        ->and($file->file_type)->toBe(GeslibInterFile::FILE_TYPE_INITIAL_LOAD);
+
+    Bus::assertDispatched(ProcessInitialGeslibInterFile::class);
+    Bus::assertNotDispatched(ProcessGeslibInterFile::class);
+});
+
+test('it detects normal_update for a real ZIP containing a normal-update INTER file', function (): void {
+    $disk = config('lunar.geslib.inter_files_disk');
+    $base = config('lunar.geslib.inter_files_path');
+
+    $ts = Carbon::now()->subMinutes(5)->timestamp;
+    $zipContent = makeZipContent('INTER001', "EDI|001\nART|123\n");
+
+    putWithMTime($disk, "$base/INTER001.zip", $zipContent, $ts);
+
+    $this->artisan('lunar:geslib:import')->assertExitCode(Import::SUCCESS);
+
+    $file = GeslibInterFile::first();
+
+    expect($file)->not->toBeNull()
+        ->and($file->file_type)->toBe(GeslibInterFile::FILE_TYPE_NORMAL_UPDATE);
+
+    Bus::assertDispatched(ProcessGeslibInterFile::class);
+    Bus::assertNotDispatched(ProcessInitialGeslibInterFile::class);
+});

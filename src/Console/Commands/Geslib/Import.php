@@ -111,7 +111,7 @@ class Import extends Command
         try {
             file_put_contents($tmp, $rawContent);
 
-            $zip = new \ZipArchive();
+            $zip = new \ZipArchive;
 
             if ($zip->open($tmp) !== true || $zip->numFiles === 0) {
                 return '';

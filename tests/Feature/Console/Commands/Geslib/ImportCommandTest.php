@@ -184,7 +184,7 @@ function makeZipContent(string $entryName, string $entryContent): string
 {
     $tmp = tempnam(sys_get_temp_dir(), 'geslib_test_');
 
-    $zip = new ZipArchive();
+    $zip = new ZipArchive;
     $zip->open($tmp, ZipArchive::OVERWRITE);
     $zip->addFromString($entryName, $entryContent);
     $zip->close();

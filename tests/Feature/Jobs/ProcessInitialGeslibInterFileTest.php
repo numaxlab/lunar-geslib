@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Lunar\Models\Brand;
@@ -36,7 +37,10 @@ use NumaxLab\Lunar\Geslib\InterCommands\ArticleAuthorCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\ArticleCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\AuthorCommand;
 use NumaxLab\Lunar\Geslib\InterCommands\Batch\ArticleAuthorRelation;
+use NumaxLab\Lunar\Geslib\InterCommands\Contracts\CommandContract;
 use NumaxLab\Lunar\Geslib\Jobs\GeslibInitialPhasePartitioner;
+use NumaxLab\Lunar\Geslib\Jobs\ProcessGeslibInterFile;
+use NumaxLab\Lunar\Geslib\Jobs\ProcessInitialGeslibBatchRelations;
 use NumaxLab\Lunar\Geslib\Jobs\ProcessInitialGeslibInterFile;
 use NumaxLab\Lunar\Geslib\Jobs\ProcessInitialGeslibPhaseChunk;
 use NumaxLab\Lunar\Geslib\Models\Author as AuthorModel;
@@ -48,6 +52,7 @@ beforeEach(function (): void {
     config()->set('lunar.geslib.inter_files_path', 'geslib-inter');
 
     Storage::fake('local');
+    Cache::flush();
 });
 
 /**
@@ -423,4 +428,145 @@ it('ProcessInitialGeslibInterFile sets status, started_at, finished_at and total
         [GeslibInterFile::STATUS_SUCCESS, GeslibInterFile::STATUS_WARNING],
         'status must be success or warning after processing',
     );
+});
+
+// ─── Lock lifecycle tests ─────────────────────────────────────────────────────
+
+it('ProcessInitialGeslibInterFile::failed() releases the shared import lock', function (): void {
+    $file = GeslibInterFile::factory()->create([
+        'file_type' => GeslibInterFile::FILE_TYPE_INITIAL_LOAD,
+    ]);
+
+    $lock = Cache::lock(ProcessGeslibInterFile::CACHE_LOCK_NAME);
+    $lock->get();
+
+    $job = new ProcessInitialGeslibInterFile($file);
+    $job->failed(new RuntimeException('Simulated failure'));
+
+    expect($lock->get())->toBeTrue('lock must be released after ProcessInitialGeslibInterFile::failed()');
+    $lock->release();
+});
+
+it('ProcessInitialGeslibInterFile::failed() marks the record as failed with finished_at', function (): void {
+    $file = GeslibInterFile::factory()->create([
+        'file_type' => GeslibInterFile::FILE_TYPE_INITIAL_LOAD,
+        'status' => GeslibInterFile::STATUS_PROCESSING,
+    ]);
+
+    $job = new ProcessInitialGeslibInterFile($file);
+    $job->failed(new RuntimeException('Coordinator failure'));
+
+    $file->refresh();
+
+    expect($file->status)->toBe(GeslibInterFile::STATUS_FAILED)
+        ->and($file->finished_at)->not->toBeNull()
+        ->and(collect($file->log)->last())->toMatchArray([
+            'level' => CommandContract::LEVEL_ERROR,
+            'message' => 'Coordinator failure',
+        ]);
+});
+
+it('ProcessInitialGeslibPhaseChunk::failed() releases the shared import lock', function (): void {
+    $file = GeslibInterFile::factory()->create([
+        'file_type' => GeslibInterFile::FILE_TYPE_INITIAL_LOAD,
+        'status' => GeslibInterFile::STATUS_PROCESSING,
+    ]);
+
+    $lock = Cache::lock(ProcessGeslibInterFile::CACHE_LOCK_NAME);
+    $lock->get();
+
+    $job = new ProcessInitialGeslibPhaseChunk($file, phase: 1, lines: []);
+    $job->failed(new RuntimeException('Phase chunk failure'));
+
+    expect($lock->get())->toBeTrue('lock must be released after ProcessInitialGeslibPhaseChunk::failed()');
+    $lock->release();
+});
+
+it('ProcessInitialGeslibPhaseChunk::failed() marks the record as failed with finished_at', function (): void {
+    $file = GeslibInterFile::factory()->create([
+        'file_type' => GeslibInterFile::FILE_TYPE_INITIAL_LOAD,
+        'status' => GeslibInterFile::STATUS_PROCESSING,
+    ]);
+
+    $job = new ProcessInitialGeslibPhaseChunk($file, phase: 2, lines: []);
+    $job->failed(new RuntimeException('Phase 2 chunk failure'));
+
+    $file->refresh();
+
+    expect($file->status)->toBe(GeslibInterFile::STATUS_FAILED)
+        ->and($file->finished_at)->not->toBeNull()
+        ->and(collect($file->log)->last())->toMatchArray([
+            'level' => CommandContract::LEVEL_ERROR,
+            'message' => 'Phase 2 chunk failure',
+        ]);
+});
+
+it('ProcessInitialGeslibBatchRelations::handle() releases the shared import lock on success', function (): void {
+    Bus::fake();
+
+    $file = GeslibInterFile::factory()->create([
+        'file_type' => GeslibInterFile::FILE_TYPE_INITIAL_LOAD,
+        'status' => GeslibInterFile::STATUS_PROCESSING,
+    ]);
+
+    $lock = Cache::lock(ProcessGeslibInterFile::CACHE_LOCK_NAME);
+    $lock->get();
+
+    $job = new ProcessInitialGeslibBatchRelations($file);
+    $job->handle();
+
+    expect($lock->get())->toBeTrue('lock must be released by ProcessInitialGeslibBatchRelations::handle()');
+    $lock->release();
+});
+
+it('ProcessInitialGeslibBatchRelations::handle() sets final status and finished_at when no batch lines remain', function (): void {
+    Bus::fake();
+
+    $file = GeslibInterFile::factory()->create([
+        'file_type' => GeslibInterFile::FILE_TYPE_INITIAL_LOAD,
+        'status' => GeslibInterFile::STATUS_PROCESSING,
+    ]);
+
+    $job = new ProcessInitialGeslibBatchRelations($file);
+    $job->handle();
+
+    $file->refresh();
+
+    expect($file->status)->toBeIn([GeslibInterFile::STATUS_SUCCESS, GeslibInterFile::STATUS_WARNING])
+        ->and($file->finished_at)->not->toBeNull();
+});
+
+it('ProcessInitialGeslibBatchRelations::failed() releases the shared import lock', function (): void {
+    $file = GeslibInterFile::factory()->create([
+        'file_type' => GeslibInterFile::FILE_TYPE_INITIAL_LOAD,
+        'status' => GeslibInterFile::STATUS_PROCESSING,
+    ]);
+
+    $lock = Cache::lock(ProcessGeslibInterFile::CACHE_LOCK_NAME);
+    $lock->get();
+
+    $job = new ProcessInitialGeslibBatchRelations($file);
+    $job->failed(new RuntimeException('Batch relations failure'));
+
+    expect($lock->get())->toBeTrue('lock must be released after ProcessInitialGeslibBatchRelations::failed()');
+    $lock->release();
+});
+
+it('ProcessInitialGeslibBatchRelations::failed() marks the record as failed with finished_at', function (): void {
+    $file = GeslibInterFile::factory()->create([
+        'file_type' => GeslibInterFile::FILE_TYPE_INITIAL_LOAD,
+        'status' => GeslibInterFile::STATUS_PROCESSING,
+    ]);
+
+    $job = new ProcessInitialGeslibBatchRelations($file);
+    $job->failed(new RuntimeException('Batch failure'));
+
+    $file->refresh();
+
+    expect($file->status)->toBe(GeslibInterFile::STATUS_FAILED)
+        ->and($file->finished_at)->not->toBeNull()
+        ->and(collect($file->log)->last())->toMatchArray([
+            'level' => CommandContract::LEVEL_ERROR,
+            'message' => 'Batch failure',
+        ]);
 });

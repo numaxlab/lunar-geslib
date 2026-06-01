@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace NumaxLab\Lunar\Geslib\Jobs;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Cache;
 use NumaxLab\Geslib\Lines\Article;
 use NumaxLab\Geslib\Lines\ArticleAuthor;
 use NumaxLab\Geslib\Lines\ArticleBatchHeader;
@@ -66,6 +68,7 @@ use NumaxLab\Lunar\Geslib\InterCommands\TypeCommand;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFile;
 use NumaxLab\Lunar\Geslib\Models\GeslibInterFileBatchLine;
 use RuntimeException;
+use Throwable;
 
 /**
  * Processes a chunk of Geslib lines for a single phase of the initial load strategy.
@@ -208,6 +211,22 @@ class ProcessInitialGeslibPhaseChunk implements ShouldQueue
 
         $this->geslibInterFile->update([
             'log' => $log,
+        ]);
+    }
+
+    public function failed(Throwable $exception): void
+    {
+        Cache::lock(ProcessGeslibInterFile::CACHE_LOCK_NAME)->forceRelease();
+
+        $this->geslibInterFile->update([
+            'status' => GeslibInterFile::STATUS_FAILED,
+            'log' => array_merge($this->geslibInterFile->log ?? [], [
+                [
+                    'level' => CommandContract::LEVEL_ERROR,
+                    'message' => $exception->getMessage(),
+                ],
+            ]),
+            'finished_at' => Carbon::now(),
         ]);
     }
 }

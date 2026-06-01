@@ -9,6 +9,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use NumaxLab\Geslib\GeslibFile;
 use NumaxLab\Lunar\Geslib\InterCommands\Contracts\CommandContract;
@@ -124,6 +125,8 @@ class ProcessInitialGeslibInterFile implements ShouldQueue
 
     public function failed(Throwable $exception): void
     {
+        Cache::lock(ProcessGeslibInterFile::CACHE_LOCK_NAME)->forceRelease();
+
         $this->geslibInterFile->update([
             'status' => GeslibInterFile::STATUS_FAILED,
             'log' => array_merge($this->geslibInterFile->log ?? [], [

@@ -31,7 +31,7 @@ use NumaxLab\Geslib\Lines\Type;
  *
  * Phase 1 — Base entities (no article dependencies)
  * Phase 2 — Articles and article indexes (depend on phase 1)
- * Phase 3 — Stock and stock-dependent data (depend on phase 2)
+ * Phase 3 — Stock and article-dependent data (depend on phase 2)
  * Phase 4 — Batch relations: author/topic/ibic (depend on phase 2)
  */
 final class GeslibInitialPhasePartitioner
@@ -48,7 +48,6 @@ final class GeslibInitialPhasePartitioner
         Status::CODE => 1,
         Author::CODE => 1,
         BindingType::CODE => 1,
-        EditorialReference::CODE => 1,
         Classification::CODE => 1,
         PressPublication::CODE => 1,
 
@@ -57,10 +56,13 @@ final class GeslibInitialPhasePartitioner
         EBook::CODE => 2,
         ArticleIndex::CODE => 2,
 
-        // Phase 3 — stock and dependent updates
+        // Phase 3 — stock and article-dependent updates
         Stock::CODE => 3,
         CenterStock::CODE => 3,
         AuthorBiography::CODE => 3,
+        // Needs the product variant created in phase 2: EditorialReferenceCommand
+        // looks it up by sku and returns silently when it does not exist yet.
+        EditorialReference::CODE => 3,
 
         // Phase 4 — batch relations (processed via ProcessGeslibInterFileBatchLine)
         ArticleAuthor::CODE => 4,

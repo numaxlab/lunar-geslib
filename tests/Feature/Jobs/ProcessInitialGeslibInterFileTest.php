@@ -131,7 +131,7 @@ it('partitions base-entity codes into phase 1', function (): void {
     $phase1Codes = [
         Editorial::CODE, RecordLabel::CODE, Collection::CODE, Topic::CODE,
         Type::CODE, Language::CODE, Status::CODE, Author::CODE,
-        BindingType::CODE, EditorialReference::CODE,
+        BindingType::CODE,
         Classification::CODE, PressPublication::CODE,
     ];
 
@@ -157,6 +157,14 @@ it('partitions stock and biography codes into phase 3', function (): void {
         $phase = GeslibInitialPhasePartitioner::phaseFor($code);
         expect($phase)->toBe(3, "Expected code '$code' to be in phase 3, got phase $phase");
     }
+});
+
+it('applies editorial references after the articles exist', function (): void {
+    // EditorialReferenceCommand looks the product variant up by sku and returns
+    // silently when it is missing, so phase 1 would drop every reference on a
+    // fresh database.
+    expect(GeslibInitialPhasePartitioner::phaseFor(EditorialReference::CODE))
+        ->toBeGreaterThan(GeslibInitialPhasePartitioner::phaseFor(Article::CODE));
 });
 
 it('partitions batch-relation codes into phase 4', function (): void {

@@ -13,7 +13,8 @@
             "ebook",
             "favourite",
             "favourites",
-            "enricher"
+            "enricher",
+            "partitioner"
         ],
         "paths": []
     }

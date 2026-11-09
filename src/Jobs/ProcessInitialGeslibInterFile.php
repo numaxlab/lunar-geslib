@@ -78,7 +78,7 @@ class ProcessInitialGeslibInterFile implements ShouldQueue
         // Append batch-relation processor at the end of the chain
         $batchLineJob = new ProcessInitialGeslibBatchRelations($this->geslibInterFile);
 
-        if (! empty($chain)) {
+        if ($chain !== []) {
             Bus::chain([...$chain, $batchLineJob])->dispatch();
         } else {
             $batchLineJob->handle();

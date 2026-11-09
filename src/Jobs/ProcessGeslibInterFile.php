@@ -265,9 +265,7 @@ class ProcessGeslibInterFile implements ShouldBeUnique, ShouldQueue
                     'line_type' => $lineType,
                 ]);
 
-                if ($fileBatchLine->data === null) {
-                    $fileBatchLine->data = [];
-                }
+                $fileBatchLine->data ??= [];
 
                 $fileBatchLine->update([
                     'data' => array_merge(

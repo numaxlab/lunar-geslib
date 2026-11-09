@@ -6,6 +6,7 @@ namespace NumaxLab\Lunar\Geslib\Services;
 
 use Lunar\Models\ProductVariant;
 use NumaxLab\Dilve\Client;
+use NumaxLab\Dilve\Onix\Dto\Product;
 
 final readonly class DilveEnricher
 {
@@ -23,7 +24,7 @@ final readonly class DilveEnricher
 
         $onixProduct = $this->client->getProductByIsbn($productVariant->gtin);
 
-        if (! $onixProduct || ! $onixProduct->coverUrl) {
+        if (! $onixProduct instanceof Product || ! $onixProduct->coverUrl) {
             return;
         }
 

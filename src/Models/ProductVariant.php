@@ -29,6 +29,12 @@ class ProductVariant extends \Lunar\Models\ProductVariant
     #[\Override]
     public function canBeFulfilledAtQuantity(int $quantity): bool
     {
+        $product = $this->product;
+
+        if ($product && method_exists($product, 'isNotPurchasableByStatus') && $product->isNotPurchasableByStatus()) {
+            return false;
+        }
+
         if ($this->purchasable == 'always') {
             return true;
         }

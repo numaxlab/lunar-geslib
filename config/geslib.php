@@ -49,6 +49,16 @@ return [
     ],
 
     /*
+     * Geslib stock centres (B2 lines) shown on the storefront.
+     * Key is the Geslib centre id. `ships` adds the "available for shipping"
+     * line next to the centre name. Unknown ids fall back to the raw id.
+     */
+    'stock_centers' => [
+        // 10 => ['name' => 'Duque de Alba', 'ships' => true],
+        // 12 => ['name' => 'Ateneo La Maliciosa', 'ships' => false],
+    ],
+
+    /*
      * Geslib products measurements units. You can change them to match your Geslib data measurements.
      * Check Lunar shipping config to find out the available valid units
      */

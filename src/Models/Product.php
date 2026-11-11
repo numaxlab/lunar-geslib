@@ -108,6 +108,32 @@ class Product extends \Lunar\Models\Product
         });
     }
 
+    /**
+     * Return the Geslib status that prevents this product from being purchased, if any.
+     */
+    public function notPurchasableStatus(): ?Collection
+    {
+        $blockedCodes = array_map(
+            strval(...),
+            (array) config('lunar.geslib.not_purchasable_statuses', []),
+        );
+
+        if ($blockedCodes === []) {
+            return null;
+        }
+
+        return $this->statuses
+            ->first(fn (Collection $status): bool => in_array((string) $status->geslib_code, $blockedCodes, true));
+    }
+
+    /**
+     * Determine whether the Geslib status forbids buying this product, whatever its stock.
+     */
+    public function isNotPurchasableByStatus(): bool
+    {
+        return $this->notPurchasableStatus() !== null;
+    }
+
     public function types(): BelongsToMany
     {
         return $this->collections()->whereHas('group', function ($query): void {
